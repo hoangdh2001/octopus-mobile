@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:octopus/config/routes/routers.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -67,7 +68,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, Routes.LOGIN);
+                },
                 child: const Text('Log in'),
               ),
             ),

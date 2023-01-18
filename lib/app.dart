@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:octopus/screens/welcome_screen.dart';
+import 'package:octopus/config/routes/app_routes.dart';
+import 'package:octopus/config/routes/routers.dart';
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -20,7 +21,8 @@ class _MyAppState extends State<MyApp> {
       localizationsDelegates: context.localizationDelegates,
       locale: context.locale,
       debugShowCheckedModeBanner: false,
-      home: const WelcomeScreen(),
+      initialRoute: Routes.WELCOME,
+      onGenerateRoute: AppRoutes.generateRoute,
     );
   }
 }
