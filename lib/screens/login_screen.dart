@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -125,7 +126,38 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      showCupertinoModalPopup(
+                          context: context,
+                          builder: (context) => CupertinoActionSheet(
+                                title: const Text(
+                                  'Option',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                message: const Text('Select method log in'),
+                                actions: [
+                                  CupertinoActionSheetAction(
+                                    onPressed: () {},
+                                    child: const Text('Send email'),
+                                  ),
+                                  CupertinoActionSheetAction(
+                                    onPressed: () {},
+                                    child: const Text('Enter password'),
+                                  ),
+                                ],
+                                cancelButton: CupertinoActionSheetAction(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text(
+                                    'Cancel',
+                                  ),
+                                ),
+                              ));
+                    },
                     child: const Text('Continue with email'),
                   ),
                 ),
