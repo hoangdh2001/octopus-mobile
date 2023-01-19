@@ -82,7 +82,7 @@ class _LoginWithPassScreenState extends State<LoginWithPassScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      InkWell(
+                      GestureDetector(
                         child: const Text(
                           'Forgot password?',
                           style:
@@ -90,7 +90,7 @@ class _LoginWithPassScreenState extends State<LoginWithPassScreen> {
                         ),
                         onTap: () {},
                       ),
-                      InkWell(
+                      GestureDetector(
                         child: const Text(
                           'Log in with email',
                           style:

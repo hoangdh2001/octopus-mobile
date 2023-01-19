@@ -129,45 +129,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     onPressed: () {
-                      showCupertinoModalPopup(
-                          context: context,
-                          builder: (context) => CupertinoActionSheet(
-                                title: const Text(
-                                  'Option',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                message: const Text('Select method log in'),
-                                actions: [
-                                  CupertinoActionSheetAction(
-                                    onPressed: () {},
-                                    child: const Text('Send email'),
-                                  ),
-                                  CupertinoActionSheetAction(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const LoginWithPassScreen(),
-                                        ),
-                                      );
-                                    },
-                                    child: const Text('Enter password'),
-                                  ),
-                                ],
-                                cancelButton: CupertinoActionSheetAction(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text(
-                                    'Cancel',
-                                  ),
-                                ),
-                              ));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginWithPassScreen(),
+                        ),
+                      );
                     },
                     child: const Text('Continue with email'),
                   ),
