@@ -1,16 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:octopus/screens/login_with_pass_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class LoginWithPassScreen extends StatefulWidget {
+  const LoginWithPassScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<LoginWithPassScreen> createState() => _LoginWithPassScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginWithPassScreenState extends State<LoginWithPassScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -25,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
               onTap: () {
                 Navigator.pop(context);
               },
-              child: SvgPicture.asset('assets/icons/close.svg'),
+              child: SvgPicture.asset('assets/icons/arrow-left.svg'),
             ),
           ),
           SizedBox(
@@ -42,44 +40,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     'assets/logo/logo-text-light.png',
                   ),
                 ),
-                SizedBox(
-                  width: size.width * 0.8,
-                  child: TextButton(
-                    style: ButtonStyle(
-                      foregroundColor:
-                          MaterialStateProperty.all<Color>(Colors.black),
-                      backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                          (Set<MaterialState> states) {
-                        if (states.contains(MaterialState.pressed)) {
-                          return Colors.white;
-                        }
-                        return const Color(0xFFEBEAE8);
-                      }),
-                      overlayColor:
-                          MaterialStateProperty.all(Colors.transparent),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                    ),
-                    onPressed: () {},
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SvgPicture.asset('assets/icons/google.svg'),
-                        const Text('Log in with Google'),
-                        const SizedBox(width: 20),
-                      ],
-                    ),
-                  ),
-                ),
                 const SizedBox(height: 20),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Email',
+                      'Password',
                       style:
                           TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
                     ),
@@ -95,16 +61,45 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       child: const TextField(
                         decoration: InputDecoration(
-                          hintText: 'name@company',
+                          hintText: 'Enter password',
                           hintStyle: TextStyle(color: Color(0xffa6a6a6)),
                           border: InputBorder.none,
                         ),
+                        obscureText: true,
+                        obscuringCharacter: '*',
+                        enableSuggestions: false,
+                        autocorrect: false,
                         style: TextStyle(
                           fontSize: 13,
                         ),
                       ),
                     ),
                   ],
+                ),
+                Container(
+                  width: size.width * 0.8,
+                  margin: const EdgeInsets.only(top: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      InkWell(
+                        child: const Text(
+                          'Forgot password?',
+                          style:
+                              TextStyle(color: Color(0xFF1F9BE1), fontSize: 12),
+                        ),
+                        onTap: () {},
+                      ),
+                      InkWell(
+                        child: const Text(
+                          'Log in with email',
+                          style:
+                              TextStyle(color: Color(0xFF1F9BE1), fontSize: 12),
+                        ),
+                        onTap: () {},
+                      ),
+                    ],
+                  ),
                 ),
                 Container(
                   width: size.width * 0.8,
@@ -128,48 +123,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    onPressed: () {
-                      showCupertinoModalPopup(
-                          context: context,
-                          builder: (context) => CupertinoActionSheet(
-                                title: const Text(
-                                  'Option',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                message: const Text('Select method log in'),
-                                actions: [
-                                  CupertinoActionSheetAction(
-                                    onPressed: () {},
-                                    child: const Text('Send email'),
-                                  ),
-                                  CupertinoActionSheetAction(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              const LoginWithPassScreen(),
-                                        ),
-                                      );
-                                    },
-                                    child: const Text('Enter password'),
-                                  ),
-                                ],
-                                cancelButton: CupertinoActionSheetAction(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text(
-                                    'Cancel',
-                                  ),
-                                ),
-                              ));
-                    },
-                    child: const Text('Continue with email'),
+                    onPressed: () {},
+                    child: const Text('Log in'),
                   ),
                 ),
                 Container(
