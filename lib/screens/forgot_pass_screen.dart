@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:octopus/screens/forgot_pass_screen.dart';
-import 'package:octopus/screens/notification_email_screen.dart';
 
-class LoginWithPassScreen extends StatefulWidget {
-  const LoginWithPassScreen({super.key});
+class ForgotPassScreen extends StatefulWidget {
+  const ForgotPassScreen({super.key});
 
   @override
-  State<LoginWithPassScreen> createState() => _LoginWithPassScreenState();
+  State<ForgotPassScreen> createState() => _ForgotPassScreenState();
 }
 
-class _LoginWithPassScreenState extends State<LoginWithPassScreen> {
+class _ForgotPassScreenState extends State<ForgotPassScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -42,78 +40,33 @@ class _LoginWithPassScreenState extends State<LoginWithPassScreen> {
                     'assets/logo/logo-text-light.png',
                   ),
                 ),
-                const SizedBox(height: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Password',
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
-                    ),
-                    const SizedBox(height: 5),
-                    Container(
-                      width: size.width * 0.8,
-                      height: 30,
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          bottom:
-                              BorderSide(width: 1, color: Color(0xffeaeaea)),
-                        ),
-                      ),
-                      child: const TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Enter password',
-                          hintStyle: TextStyle(color: Color(0xffa6a6a6)),
-                          border: InputBorder.none,
-                        ),
-                        obscureText: true,
-                        obscuringCharacter: '*',
-                        enableSuggestions: false,
-                        autocorrect: false,
-                        style: TextStyle(
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
-                  ],
+                const Text(
+                  'Password Recovery',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
                 ),
+                const SizedBox(height: 20),
+                const Text(
+                  'To restore please enter your registered email',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+                ),
+                const SizedBox(height: 20),
                 Container(
                   width: size.width * 0.8,
-                  margin: const EdgeInsets.only(top: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        child: const Text(
-                          'Forgot password?',
-                          style:
-                              TextStyle(color: Color(0xFF1F9BE1), fontSize: 12),
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => const ForgotPassScreen()));
-                        },
-                      ),
-                      GestureDetector(
-                        child: const Text(
-                          'Log in with email',
-                          style:
-                              TextStyle(color: Color(0xFF1F9BE1), fontSize: 12),
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const NotificationEmailScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
+                  height: 30,
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(width: 1, color: Color(0xffeaeaea)),
+                    ),
+                  ),
+                  child: const TextField(
+                    decoration: InputDecoration(
+                      hintText: 'name@company',
+                      hintStyle: TextStyle(color: Color(0xffa6a6a6)),
+                      border: InputBorder.none,
+                    ),
+                    style: TextStyle(
+                      fontSize: 13,
+                    ),
                   ),
                 ),
                 Container(
@@ -139,7 +92,7 @@ class _LoginWithPassScreenState extends State<LoginWithPassScreen> {
                       ),
                     ),
                     onPressed: () {},
-                    child: const Text('Log in'),
+                    child: const Text('Continue with email'),
                   ),
                 ),
                 Container(
