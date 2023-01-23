@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:octopus/screens/notification_email_screen.dart';
 
 class LoginWithPassScreen extends StatefulWidget {
   const LoginWithPassScreen({super.key});
@@ -96,7 +97,15 @@ class _LoginWithPassScreenState extends State<LoginWithPassScreen> {
                           style:
                               TextStyle(color: Color(0xFF1F9BE1), fontSize: 12),
                         ),
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const NotificationEmailScreen(),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
