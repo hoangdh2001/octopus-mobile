@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:octopus/screens/confirm_password_screen.dart';
 import 'package:octopus/screens/login_with_pass_screen.dart';
 
 class OTPConfirmScreen extends StatefulWidget {
@@ -369,7 +370,12 @@ class _OTPConfirmScreenState extends State<OTPConfirmScreen> {
                         ),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const ConfirmPasswordScreen()));
+                    },
                     child: const Text('Verify'),
                   ),
                 ),
