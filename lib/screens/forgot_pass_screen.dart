@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:octopus/screens/otp_confirm_screen.dart';
 
 class ForgotPassScreen extends StatefulWidget {
   const ForgotPassScreen({super.key});
@@ -91,7 +92,12 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
                         ),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const OTPConfirmScreen()));
+                    },
                     child: const Text('Continue with email'),
                   ),
                 ),
