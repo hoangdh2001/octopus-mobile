@@ -44,7 +44,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, Routes.SIGN_UP);
+                },
                 child: const Text('Sign up'),
               ),
             ),
