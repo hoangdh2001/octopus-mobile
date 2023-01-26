@@ -2,7 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:octopus/config/routes/routers.dart';
-import 'package:octopus/screens/login_with_pass_screen.dart';
 import 'package:octopus/screens/notification_email_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -102,6 +101,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     style: TextStyle(
                       fontSize: 13,
                     ),
+                    keyboardType: TextInputType.emailAddress,
                   ),
                 ),
                 const SizedBox(height: 20),

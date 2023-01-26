@@ -102,6 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                           fontSize: 13,
                         ),
+                        keyboardType: TextInputType.emailAddress,
                       ),
                     ),
                   ],
