@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:octopus/config/routes/routers.dart';
+import 'package:octopus/config/theme/oc_theme.dart';
 import 'package:octopus/screens/forgot_pass_screen.dart';
 import 'package:octopus/screens/notification_email_screen.dart';
 
@@ -15,7 +17,7 @@ class _LoginWithPassScreenState extends State<LoginWithPassScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
       body: Stack(
         children: [
           Positioned(
@@ -25,7 +27,10 @@ class _LoginWithPassScreenState extends State<LoginWithPassScreen> {
               onTap: () {
                 Navigator.pop(context);
               },
-              child: SvgPicture.asset('assets/icons/arrow-left.svg'),
+              child: SvgPicture.asset(
+                'assets/icons/arrow-left.svg',
+                color: OctopusTheme.of(context).colorTheme.icon,
+              ),
             ),
           ),
           SizedBox(
@@ -39,17 +44,18 @@ class _LoginWithPassScreenState extends State<LoginWithPassScreen> {
                   width: size.width * 0.5,
                   margin: const EdgeInsets.only(bottom: 30),
                   child: Image.asset(
-                    'assets/logo/logo-text-light.png',
+                    OctopusTheme.of(context).logo,
                   ),
                 ),
                 const SizedBox(height: 20),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Password',
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                      style: OctopusTheme.of(context)
+                          .textTheme
+                          .primaryGreyLabelPrimary,
                     ),
                     const SizedBox(height: 5),
                     Container(
@@ -61,19 +67,18 @@ class _LoginWithPassScreenState extends State<LoginWithPassScreen> {
                               BorderSide(width: 1, color: Color(0xffeaeaea)),
                         ),
                       ),
-                      child: const TextField(
+                      child: TextField(
                         decoration: InputDecoration(
                           hintText: 'Enter password',
-                          hintStyle: TextStyle(color: Color(0xffa6a6a6)),
+                          hintStyle: OctopusTheme.of(context).textTheme.hint,
                           border: InputBorder.none,
                         ),
                         obscureText: true,
                         obscuringCharacter: '*',
                         enableSuggestions: false,
                         autocorrect: false,
-                        style: TextStyle(
-                          fontSize: 13,
-                        ),
+                        style:
+                            OctopusTheme.of(context).textTheme.primaryGreyBody,
                       ),
                     ),
                   ],
@@ -120,25 +125,11 @@ class _LoginWithPassScreenState extends State<LoginWithPassScreen> {
                   width: size.width * 0.8,
                   margin: const EdgeInsets.symmetric(vertical: 20),
                   child: TextButton(
-                    style: ButtonStyle(
-                      foregroundColor:
-                          MaterialStateProperty.all<Color>(Colors.white),
-                      backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                          (Set<MaterialState> states) {
-                        if (states.contains(MaterialState.pressed)) {
-                          return Colors.white;
-                        }
-                        return const Color(0xff726bb8);
-                      }),
-                      overlayColor:
-                          MaterialStateProperty.all(Colors.transparent),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                    ),
-                    onPressed: () {},
+                    style:
+                        OctopusTheme.of(context).buttonTheme.brandPrimaryButton,
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, Routes.HOME);
+                    },
                     child: const Text('Log in'),
                   ),
                 ),

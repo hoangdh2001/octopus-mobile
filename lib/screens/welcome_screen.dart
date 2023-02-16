@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:octopus/config/routes/routers.dart';
+import 'package:octopus/config/theme/oc_theme.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -27,23 +28,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             SizedBox(
               width: size.width * 0.6,
               child: TextButton(
-                style: ButtonStyle(
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(Colors.white),
-                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                      (Set<MaterialState> states) {
-                    if (states.contains(MaterialState.pressed)) {
-                      return Colors.white;
-                    }
-                    return const Color(0xff726bb8);
-                  }),
-                  overlayColor: MaterialStateProperty.all(Colors.transparent),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                ),
+                style: OctopusTheme.of(context).buttonTheme.brandPrimaryButton,
                 onPressed: () {
                   Navigator.pushNamed(context, Routes.SIGN_UP);
                 },
@@ -53,23 +38,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             SizedBox(
               width: size.width * 0.6,
               child: TextButton(
-                style: ButtonStyle(
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(Colors.black),
-                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                      (Set<MaterialState> states) {
-                    if (states.contains(MaterialState.pressed)) {
-                      return Colors.white70;
-                    }
-                    return Colors.white;
-                  }),
-                  overlayColor: MaterialStateProperty.all(Colors.transparent),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                ),
+                style:
+                    OctopusTheme.of(context).buttonTheme.secondaryPrimaryButton,
                 onPressed: () {
                   Navigator.pushNamed(context, Routes.LOGIN);
                 },

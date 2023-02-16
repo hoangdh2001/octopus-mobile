@@ -1,7 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:octopus/config/theme/oc_theme.dart';
 import 'package:octopus/screens/login_with_pass_screen.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,17 +16,20 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
       body: Stack(
         children: [
           Positioned(
             top: MediaQuery.of(context).padding.top + 6,
-            left: 16,
+            left: 16.w,
             child: GestureDetector(
               onTap: () {
                 Navigator.pop(context);
               },
-              child: SvgPicture.asset('assets/icons/close.svg'),
+              child: SvgPicture.asset(
+                'assets/icons/close.svg',
+                color: OctopusTheme.of(context).colorTheme.icon,
+              ),
             ),
           ),
           SizedBox(
@@ -36,14 +40,14 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  width: size.width * 0.5,
-                  margin: const EdgeInsets.only(bottom: 30),
+                  width: 0.5.sw,
+                  margin: const EdgeInsets.only(bottom: 30).w,
                   child: Image.asset(
-                    'assets/logo/logo-text-light.png',
+                    OctopusTheme.of(context).logo,
                   ),
                 ),
                 SizedBox(
-                  width: size.width * 0.8,
+                  width: 0.8.sw,
                   child: TextButton(
                     style: ButtonStyle(
                       foregroundColor:
@@ -59,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           MaterialStateProperty.all(Colors.transparent),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(20).r,
                         ),
                       ),
                     ),
@@ -69,66 +73,50 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         SvgPicture.asset('assets/icons/google.svg'),
                         const Text('Log in with Google'),
-                        const SizedBox(width: 20),
+                        Container(width: 20.w),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                Container(height: 20.w),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Email',
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                      style: OctopusTheme.of(context)
+                          .textTheme
+                          .primaryGreyLabelPrimary,
                     ),
                     const SizedBox(height: 5),
                     Container(
-                      width: size.width * 0.8,
-                      height: 30,
+                      width: 0.8.sw,
+                      height: 30.h,
                       decoration: const BoxDecoration(
                         border: Border(
                           bottom:
                               BorderSide(width: 1, color: Color(0xffeaeaea)),
                         ),
                       ),
-                      child: const TextField(
+                      child: TextField(
                         decoration: InputDecoration(
                           hintText: 'name@company',
-                          hintStyle: TextStyle(color: Color(0xffa6a6a6)),
+                          hintStyle: OctopusTheme.of(context).textTheme.hint,
                           border: InputBorder.none,
                         ),
-                        style: TextStyle(
-                          fontSize: 13,
-                        ),
+                        style:
+                            OctopusTheme.of(context).textTheme.primaryGreyBody,
                         keyboardType: TextInputType.emailAddress,
                       ),
                     ),
                   ],
                 ),
                 Container(
-                  width: size.width * 0.8,
-                  margin: const EdgeInsets.symmetric(vertical: 20),
+                  width: 0.8.sw,
+                  margin: EdgeInsets.symmetric(vertical: 20.h),
                   child: TextButton(
-                    style: ButtonStyle(
-                      foregroundColor:
-                          MaterialStateProperty.all<Color>(Colors.white),
-                      backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                          (Set<MaterialState> states) {
-                        if (states.contains(MaterialState.pressed)) {
-                          return Colors.white;
-                        }
-                        return const Color(0xff726bb8);
-                      }),
-                      overlayColor:
-                          MaterialStateProperty.all(Colors.transparent),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                    ),
+                    style:
+                        OctopusTheme.of(context).buttonTheme.brandPrimaryButton,
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -141,13 +129,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 Container(
-                  width: size.width * 0.8,
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  width: 0.8.sw,
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
                   child: RichText(
                     textAlign: TextAlign.center,
-                    text: const TextSpan(
+                    text: TextSpan(
                       style: TextStyle(
-                        fontSize: 11,
+                        fontSize: 11.sp,
                         fontWeight: FontWeight.w400,
                         color: Color(0xff8d8c8c),
                       ),
@@ -155,17 +143,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         TextSpan(
                           text: 'By continuing, you agree to the ',
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 12.sp,
                             fontWeight: FontWeight.w400,
-                            color: Color(0xff8d8c8c),
+                            color: const Color(0xff8d8c8c),
                           ),
                         ),
                         TextSpan(
                           text: 'Terms of Service and Privacy Policy',
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: 12.sp,
                             fontWeight: FontWeight.w500,
-                            color: Color(0xff8d8c8c),
+                            color: const Color(0xff8d8c8c),
                           ),
                         ),
                       ],

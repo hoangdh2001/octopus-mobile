@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:octopus/config/routes/routers.dart';
+import 'package:octopus/screens/home_screen.dart';
 import 'package:octopus/screens/login_screen.dart';
 import 'package:octopus/screens/sign_up_screen.dart';
 import 'package:octopus/screens/welcome_screen.dart';
@@ -45,6 +46,10 @@ class AppRoutes {
       case Routes.WELCOME:
         return MaterialPageRoute(builder: (_) {
           return const WelcomeScreen();
+        });
+      case Routes.HOME:
+        return MaterialPageRoute(builder: (_) {
+          return const HomeScreen();
         });
       default:
         return MaterialPageRoute(builder: (_) {

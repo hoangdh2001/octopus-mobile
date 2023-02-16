@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:octopus/config/theme/oc_theme.dart';
 import 'package:octopus/screens/otp_confirm_screen.dart';
 
 class ForgotPassScreen extends StatefulWidget {
@@ -14,7 +15,7 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
       body: Stack(
         children: [
           Positioned(
@@ -24,7 +25,10 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
               onTap: () {
                 Navigator.pop(context);
               },
-              child: SvgPicture.asset('assets/icons/arrow-left.svg'),
+              child: SvgPicture.asset(
+                'assets/icons/arrow-left.svg',
+                color: OctopusTheme.of(context).colorTheme.icon,
+              ),
             ),
           ),
           SizedBox(
@@ -38,17 +42,17 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
                   width: size.width * 0.5,
                   margin: const EdgeInsets.only(bottom: 30),
                   child: Image.asset(
-                    'assets/logo/logo-text-light.png',
+                    OctopusTheme.of(context).logo,
                   ),
                 ),
-                const Text(
+                Text(
                   'Password Recovery',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  style: OctopusTheme.of(context).textTheme.primaryGreyH1,
                 ),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'To restore please enter your registered email',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400),
+                  style: OctopusTheme.of(context).textTheme.primaryGreyBody,
                 ),
                 const SizedBox(height: 20),
                 Container(
@@ -59,39 +63,21 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
                       bottom: BorderSide(width: 1, color: Color(0xffeaeaea)),
                     ),
                   ),
-                  child: const TextField(
+                  child: TextField(
                     decoration: InputDecoration(
                       hintText: 'name@company',
-                      hintStyle: TextStyle(color: Color(0xffa6a6a6)),
+                      hintStyle: OctopusTheme.of(context).textTheme.hint,
                       border: InputBorder.none,
                     ),
-                    style: TextStyle(
-                      fontSize: 13,
-                    ),
+                    style: OctopusTheme.of(context).textTheme.primaryGreyBody,
                   ),
                 ),
                 Container(
                   width: size.width * 0.8,
                   margin: const EdgeInsets.symmetric(vertical: 20),
                   child: TextButton(
-                    style: ButtonStyle(
-                      foregroundColor:
-                          MaterialStateProperty.all<Color>(Colors.white),
-                      backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                          (Set<MaterialState> states) {
-                        if (states.contains(MaterialState.pressed)) {
-                          return Colors.white;
-                        }
-                        return const Color(0xff726bb8);
-                      }),
-                      overlayColor:
-                          MaterialStateProperty.all(Colors.transparent),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                    ),
+                    style:
+                        OctopusTheme.of(context).buttonTheme.brandPrimaryButton,
                     onPressed: () {
                       Navigator.push(
                           context,
