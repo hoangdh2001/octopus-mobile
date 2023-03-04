@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:octopus/config/theme/oc_theme.dart';
 
-class OCHeader extends StatelessWidget implements PreferredSizeWidget {
-  const OCHeader({
+class ScreenHeader extends StatelessWidget implements PreferredSizeWidget {
+  const ScreenHeader({
     Key? key,
     required this.title,
     required this.leading,

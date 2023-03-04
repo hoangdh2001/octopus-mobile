@@ -3,6 +3,7 @@ import 'package:octopus/config/theme/oc_style_guide.dart';
 import 'package:octopus/config/theme/oc_text_style.dart';
 
 class OCTextTheme {
+  final TextStyle brandPrimaryBodyBold;
   final TextStyle primaryGreyH1;
   final TextStyle primaryGreyH2;
   final TextStyle primaryGreyBody;
@@ -20,6 +21,7 @@ class OCTextTheme {
   final TextStyle primaryGreyInput;
 
   const OCTextTheme({
+    required this.brandPrimaryBodyBold,
     required this.primaryGreyH1,
     required this.primaryGreyH2,
     required this.navigationTitle,
@@ -38,6 +40,10 @@ class OCTextTheme {
   });
 
   factory OCTextTheme.light({required OCStyleGuide styleGuide}) => OCTextTheme(
+        brandPrimaryBodyBold: OCTextStyle(
+          font: styleGuide.bodyBold,
+          color: styleGuide.brandPrimary.lightAppearance,
+        ),
         primaryGreyH1: OCTextStyle(
           font: styleGuide.h1,
           color: styleGuide.primaryGrey.lightAppearance,
@@ -100,6 +106,10 @@ class OCTextTheme {
       );
 
   factory OCTextTheme.dark({required OCStyleGuide styleGuide}) => OCTextTheme(
+        brandPrimaryBodyBold: OCTextStyle(
+          font: styleGuide.bodyBold,
+          color: styleGuide.brandPrimary.darkAppearance,
+        ),
         primaryGreyH1: OCTextStyle(
           font: styleGuide.h1,
           color: styleGuide.primaryGrey.darkAppearance,

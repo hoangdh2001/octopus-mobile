@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:octopus/config/theme/oc_theme.dart';
 import 'package:octopus/screens/notification_email_screen.dart';
-import 'package:octopus/widgets/oc_header.dart';
+import 'package:octopus/widgets/screen_header.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -17,7 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
-      appBar: OCHeader(
+      appBar: ScreenHeader(
         title: "Email",
         leading: IconButton(
           splashColor: Colors.transparent,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:octopus/config/routes/routers.dart';
 import 'package:octopus/config/theme/oc_theme.dart';
-import 'package:octopus/widgets/oc_header.dart';
+import 'package:octopus/widgets/screen_header.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LoginWithPassScreen extends StatefulWidget {
@@ -18,7 +18,7 @@ class _LoginWithPassScreenState extends State<LoginWithPassScreen> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
-      appBar: OCHeader(
+      appBar: ScreenHeader(
         title: "Sign in",
         leading: IconButton(
           splashColor: Colors.transparent,
