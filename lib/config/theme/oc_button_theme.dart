@@ -4,9 +4,15 @@ import 'package:octopus/config/theme/oc_style_guide.dart';
 class OCButtonTheme {
   final ButtonStyle brandPrimaryButton;
   final ButtonStyle secondaryPrimaryButton;
+  final ButtonStyle buttonBrandPrimary;
+  final ButtonStyle buttonPrimaryGreyBorder;
 
-  const OCButtonTheme(
-      {required this.brandPrimaryButton, required this.secondaryPrimaryButton});
+  const OCButtonTheme({
+    required this.brandPrimaryButton,
+    required this.secondaryPrimaryButton,
+    required this.buttonBrandPrimary,
+    required this.buttonPrimaryGreyBorder,
+  });
 
   factory OCButtonTheme.light({required OCStyleGuide styleGuide}) =>
       OCButtonTheme(
@@ -22,7 +28,7 @@ class OCButtonTheme {
           overlayColor: const MaterialStatePropertyAll(Colors.transparent),
           shape: MaterialStatePropertyAll(
             RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(10),
             ),
           ),
         ),
@@ -37,7 +43,26 @@ class OCButtonTheme {
           }),
           overlayColor: const MaterialStatePropertyAll(Colors.transparent),
           shape: MaterialStatePropertyAll(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        ),
+        buttonBrandPrimary: ButtonStyle(
+          foregroundColor:
+              MaterialStatePropertyAll(styleGuide.brandPrimary.lightAppearance),
+          overlayColor: const MaterialStatePropertyAll(Colors.transparent),
+        ),
+        buttonPrimaryGreyBorder: ButtonStyle(
+          backgroundColor: const MaterialStatePropertyAll(Colors.transparent),
+          foregroundColor:
+              MaterialStatePropertyAll(styleGuide.primaryGrey.lightAppearance),
+          overlayColor: const MaterialStatePropertyAll(Colors.transparent),
+          shape: MaterialStatePropertyAll(
+            RoundedRectangleBorder(
+              side: BorderSide(
+                color: styleGuide.border.lightAppearance,
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         ),
       );
@@ -55,7 +80,7 @@ class OCButtonTheme {
           overlayColor: const MaterialStatePropertyAll(Colors.transparent),
           shape: MaterialStatePropertyAll(
             RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(10),
             ),
           ),
         ),
@@ -69,15 +94,36 @@ class OCButtonTheme {
             return Colors.white;
           }),
           overlayColor: const MaterialStatePropertyAll(Colors.transparent),
-          shape: MaterialStateProperty.resolveWith((states) {
-            if (states.contains(MaterialState.pressed)) {
+          shape: MaterialStateProperty.resolveWith(
+            (states) {
+              if (states.contains(MaterialState.pressed)) {
+                return RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10));
+              }
               return RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20));
-            }
-            return RoundedRectangleBorder(
-                side: const BorderSide(color: Colors.black),
-                borderRadius: BorderRadius.circular(20));
-          }),
+                  side: const BorderSide(color: Colors.black),
+                  borderRadius: BorderRadius.circular(10));
+            },
+          ),
+        ),
+        buttonBrandPrimary: ButtonStyle(
+          foregroundColor:
+              MaterialStatePropertyAll(styleGuide.brandPrimary.darkAppearance),
+          overlayColor: const MaterialStatePropertyAll(Colors.transparent),
+        ),
+        buttonPrimaryGreyBorder: ButtonStyle(
+          backgroundColor: const MaterialStatePropertyAll(Colors.transparent),
+          foregroundColor:
+              MaterialStatePropertyAll(styleGuide.border.darkAppearance),
+          overlayColor: const MaterialStatePropertyAll(Colors.transparent),
+          shape: MaterialStatePropertyAll(
+            RoundedRectangleBorder(
+              side: BorderSide(
+                color: styleGuide.border.darkAppearance,
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
         ),
       );
 }

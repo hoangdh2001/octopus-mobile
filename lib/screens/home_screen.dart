@@ -101,7 +101,6 @@ class _HomeScreenState extends State<HomeScreen> {
         index: _currentIndex,
         children: [
           Container(),
-          ChannelListScreen(),
           Container(),
           Container(),
           Container(),
