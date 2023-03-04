@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:octopus/screens/otp_confirm_screen.dart';
+import 'package:octopus/config/theme/oc_theme.dart';
 
 class ConfirmPasswordScreen extends StatefulWidget {
   const ConfirmPasswordScreen({super.key});
@@ -14,7 +14,7 @@ class _ConfirmPasswordScreenState extends State<ConfirmPasswordScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
       body: Stack(
         children: [
           Positioned(
@@ -24,7 +24,10 @@ class _ConfirmPasswordScreenState extends State<ConfirmPasswordScreen> {
               onTap: () {
                 Navigator.pop(context);
               },
-              child: SvgPicture.asset('assets/icons/arrow-left.svg'),
+              child: SvgPicture.asset(
+                'assets/icons/arrow-left.svg',
+                color: OctopusTheme.of(context).colorTheme.icon,
+              ),
             ),
           ),
           SizedBox(
@@ -38,12 +41,12 @@ class _ConfirmPasswordScreenState extends State<ConfirmPasswordScreen> {
                   width: size.width * 0.5,
                   margin: const EdgeInsets.only(bottom: 30),
                   child: Image.asset(
-                    'assets/logo/logo-text-light.png',
+                    OctopusTheme.of(context).logo,
                   ),
                 ),
-                const Text(
+                Text(
                   'Enter your new password',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                  style: OctopusTheme.of(context).textTheme.primaryGreyH1,
                 ),
                 const SizedBox(height: 20),
                 Container(
@@ -57,15 +60,14 @@ class _ConfirmPasswordScreenState extends State<ConfirmPasswordScreen> {
                   child: TextFormField(
                     initialValue: 'huyhoang14901@gmail.com',
                     enabled: false,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintText: 'name@company',
-                      hintStyle: TextStyle(color: Color(0xffa6a6a6)),
+                      hintStyle: OctopusTheme.of(context).textTheme.hint,
                       border: InputBorder.none,
                     ),
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: Colors.grey,
-                    ),
+                    style: OctopusTheme.of(context)
+                        .textTheme
+                        .primaryGreyDisableBody,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -82,15 +84,13 @@ class _ConfirmPasswordScreenState extends State<ConfirmPasswordScreen> {
                     obscuringCharacter: '*',
                     decoration: InputDecoration(
                       hintText: 'New password (8 - 32 char)',
-                      hintStyle: const TextStyle(color: Color(0xffa6a6a6)),
+                      hintStyle: OctopusTheme.of(context).textTheme.hint,
                       border: InputBorder.none,
                       suffixIcon: GestureDetector(
                         child: const Icon(Icons.visibility_outlined),
                       ),
                     ),
-                    style: const TextStyle(
-                      fontSize: 13,
-                    ),
+                    style: OctopusTheme.of(context).textTheme.primaryGreyBody,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -107,39 +107,21 @@ class _ConfirmPasswordScreenState extends State<ConfirmPasswordScreen> {
                     obscuringCharacter: '*',
                     decoration: InputDecoration(
                       hintText: 'Confirm password',
-                      hintStyle: const TextStyle(color: Color(0xffa6a6a6)),
+                      hintStyle: OctopusTheme.of(context).textTheme.hint,
                       border: InputBorder.none,
                       suffixIcon: GestureDetector(
                         child: const Icon(Icons.visibility_outlined),
                       ),
                     ),
-                    style: const TextStyle(
-                      fontSize: 13,
-                    ),
+                    style: OctopusTheme.of(context).textTheme.primaryGreyBody,
                   ),
                 ),
                 Container(
                   width: size.width * 0.8,
                   margin: const EdgeInsets.only(top: 20),
                   child: TextButton(
-                    style: ButtonStyle(
-                      foregroundColor:
-                          MaterialStateProperty.all<Color>(Colors.white),
-                      backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                          (Set<MaterialState> states) {
-                        if (states.contains(MaterialState.pressed)) {
-                          return Colors.white;
-                        }
-                        return const Color(0xff726bb8);
-                      }),
-                      overlayColor:
-                          MaterialStateProperty.all(Colors.transparent),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                    ),
+                    style:
+                        OctopusTheme.of(context).buttonTheme.brandPrimaryButton,
                     onPressed: () {},
                     child: const Text('Change password'),
                   ),
@@ -147,24 +129,9 @@ class _ConfirmPasswordScreenState extends State<ConfirmPasswordScreen> {
                 SizedBox(
                   width: size.width * 0.8,
                   child: TextButton(
-                    style: ButtonStyle(
-                      foregroundColor:
-                          MaterialStateProperty.all<Color>(Colors.black),
-                      backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                          (Set<MaterialState> states) {
-                        if (states.contains(MaterialState.pressed)) {
-                          return const Color(0x3dEBEAE8);
-                        }
-                        return const Color(0xffEBEAE8);
-                      }),
-                      overlayColor:
-                          MaterialStateProperty.all(Colors.transparent),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                    ),
+                    style: OctopusTheme.of(context)
+                        .buttonTheme
+                        .secondaryPrimaryButton,
                     onPressed: () {},
                     child: const Text('Cancel'),
                   ),

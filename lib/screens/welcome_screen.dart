@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:octopus/config/routes/routers.dart';
+import 'package:octopus/config/theme/oc_theme.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -13,67 +15,24 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
       body: Container(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
         width: double.infinity,
         height: size.height,
-        decoration: const BoxDecoration(
-          color: Color(0xffdfdeda),
-        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             SizedBox(
-              width: size.width * 0.6,
+              width: 0.9.sw,
+              height: 40.h,
               child: TextButton(
-                style: ButtonStyle(
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(Colors.white),
-                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                      (Set<MaterialState> states) {
-                    if (states.contains(MaterialState.pressed)) {
-                      return Colors.white;
-                    }
-                    return const Color(0xff726bb8);
-                  }),
-                  overlayColor: MaterialStateProperty.all(Colors.transparent),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.pushNamed(context, Routes.SIGN_UP);
-                },
-                child: const Text('Sign up'),
-              ),
-            ),
-            SizedBox(
-              width: size.width * 0.6,
-              child: TextButton(
-                style: ButtonStyle(
-                  foregroundColor:
-                      MaterialStateProperty.all<Color>(Colors.black),
-                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                      (Set<MaterialState> states) {
-                    if (states.contains(MaterialState.pressed)) {
-                      return Colors.white70;
-                    }
-                    return Colors.white;
-                  }),
-                  overlayColor: MaterialStateProperty.all(Colors.transparent),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                ),
+                style: OctopusTheme.of(context).buttonTheme.brandPrimaryButton,
                 onPressed: () {
                   Navigator.pushNamed(context, Routes.LOGIN);
                 },
-                child: const Text('Log in'),
+                child: const Text('Get Started'),
               ),
             ),
           ],

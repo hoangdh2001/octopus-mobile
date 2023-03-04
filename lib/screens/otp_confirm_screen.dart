@@ -2,8 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:octopus/config/theme/oc_theme.dart';
 import 'package:octopus/screens/confirm_password_screen.dart';
-import 'package:octopus/screens/login_with_pass_screen.dart';
 
 class OTPConfirmScreen extends StatefulWidget {
   const OTPConfirmScreen({super.key});
@@ -41,7 +41,7 @@ class _OTPConfirmScreenState extends State<OTPConfirmScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
       body: Stack(
         children: [
           Positioned(
@@ -51,7 +51,10 @@ class _OTPConfirmScreenState extends State<OTPConfirmScreen> {
               onTap: () {
                 Navigator.pop(context);
               },
-              child: SvgPicture.asset('assets/icons/arrow-left.svg'),
+              child: SvgPicture.asset(
+                'assets/icons/arrow-left.svg',
+                color: OctopusTheme.of(context).colorTheme.icon,
+              ),
             ),
           ),
           SizedBox(
@@ -65,12 +68,12 @@ class _OTPConfirmScreenState extends State<OTPConfirmScreen> {
                   width: size.width * 0.5,
                   margin: const EdgeInsets.only(bottom: 30),
                   child: Image.asset(
-                    'assets/logo/logo-text-light.png',
+                    OctopusTheme.of(context).logo,
                   ),
                 ),
-                const Text(
+                Text(
                   'Please enter verify code',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                  style: OctopusTheme.of(context).textTheme.primaryGreyH2,
                 ),
                 const SizedBox(height: 20),
                 Container(
@@ -78,28 +81,17 @@ class _OTPConfirmScreenState extends State<OTPConfirmScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: RichText(
                     textAlign: TextAlign.center,
-                    text: const TextSpan(
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xff8d8c8c),
-                      ),
+                    text: TextSpan(
+                      style: OctopusTheme.of(context).textTheme.primaryGreyBody,
                       children: [
-                        TextSpan(
+                        const TextSpan(
                           text: 'We sent an email with your OTP code to ',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black,
-                          ),
                         ),
                         TextSpan(
                           text: 'huyhoang14901@gmail.com',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black,
-                          ),
+                          style: OctopusTheme.of(context)
+                              .textTheme
+                              .primaryGreyBodyBold,
                         ),
                       ],
                     ),
@@ -352,24 +344,8 @@ class _OTPConfirmScreenState extends State<OTPConfirmScreen> {
                   width: size.width * 0.8,
                   margin: const EdgeInsets.symmetric(vertical: 20),
                   child: TextButton(
-                    style: ButtonStyle(
-                      foregroundColor:
-                          MaterialStateProperty.all<Color>(Colors.white),
-                      backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                          (Set<MaterialState> states) {
-                        if (states.contains(MaterialState.pressed)) {
-                          return Colors.white;
-                        }
-                        return const Color(0xff726bb8);
-                      }),
-                      overlayColor:
-                          MaterialStateProperty.all(Colors.transparent),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                    ),
+                    style:
+                        OctopusTheme.of(context).buttonTheme.brandPrimaryButton,
                     onPressed: () {
                       Navigator.push(
                           context,
