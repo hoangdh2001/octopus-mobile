@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:octopus/config/theme/oc_theme.dart';
+import 'package:octopus/screens/channel_list_screen.dart';
+import 'package:octopus/screens/notification_list_screen.dart';
 import 'package:octopus/widgets/left_drawer.dart';
 import 'package:octopus/widgets/menu_item.dart';
 import 'package:octopus/widgets/screen_header.dart';
@@ -81,8 +83,8 @@ class _HomeScreenState extends State<HomeScreen> {
         index: _currentIndex,
         children: [
           Container(),
-          Container(),
-          Container(),
+          NotificationListScreen(),
+          ChannelListScreen(),
         ],
       ),
     );
