@@ -26,10 +26,10 @@ class OCBaseStyleGuide extends OCStyleGuide {
   OCFont get bodyItalic => _brandFont.italic(13.sp);
 
   @override
-  OCFont get caption1 => _brandFont.main(13.sp);
+  OCFont get caption1 => _brandFont.main(11.sp);
 
   @override
-  OCFont get caption2 => _brandFont.main(12.sp);
+  OCFont get caption2 => _brandFont.main(10.sp);
 
   @override
   OCFont get labelPrimary => _brandFont.main(15.sp);

@@ -104,7 +104,7 @@ class LeftDrawer extends StatelessWidget {
                       "Do Huy Hoang",
                       style: OctopusTheme.of(context)
                           .textTheme
-                          .secondaryGreyCaption1,
+                          .secondaryGreyCaption2,
                     ),
                   ],
                 ),

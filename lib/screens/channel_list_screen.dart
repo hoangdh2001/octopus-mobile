@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:octopus/config/routes/routers.dart';
 import 'package:octopus/config/theme/oc_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:octopus/widgets/channel_preview/channel_preview.dart';
@@ -51,7 +52,11 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
           )
         ],
         body: ListView.separated(
-          itemBuilder: (context, index) => ChannelPreview(),
+          itemBuilder: (context, index) => ChannelPreview(
+            onChannelTap: () {
+              Navigator.pushNamed(context, Routes.CHANNEL_PAGE);
+            },
+          ),
           separatorBuilder: (context, index) => Container(),
           itemCount: 3,
         ),

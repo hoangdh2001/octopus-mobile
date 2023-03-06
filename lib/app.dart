@@ -25,7 +25,7 @@ class _MyAppState extends State<MyApp> {
             //Setting font does not change with system font size
             data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
             child: OctopusTheme(
-              data: OctopusThemeData(brightness: Brightness.dark),
+              data: OctopusThemeData(brightness: Brightness.light),
               child: widget!,
             ),
           );

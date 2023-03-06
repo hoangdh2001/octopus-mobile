@@ -5,12 +5,16 @@ import 'package:octopus/widgets/channel_preview/channel_avatar.dart';
 import 'package:octopus/widgets/channel_preview/channel_preview_status.dart';
 
 class ChannelPreview extends StatelessWidget {
-  const ChannelPreview({super.key});
+  const ChannelPreview({super.key, this.onChannelTap});
+
+  final void Function()? onChannelTap;
 
   @override
   Widget build(BuildContext context) {
+    final onTap = onChannelTap;
+
     return ListTile(
-      onTap: () {},
+      onTap: onTap == null ? null : () => onTap(),
       visualDensity: VisualDensity.compact,
       contentPadding: const EdgeInsets.symmetric(horizontal: 8).r,
       leading: const ChannelAvatar(),
@@ -31,7 +35,7 @@ class ChannelPreview extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: Text(
                 "hello",
-                style: OctopusTheme.of(context).textTheme.secondaryGreyCaption1,
+                style: OctopusTheme.of(context).textTheme.secondaryGreyCaption2,
               ),
             ),
           ),
