@@ -3,6 +3,7 @@ import 'package:octopus/config/theme/oc_style_guide.dart';
 import 'package:octopus/config/theme/oc_text_style.dart';
 
 class OCTextTheme {
+  final TextStyle brandPrimaryBodyBold;
   final TextStyle primaryGreyH1;
   final TextStyle primaryGreyH2;
   final TextStyle primaryGreyBody;
@@ -10,16 +11,18 @@ class OCTextTheme {
   final TextStyle navigationTitle;
   final TextStyle primaryGreyBodyBold;
   final TextStyle primaryGreyBodyItalic;
+  final TextStyle secondaryGreyBody;
   final TextStyle mediumGreyBody;
   final TextStyle primaryGreyLabelPrimary;
   final TextStyle secondaryGreyLabelPrimary;
   final TextStyle secondaryGreyLabelSecondary;
-  final TextStyle secondaryGreyCaption1;
-  final TextStyle mediumGreyCaption1;
+  final TextStyle secondaryGreyCaption2;
+  final TextStyle mediumGreyCaption2;
   final TextStyle hint;
   final TextStyle primaryGreyInput;
 
   const OCTextTheme({
+    required this.brandPrimaryBodyBold,
     required this.primaryGreyH1,
     required this.primaryGreyH2,
     required this.navigationTitle,
@@ -27,17 +30,22 @@ class OCTextTheme {
     required this.primaryGreyDisableBody,
     required this.primaryGreyBodyBold,
     required this.primaryGreyBodyItalic,
+    required this.secondaryGreyBody,
     required this.mediumGreyBody,
     required this.primaryGreyLabelPrimary,
     required this.secondaryGreyLabelPrimary,
     required this.secondaryGreyLabelSecondary,
-    required this.secondaryGreyCaption1,
-    required this.mediumGreyCaption1,
+    required this.secondaryGreyCaption2,
+    required this.mediumGreyCaption2,
     required this.hint,
     required this.primaryGreyInput,
   });
 
   factory OCTextTheme.light({required OCStyleGuide styleGuide}) => OCTextTheme(
+        brandPrimaryBodyBold: OCTextStyle(
+          font: styleGuide.bodyBold,
+          color: styleGuide.brandPrimary.lightAppearance,
+        ),
         primaryGreyH1: OCTextStyle(
           font: styleGuide.h1,
           color: styleGuide.primaryGrey.lightAppearance,
@@ -66,6 +74,10 @@ class OCTextTheme {
           font: styleGuide.bodyItalic,
           color: styleGuide.primaryGrey.lightAppearance,
         ),
+        secondaryGreyBody: OCTextStyle(
+          font: styleGuide.body,
+          color: styleGuide.secondaryGrey.lightAppearance,
+        ),
         mediumGreyBody: OCTextStyle(
             font: styleGuide.body,
             color: styleGuide.mediumGrey.lightAppearance),
@@ -81,11 +93,11 @@ class OCTextTheme {
           font: styleGuide.labelSecondary,
           color: styleGuide.secondaryGrey.lightAppearance,
         ),
-        secondaryGreyCaption1: OCTextStyle(
+        secondaryGreyCaption2: OCTextStyle(
           font: styleGuide.caption2,
           color: styleGuide.secondaryGrey.lightAppearance,
         ),
-        mediumGreyCaption1: OCTextStyle(
+        mediumGreyCaption2: OCTextStyle(
           font: styleGuide.caption2,
           color: styleGuide.mediumGrey.lightAppearance,
         ),
@@ -100,6 +112,10 @@ class OCTextTheme {
       );
 
   factory OCTextTheme.dark({required OCStyleGuide styleGuide}) => OCTextTheme(
+        brandPrimaryBodyBold: OCTextStyle(
+          font: styleGuide.bodyBold,
+          color: styleGuide.brandPrimary.darkAppearance,
+        ),
         primaryGreyH1: OCTextStyle(
           font: styleGuide.h1,
           color: styleGuide.primaryGrey.darkAppearance,
@@ -128,6 +144,10 @@ class OCTextTheme {
           font: styleGuide.bodyItalic,
           color: styleGuide.primaryGrey.darkAppearance,
         ),
+        secondaryGreyBody: OCTextStyle(
+          font: styleGuide.body,
+          color: styleGuide.secondaryGrey.darkAppearance,
+        ),
         mediumGreyBody: OCTextStyle(
             font: styleGuide.body, color: styleGuide.mediumGrey.darkAppearance),
         primaryGreyLabelPrimary: OCTextStyle(
@@ -142,11 +162,11 @@ class OCTextTheme {
           font: styleGuide.labelSecondary,
           color: styleGuide.secondaryGrey.darkAppearance,
         ),
-        secondaryGreyCaption1: OCTextStyle(
+        secondaryGreyCaption2: OCTextStyle(
           font: styleGuide.caption2,
           color: styleGuide.secondaryGrey.darkAppearance,
         ),
-        mediumGreyCaption1: OCTextStyle(
+        mediumGreyCaption2: OCTextStyle(
           font: styleGuide.caption2,
           color: styleGuide.mediumGrey.darkAppearance,
         ),

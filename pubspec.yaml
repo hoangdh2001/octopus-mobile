@@ -41,6 +41,9 @@ dependencies:
   easy_localization: ^3.0.1
   flutter_svg: ^1.1.6
   flutter_screenutil: ^5.6.1
+  cached_network_image: ^3.2.3
+  url_launcher: ^6.1.10
+  formz: ^0.6.0
 
 dev_dependencies:
   flutter_test:
