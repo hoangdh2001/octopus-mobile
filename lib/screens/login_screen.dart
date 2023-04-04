@@ -70,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             Text(
               "We'll send you an email to confirm you address",
-              style: OctopusTheme.of(context).textTheme.secondaryGreyCaption1,
+              style: OctopusTheme.of(context).textTheme.secondaryGreyBody,
             ),
           ],
         ),
