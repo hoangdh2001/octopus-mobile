@@ -13,8 +13,9 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
   Widget build(BuildContext context) {
     return Container(
       child: Center(
-          child: Text("Notification list",
-              style: OctopusTheme.of(context).textTheme.primaryGreyBody)),
+        child: Text("Notification list",
+            style: OctopusTheme.of(context).textTheme.primaryGreyBody),
+      ),
     );
   }
 }
