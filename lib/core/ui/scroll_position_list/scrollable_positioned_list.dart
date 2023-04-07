@@ -4,10 +4,10 @@ import 'dart:math';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:octopus/core/scroll_position_list/item_positions_listener.dart';
-import 'package:octopus/core/scroll_position_list/item_positions_notifier.dart';
-import 'package:octopus/core/scroll_position_list/positioned_list.dart';
-import 'package:octopus/core/scroll_position_list/post_mount_callback.dart';
+import 'package:octopus/core/ui/scroll_position_list/item_positions_listener.dart';
+import 'package:octopus/core/ui/scroll_position_list/item_positions_notifier.dart';
+import 'package:octopus/core/ui/scroll_position_list/positioned_list.dart';
+import 'package:octopus/core/ui/scroll_position_list/post_mount_callback.dart';
 
 const int _screenScrollCount = 2;
 

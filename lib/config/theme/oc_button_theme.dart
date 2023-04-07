@@ -47,8 +47,13 @@ class OCButtonTheme {
           ),
         ),
         buttonBrandPrimary: ButtonStyle(
-          foregroundColor:
-              MaterialStatePropertyAll(styleGuide.brandPrimary.lightAppearance),
+          foregroundColor: MaterialStateProperty.resolveWith<Color>(
+              (Set<MaterialState> states) {
+            if (states.contains(MaterialState.disabled)) {
+              return Colors.grey;
+            }
+            return styleGuide.brandPrimary.lightAppearance;
+          }),
           overlayColor: const MaterialStatePropertyAll(Colors.transparent),
         ),
         buttonPrimaryGreyBorder: ButtonStyle(

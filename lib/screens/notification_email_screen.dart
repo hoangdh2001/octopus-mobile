@@ -7,6 +7,9 @@ import 'package:octopus/screens/options_signin_screen.dart';
 import 'package:octopus/widgets/screen_header.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:octopus/widgets/separator_text.dart';
+import 'package:open_mail_app/open_mail_app.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class NotificationEmailScreen extends StatefulWidget {
   const NotificationEmailScreen({super.key});
@@ -19,7 +22,6 @@ class NotificationEmailScreen extends StatefulWidget {
 class _NotificationEmailScreenState extends State<NotificationEmailScreen> {
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
       appBar: ScreenHeader(
@@ -107,34 +109,16 @@ class _NotificationEmailScreenState extends State<NotificationEmailScreen> {
                 child: TextButton(
                   style:
                       OctopusTheme.of(context).buttonTheme.brandPrimaryButton,
-                  onPressed: () {
-                    showCupertinoModalPopup(
+                  onPressed: () async {
+                    var result = await OpenMailApp.getMailApps();
+                    showDialog(
                       context: context,
-                      builder: (context) => CupertinoActionSheet(
-                        actions: [
-                          CupertinoActionSheetAction(
-                            onPressed: () {
-                              Navigator.pop(context);
-                              Navigator.pushNamed(context, Routes.HOME);
-                            },
-                            child: const Text('Mail (default)'),
-                          ),
-                          CupertinoActionSheetAction(
-                            onPressed: () {},
-                            child: const Text('Gmail'),
-                          ),
-                          CupertinoActionSheetAction(
-                            onPressed: () {},
-                            child: const Text('Microsoft Outlook'),
-                          ),
-                        ],
-                        cancelButton: CupertinoActionSheetAction(
-                          child: const Text('Cancel'),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ),
+                      builder: (_) {
+                        return MailAppPickerDialog(
+                          mailApps: result,
+                          title: 'Choose Mail App',
+                        );
+                      },
                     );
                   },
                   child: const Text('Open Email App'),

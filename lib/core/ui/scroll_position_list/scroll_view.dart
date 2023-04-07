@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:octopus/core/scroll_position_list/viewport.dart';
+import 'package:octopus/core/ui/scroll_position_list/viewport.dart';
 
 class UnboundedCustomScrollView extends CustomScrollView {
   const UnboundedCustomScrollView({

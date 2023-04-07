@@ -6,3 +6,21 @@ abstract class VerifyEmailEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+
+class VerifyEmailChanged extends VerifyEmailEvent {
+  final String email;
+
+  const VerifyEmailChanged(this.email);
+
+  @override
+  List<Object> get props => [email];
+}
+
+class VerifyEmailSubmited extends VerifyEmailEvent {
+  final String email;
+
+  const VerifyEmailSubmited(this.email);
+
+  @override
+  List<Object> get props => [email];
+}

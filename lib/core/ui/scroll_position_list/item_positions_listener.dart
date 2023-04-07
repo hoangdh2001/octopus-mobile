@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:octopus/core/scroll_position_list/item_positions_notifier.dart';
+import 'package:octopus/core/ui/scroll_position_list/item_positions_notifier.dart';
 
 abstract class ItemPositionsListener {
   factory ItemPositionsListener.create() => ItemPositionsNotifier();

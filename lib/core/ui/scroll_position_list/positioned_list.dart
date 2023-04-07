@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:octopus/core/scroll_position_list/element_registry.dart';
-import 'package:octopus/core/scroll_position_list/indexed_key.dart';
-import 'package:octopus/core/scroll_position_list/item_positions_listener.dart';
-import 'package:octopus/core/scroll_position_list/item_positions_notifier.dart';
-import 'package:octopus/core/scroll_position_list/scroll_view.dart';
+import 'package:octopus/core/ui/scroll_position_list/element_registry.dart';
+import 'package:octopus/core/ui/scroll_position_list/indexed_key.dart';
+import 'package:octopus/core/ui/scroll_position_list/item_positions_listener.dart';
+import 'package:octopus/core/ui/scroll_position_list/item_positions_notifier.dart';
+import 'package:octopus/core/ui/scroll_position_list/scroll_view.dart';
 
 class PositionedList extends StatefulWidget {
   const PositionedList({
