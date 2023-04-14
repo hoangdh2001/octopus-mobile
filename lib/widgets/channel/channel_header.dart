@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:octopus/config/theme/oc_theme.dart';
+import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/utils.dart';
 import 'package:octopus/widgets/back_button.dart';
 import 'package:octopus/widgets/channel_preview/channel_avatar.dart';

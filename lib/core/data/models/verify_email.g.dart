@@ -9,18 +9,17 @@ part of 'verify_email.dart';
 VerifyEmail _$VerifyEmailFromJson(Map<String, dynamic> json) => VerifyEmail(
       json['email'] as String,
       json['success'] as bool,
-      $enumDecode(_$VerificationTypeEnumMap, json['verification_type']),
+      $enumDecode(_$VerificationTypeEnumMap, json['verificationType']),
     );
 
 Map<String, dynamic> _$VerifyEmailToJson(VerifyEmail instance) =>
     <String, dynamic>{
       'email': instance.email,
       'success': instance.success,
-      'verification_type':
-          _$VerificationTypeEnumMap[instance.verificationType]!,
+      'verificationType': _$VerificationTypeEnumMap[instance.verificationType]!,
     };
 
 const _$VerificationTypeEnumMap = {
-  VerificationType.LOGIN: 'LOGIN',
-  VerificationType.SIGN_UP: 'SIGN_UP',
+  VerificationType.login: 'LOGIN',
+  VerificationType.signUp: 'SIGN_UP',
 };

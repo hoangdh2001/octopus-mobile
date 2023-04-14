@@ -19,7 +19,7 @@ class _AuthService implements AuthService {
   String? baseUrl;
 
   @override
-  Future<VerifyEmail> verifyEmail(email) async {
+  Future<VerifyEmail> sendEmail(email) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -39,6 +39,54 @@ class _AuthService implements AuthService {
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = VerifyEmail.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<Token> login(loginRequest) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(loginRequest.toJson());
+    final _result =
+        await _dio.fetch<Map<String, dynamic>>(_setStreamType<Token>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/auth/login',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = Token.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<User> signup(signUpRequest) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(signUpRequest.toJson());
+    final _result =
+        await _dio.fetch<Map<String, dynamic>>(_setStreamType<User>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/auth/signup',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = User.fromJson(_result.data!);
     return value;
   }
 

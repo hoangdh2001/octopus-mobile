@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:octopus/widgets/avatar/avatar.dart';
+import 'package:octopus/widgets/avatars/user_avatar.dart';
 
 class ChannelAvatar extends StatelessWidget {
   const ChannelAvatar({super.key, this.size = 40});
@@ -8,8 +8,6 @@ class ChannelAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Avatar(
-      size: size,
-    );
+    return const UserAvatar();
   }
 }

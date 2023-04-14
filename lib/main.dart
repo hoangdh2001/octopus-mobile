@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:octopus/di/service_locator.dart';
 
 Future<void> main() async {
-  await configureDependencies();
   WidgetsFlutterBinding.ensureInitialized();
+  await configureDependencies();
   await EasyLocalization.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
   SystemChrome.setPreferredOrientations([

@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:octopus/config/theme/oc_theme.dart';
+import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:octopus/widgets/menu_item.dart';
+import 'package:octopus/pages/settings/settings_page.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({
@@ -110,6 +112,14 @@ class LeftDrawer extends StatelessWidget {
                 ),
               ),
               GestureDetector(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return const SettingsPage();
+                    },
+                  );
+                },
                 child: SvgPicture.asset(
                   'assets/icons/settings.svg',
                   color: OctopusTheme.of(context).colorTheme.icon,

@@ -12,7 +12,7 @@ class VerifyEmail extends Equatable {
   @JsonKey(name: 'success')
   final bool success;
 
-  @JsonKey(name: 'verification_type')
+  @JsonKey(name: 'verificationType')
   final VerificationType verificationType;
 
   const VerifyEmail(this.email, this.success, this.verificationType);

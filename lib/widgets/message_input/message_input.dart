@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:octopus/config/theme/oc_theme.dart';
+import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:octopus/widgets/auto_complete_input/auto_complete_input.dart';
 import 'package:octopus/widgets/message_input/message_send_button.dart';
