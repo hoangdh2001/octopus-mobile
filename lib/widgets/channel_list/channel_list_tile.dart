@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:octopus/core/data/client/channel.dart';
 import 'package:octopus/widgets/channel/channel_name.dart';
 import 'package:octopus/widgets/channel_preview/channel_avatar.dart';
 
@@ -8,9 +9,16 @@ class ChannelListTile extends StatelessWidget {
       this.onTap,
       this.visualDensity = VisualDensity.compact,
       this.contentPadding = const EdgeInsets.symmetric(horizontal: 8),
-      this.tileColor});
+      this.tileColor,
+      required this.channel,
+      this.onLongPress,
+      this.unreadIndicatorBuilder});
+
+  final Channel channel;
 
   final GestureTapCallback? onTap;
+
+  final GestureLongPressCallback? onLongPress;
 
   final VisualDensity visualDensity;
 
@@ -18,10 +26,16 @@ class ChannelListTile extends StatelessWidget {
 
   final Color? tileColor;
 
+  final WidgetBuilder? unreadIndicatorBuilder;
+
   @override
   Widget build(BuildContext context) {
-    final leading = ChannelAvatar();
-    final title = ChannelName();
+    final leading = ChannelAvatar(
+      channel: channel,
+    );
+    final title = ChannelName(
+      channel: channel,
+    );
     final subTitle = Container();
     final trailing = Container();
     return AnimatedOpacity(

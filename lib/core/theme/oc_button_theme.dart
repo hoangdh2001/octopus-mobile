@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:octopus/core/theme/oc_style_guide.dart';
 
@@ -6,12 +7,14 @@ class OCButtonTheme {
   final ButtonStyle secondaryPrimaryButton;
   final ButtonStyle buttonBrandPrimary;
   final ButtonStyle buttonPrimaryGreyBorder;
+  final ButtonStyle buttonStyleIOS;
 
   const OCButtonTheme({
     required this.brandPrimaryButton,
     required this.secondaryPrimaryButton,
     required this.buttonBrandPrimary,
     required this.buttonPrimaryGreyBorder,
+    required this.buttonStyleIOS,
   });
 
   factory OCButtonTheme.light({required OCStyleGuide styleGuide}) =>
@@ -69,6 +72,11 @@ class OCButtonTheme {
               borderRadius: BorderRadius.circular(10),
             ),
           ),
+        ),
+        buttonStyleIOS: const ButtonStyle(
+          backgroundColor: MaterialStatePropertyAll(Colors.transparent),
+          foregroundColor: MaterialStatePropertyAll(CupertinoColors.activeBlue),
+          overlayColor: MaterialStatePropertyAll(Colors.transparent),
         ),
       );
   factory OCButtonTheme.dark({required OCStyleGuide styleGuide}) =>
@@ -135,6 +143,11 @@ class OCButtonTheme {
               borderRadius: BorderRadius.circular(10),
             ),
           ),
+        ),
+        buttonStyleIOS: const ButtonStyle(
+          backgroundColor: MaterialStatePropertyAll(Colors.transparent),
+          foregroundColor: MaterialStatePropertyAll(CupertinoColors.activeBlue),
+          overlayColor: MaterialStatePropertyAll(Colors.transparent),
         ),
       );
 }

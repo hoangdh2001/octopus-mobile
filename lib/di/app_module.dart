@@ -1,3 +1,5 @@
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
@@ -20,4 +22,10 @@ abstract class AppModule {
   FlutterSecureStorage secureStorage(
           AndroidOptions androidOptions, IOSOptions iosOptions) =>
       FlutterSecureStorage(aOptions: androidOptions, iOptions: iosOptions);
+
+  @singleton
+  FirebaseMessaging get prepareFirebaseMessaging => FirebaseMessaging.instance;
+
+  @singleton
+  DeviceInfoPlugin get deviceInfoPlugin => DeviceInfoPlugin();
 }

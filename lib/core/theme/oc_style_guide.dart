@@ -34,4 +34,6 @@ abstract class OCStyleGuide {
   OCColor get errorBackgroundColor;
   OCColor get errorLightBackgroundColor;
   OCColor get logoutColor;
+  OCColor get overlayDark;
+  OCColor get disabled;
 }

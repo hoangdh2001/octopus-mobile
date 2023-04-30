@@ -6,13 +6,13 @@ part of 'message.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_Message _$$_MessageFromJson(Map<String, dynamic> json) => _$_Message(
-      id: json['_id'] as String,
+Message _$MessageFromJson(Map<String, dynamic> json) => Message(
+      id: json['_id'] as String?,
       updated: json['updated'] as bool?,
-      status: $enumDecodeNullable(_$MessageStatusEnumMap, json['status']),
-      text: json['text'] as String,
-      type: $enumDecodeNullable(_$MessageTypeEnumMap, json['type']),
-      channelId: json['channelId'] as String?,
+      channelID: json['channelID'] as String?,
+      text: json['text'] as String?,
+      type: $enumDecodeNullable(_$MessageTypeEnumMap, json['type']) ??
+          MessageType.normal,
       createdAt: json['createdAt'] == null
           ? null
           : DateTime.parse(json['createdAt'] as String),
@@ -23,27 +23,34 @@ _$_Message _$$_MessageFromJson(Map<String, dynamic> json) => _$_Message(
           ? null
           : User.fromJson(json['sender'] as Map<String, dynamic>),
       senderID: json['senderID'] as String?,
+      attachments: (json['attachments'] as List<dynamic>?)
+              ?.map((e) => Attachment.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
     );
 
-Map<String, dynamic> _$$_MessageToJson(_$_Message instance) =>
-    <String, dynamic>{
-      '_id': instance.id,
-      'updated': instance.updated,
-      'status': _$MessageStatusEnumMap[instance.status],
-      'text': instance.text,
-      'type': _$MessageTypeEnumMap[instance.type],
-      'channelId': instance.channelId,
-      'createdAt': instance.createdAt?.toIso8601String(),
-      'updatedAt': instance.updatedAt?.toIso8601String(),
-      'sender': instance.sender,
-      'senderID': instance.senderID,
-    };
+Map<String, dynamic> _$MessageToJson(Message instance) {
+  final val = <String, dynamic>{
+    '_id': instance.id,
+  };
 
-const _$MessageStatusEnumMap = {
-  MessageStatus.deleted: 'DELETED',
-  MessageStatus.error: 'ERROR',
-  MessageStatus.ready: 'READY',
-};
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('updated', instance.updated);
+  writeNotNull('channelID', instance.channelID);
+  writeNotNull('text', instance.text);
+  val['type'] = _$MessageTypeEnumMap[instance.type]!;
+  val['createdAt'] = instance.createdAt.toIso8601String();
+  val['updatedAt'] = instance.updatedAt.toIso8601String();
+  writeNotNull('sender', instance.sender);
+  writeNotNull('senderID', instance.senderID);
+  val['attachments'] = instance.attachments;
+  return val;
+}
 
 const _$MessageTypeEnumMap = {
   MessageType.systemNotification: 'SYSTEM_NOTIFICATION',

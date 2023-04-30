@@ -6,5 +6,6 @@ enum MessageStatus {
   @JsonValue("ERROR")
   error,
   @JsonValue("READY")
-  ready;
+  ready,
+  sending;
 }

@@ -111,4 +111,13 @@ class OCBaseStyleGuide extends OCStyleGuide {
   @override
   OCColor get logoutColor => const OCColor(
       lightAppearance: Color(0xFFB05959), darkAppearance: Color(0xFFB05959));
+
+  @override
+  OCColor get overlayDark => const OCColor(
+      lightAppearance: Color.fromRGBO(0, 0, 0, 0.6),
+      darkAppearance: Color.fromRGBO(255, 255, 255, 0.6));
+
+  @override
+  OCColor get disabled => const OCColor(
+      lightAppearance: Color(0xffdbdbdb), darkAppearance: Color(0xff2d2f2f));
 }

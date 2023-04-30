@@ -2,6 +2,7 @@ import 'package:flutter/material.dart' hide TextTheme;
 import 'package:octopus/core/theme/mutipleTheme/oc_base_style_guide.dart';
 import 'package:octopus/core/theme/oc_button_theme.dart';
 import 'package:octopus/core/theme/oc_color_theme.dart';
+import 'package:octopus/core/theme/oc_message_theme_data.dart';
 import 'package:octopus/core/theme/oc_style_guide.dart';
 import 'package:octopus/core/theme/oc_text_theme.dart';
 
@@ -45,6 +46,8 @@ class OctopusThemeData {
   final OCTextTheme textTheme;
   final OCButtonTheme buttonTheme;
   final OCStyleGuide styleGuide;
+  final OCMessageThemeData ownMessageTheme;
+  final OCMessageThemeData otherMessageTheme;
 
   factory OctopusThemeData({
     Brightness? brightness,
@@ -79,13 +82,14 @@ class OctopusThemeData {
     return defaultTheme;
   }
 
-  const OctopusThemeData.raw({
-    required this.logo,
-    required this.colorTheme,
-    required this.textTheme,
-    required this.buttonTheme,
-    required this.styleGuide,
-  });
+  const OctopusThemeData.raw(
+      {required this.logo,
+      required this.colorTheme,
+      required this.textTheme,
+      required this.buttonTheme,
+      required this.styleGuide,
+      required this.otherMessageTheme,
+      required this.ownMessageTheme});
 
   factory OctopusThemeData.fromTextTheme(
     String logo,
@@ -100,6 +104,43 @@ class OctopusThemeData {
       textTheme: textTheme,
       buttonTheme: buttonTheme,
       styleGuide: styleGuide,
+      otherMessageTheme: OCMessageThemeData(
+        messageAuthorStyle: textTheme.primaryGreyBody,
+        messageTextStyle: textTheme.primaryGreyBody,
+        messageBackgroundColor: colorTheme.contentView,
+        messageBorderColor: colorTheme.border,
+        createdAtStyle: textTheme.primaryGreyBody,
+      ),
+      ownMessageTheme: OCMessageThemeData(
+        messageAuthorStyle: textTheme.primaryGreyBody,
+        messageTextStyle: textTheme.primaryGreyBody,
+        messageBackgroundColor: colorTheme.brandPrimary,
+        messageBorderColor: colorTheme.brandPrimary,
+        createdAtStyle: textTheme.primaryGreyBody,
+      ),
     );
+  }
+
+  OctopusThemeData copyWith({
+    String? logo,
+    OCColorTheme? colorTheme,
+    OCTextTheme? textTheme,
+    OCButtonTheme? buttonTheme,
+    OCStyleGuide? styleGuide,
+    OCMessageThemeData? otherMessageTheme,
+    OCMessageThemeData? ownMessageTheme,
+  }) =>
+      OctopusThemeData.raw(
+          logo: logo ?? this.logo,
+          colorTheme: colorTheme ?? this.colorTheme,
+          textTheme: textTheme ?? this.textTheme,
+          buttonTheme: buttonTheme ?? this.buttonTheme,
+          styleGuide: styleGuide ?? this.styleGuide,
+          otherMessageTheme: otherMessageTheme ?? this.otherMessageTheme,
+          ownMessageTheme: ownMessageTheme ?? this.ownMessageTheme);
+
+  OctopusThemeData merge(OctopusThemeData? other) {
+    if (other == null) return this;
+    return copyWith();
   }
 }

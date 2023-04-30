@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide MenuItem;
 import 'package:flutter_svg/svg.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:octopus/octopus.dart';
 import 'package:octopus/widgets/menu_item.dart';
 import 'package:octopus/pages/settings/settings_page.dart';
 
@@ -16,7 +16,7 @@ class LeftDrawer extends StatelessWidget {
   });
 
   final int currentIndex;
-  final List<OCMenuItem> items;
+  final List<MenuItem> items;
   final ValueChanged<int>? onTap;
 
   @override
@@ -113,10 +113,17 @@ class LeftDrawer extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
+                  final client = Octopus.of(context).client;
                   showDialog(
                     context: context,
                     builder: (context) {
-                      return const SettingsPage();
+                      return StatefulBuilder(
+                        builder: (context, setState) {
+                          return SettingsPage(
+                            client: client,
+                          );
+                        },
+                      );
                     },
                   );
                 },

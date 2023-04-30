@@ -35,3 +35,17 @@ bool getEffectiveCenterTitle(
       return actions == null || actions.length < 2;
   }
 }
+
+Widget wrapAttachmentWidget(
+  BuildContext context,
+  Widget attachmentWidget,
+  ShapeBorder attachmentShape,
+  // ignore: avoid_positional_boolean_parameters
+  bool reverse,
+) =>
+    Material(
+      clipBehavior: Clip.hardEdge,
+      shape: attachmentShape,
+      type: MaterialType.transparency,
+      child: attachmentWidget,
+    );

@@ -1,11 +1,13 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:octopus/core/data/client/client.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/di/service_locator.dart';
 import 'package:octopus/pages/settings/bloc/settings_bloc.dart';
+import 'package:octopus/pages/settings/settings_page.dart';
 
 class LogoutCell extends StatelessWidget {
   const LogoutCell({super.key});
@@ -14,11 +16,10 @@ class LogoutCell extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        getIt<SettingsBloc>().handleRemoveToken().then((value) {
-          Navigator.pop(
-            context,
-          );
-          context.replace('/welcome');
+        final client = SettingsPage.of(context).client;
+        _logout(client).then((value) {
+          context.pop();
+          context.go('/welcome');
         });
       },
       child: Container(
@@ -45,5 +46,16 @@ class LogoutCell extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _logout(Client client) async {
+    await getIt<SettingsBloc>().handleRemoveToken();
+    final token = await getIt<FirebaseMessaging>().getToken();
+    await getIt<FirebaseMessaging>().deleteToken();
+    if (token != null) {
+      await client.removeDevice(token);
+    }
+    client.disconnectUser();
+    await client.dispose();
   }
 }

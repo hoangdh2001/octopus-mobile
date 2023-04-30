@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:go_router/go_router.dart';
+import 'package:octopus/core/data/repositories/channel_repository.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:octopus/core/ui/paged_value_scroll_view/bloc/paged_value_bloc.dart';
 import 'package:octopus/di/service_locator.dart';
+import 'package:octopus/octopus.dart';
 import 'package:octopus/pages/channelList/bloc/channel_list_bloc.dart';
 import 'package:octopus/widgets/channel_list/channel_list.dart';
 
@@ -18,11 +21,26 @@ class ChannelListPage extends StatefulWidget {
 class _ChannelListPageState extends State<ChannelListPage> {
   final ScrollController _scrollController = ScrollController();
   TextEditingController? _controller;
+  late final ChannelListBloc _channelListBloc =
+      ChannelListBloc(getIt<ChannelRepository>(), Octopus.of(context).client);
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    _scrollController.dispose();
+    _channelListBloc.close();
+    super.dispose();
   }
 
   @override
@@ -58,11 +76,12 @@ class _ChannelListPageState extends State<ChannelListPage> {
           closeWhenOpened: true,
           child: RefreshIndicator(
             onRefresh: () async {
-              getIt<ChannelListBloc>().add(const Refresh());
+              _channelListBloc.add(const Refresh());
             },
             child: ChannelList(
               scrollController: _scrollController,
-              controller: getIt<ChannelListBloc>(),
+              controller: _channelListBloc,
+              separatorBuilder: (context, values, index) => Container(),
               itemBuilder: (context, channels, index, defaultWidget) {
                 final chatTheme = OctopusTheme.of(context);
                 final channel = channels[index];
@@ -86,7 +105,9 @@ class _ChannelListPageState extends State<ChannelListPage> {
                   child: defaultWidget,
                 );
               },
-              onChannelTap: (channel) {},
+              onChannelTap: (channel) {
+                context.push('/messages/channel', extra: channel);
+              },
             ),
           ),
         ),

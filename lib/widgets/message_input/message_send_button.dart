@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:octopus/core/theme/oc_theme.dart';
 
 class MessageSendButton extends StatelessWidget {
   const MessageSendButton({
@@ -52,6 +53,9 @@ class MessageSendButton extends StatelessWidget {
         ),
         icon: SvgPicture.asset(
           _getSendIcon(),
+          color: isEditEnabled
+              ? OctopusTheme.of(context).colorTheme.brandPrimary
+              : OctopusTheme.of(context).colorTheme.icon,
         ),
       ),
     );

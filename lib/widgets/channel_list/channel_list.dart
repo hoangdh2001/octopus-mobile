@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:octopus/core/data/models/channel.dart';
+import 'package:octopus/core/data/client/channel.dart';
+import 'package:octopus/core/data/models/channel_state.dart';
 import 'package:octopus/core/data/models/error.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/core/ui/paged_value_scroll_view/paged_value_scroll_view.dart';
@@ -124,7 +125,11 @@ class ChannelList extends StatelessWidget {
         final onTap = onChannelTap;
         final onLongPress = onChannelLongPress;
 
-        final channelListTile = ChannelListTile();
+        final channelListTile = ChannelListTile(
+          channel: channel,
+          onTap: onTap == null ? null : () => onTap(channel),
+          onLongPress: onLongPress == null ? null : () => onLongPress(channel),
+        );
 
         return itemBuilder?.call(context, channels, index, channelListTile) ??
             channelListTile;

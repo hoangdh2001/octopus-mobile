@@ -32,6 +32,10 @@ class OCColorTheme {
 
   final Color errorLightBackgroundColor;
 
+  final Color overlayDark;
+
+  final Color disabled;
+
   const OCColorTheme({
     required this.brandPrimary,
     required this.brandPrimarySelect,
@@ -48,6 +52,8 @@ class OCColorTheme {
     required this.error,
     required this.errorBackgroundColor,
     required this.errorLightBackgroundColor,
+    required this.overlayDark,
+    required this.disabled,
   });
 
   factory OCColorTheme.light({required OCStyleGuide styleGuide}) =>
@@ -69,6 +75,8 @@ class OCColorTheme {
         errorBackgroundColor: styleGuide.errorBackgroundColor.lightAppearance,
         errorLightBackgroundColor:
             styleGuide.errorLightBackgroundColor.lightAppearance,
+        overlayDark: styleGuide.overlayDark.lightAppearance,
+        disabled: styleGuide.disabled.lightAppearance,
       );
 
   factory OCColorTheme.dark({required OCStyleGuide styleGuide}) => OCColorTheme(
@@ -89,5 +97,7 @@ class OCColorTheme {
         errorBackgroundColor: styleGuide.errorBackgroundColor.darkAppearance,
         errorLightBackgroundColor:
             styleGuide.errorLightBackgroundColor.darkAppearance,
+        overlayDark: styleGuide.overlayDark.darkAppearance,
+        disabled: styleGuide.disabled.darkAppearance,
       );
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:octopus/core/data/client/channel.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/utils.dart';
 import 'package:octopus/widgets/back_button.dart';
@@ -18,7 +19,10 @@ class ChannelHeader extends StatelessWidget implements PreferredSizeWidget {
     this.actions,
     this.backgroundColor,
     this.elevation = 1,
+    required this.channel,
   }) : preferredSize = const Size.fromHeight(kToolbarHeight);
+
+  final Channel channel;
 
   final bool showBackButton;
 
@@ -72,11 +76,12 @@ class ChannelHeader extends StatelessWidget implements PreferredSizeWidget {
         child: SizedBox(
           child: Row(
             children: [
-              const Padding(
-                padding: EdgeInsets.only(right: 10),
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
                 child: Center(
                   child: ChannelAvatar(
                     size: 40,
+                    channel: channel,
                   ),
                 ),
               ),

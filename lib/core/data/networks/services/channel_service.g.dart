@@ -19,7 +19,7 @@ class _ChannelService implements ChannelService {
   String? baseUrl;
 
   @override
-  Future<Page<Channel>> getChannels(
+  Future<Page<ChannelState>> getChannels(
     skip,
     limit,
   ) async {
@@ -32,7 +32,7 @@ class _ChannelService implements ChannelService {
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
     final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<Page<Channel>>(Options(
+        .fetch<Map<String, dynamic>>(_setStreamType<Page<ChannelState>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -44,8 +44,164 @@ class _ChannelService implements ChannelService {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = Page<Channel>.fromJson(_result.data!,
-        (json) => Channel.fromJson(json as Map<String, dynamic>));
+    final value = Page<ChannelState>.fromJson(_result.data!,
+        (json) => ChannelState.fromJson(json as Map<String, dynamic>));
+    return value;
+  }
+
+  @override
+  Future<ChannelState> createChannel(newChannel) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(newChannel.toJson());
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<ChannelState>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/channels',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = ChannelState.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<ChannelState> queryChannel(
+    channelID,
+    channelQuery,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(channelQuery.toJson());
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<ChannelState>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/channels/${channelID}/query',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = ChannelState.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<Message> sendMessage(
+    channelID,
+    message,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(message.toJson());
+    final _result =
+        await _dio.fetch<Map<String, dynamic>>(_setStreamType<Message>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/channels/${channelID}/messages',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = Message.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<Attachment> sendFile(
+    channelID,
+    attachmentID,
+    file,
+    onSendProgress,
+    onReceiveProgress,
+    cancelToken,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData.fromMap({'file': file});
+    _data.fields.add(MapEntry(
+      'attachmentID',
+      attachmentID,
+    ));
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<Attachment>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'multipart/form-data',
+    )
+            .compose(
+              _dio.options,
+              '/channels/${channelID}/file',
+              queryParameters: queryParameters,
+              data: _data,
+              cancelToken: cancelToken,
+              onSendProgress: onSendProgress,
+              onReceiveProgress: onReceiveProgress,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = Attachment.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<Attachment> sendImage(
+    channelID,
+    attachmentID,
+    file,
+    onSendProgress,
+    onReceiveProgress,
+    cancelToken,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData.fromMap({'file': file});
+    _data.fields.add(MapEntry(
+      'attachmentID',
+      attachmentID,
+    ));
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<Attachment>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'multipart/form-data',
+    )
+            .compose(
+              _dio.options,
+              '/channels/${channelID}/image',
+              queryParameters: queryParameters,
+              data: _data,
+              cancelToken: cancelToken,
+              onSendProgress: onSendProgress,
+              onReceiveProgress: onReceiveProgress,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = Attachment.fromJson(_result.data!);
     return value;
   }
 

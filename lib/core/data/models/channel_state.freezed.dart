@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'channel.dart';
+part of 'channel_state.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -24,9 +24,13 @@ mixin _$ChannelModel {
   String get id => throw _privateConstructorUsedError;
   String? get avatar => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
-  String? get lastMessageAt => throw _privateConstructorUsedError;
-  String? get createdAt => throw _privateConstructorUsedError;
-  String? get updatedAt => throw _privateConstructorUsedError;
+  DateTime? get lastMessageAt => throw _privateConstructorUsedError;
+  DateTime? get createdAt => throw _privateConstructorUsedError;
+  DateTime? get updatedAt => throw _privateConstructorUsedError;
+  DateTime? get deletedAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'hiddenChannel')
+  bool get hidden => throw _privateConstructorUsedError;
+  bool get activeNotify => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -44,9 +48,12 @@ abstract class $ChannelModelCopyWith<$Res> {
       {@JsonKey(name: '_id') String id,
       String? avatar,
       String? name,
-      String? lastMessageAt,
-      String? createdAt,
-      String? updatedAt});
+      DateTime? lastMessageAt,
+      DateTime? createdAt,
+      DateTime? updatedAt,
+      DateTime? deletedAt,
+      @JsonKey(name: 'hiddenChannel') bool hidden,
+      bool activeNotify});
 }
 
 /// @nodoc
@@ -68,6 +75,9 @@ class _$ChannelModelCopyWithImpl<$Res, $Val extends ChannelModel>
     Object? lastMessageAt = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
+    Object? deletedAt = freezed,
+    Object? hidden = null,
+    Object? activeNotify = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -85,15 +95,27 @@ class _$ChannelModelCopyWithImpl<$Res, $Val extends ChannelModel>
       lastMessageAt: freezed == lastMessageAt
           ? _value.lastMessageAt
           : lastMessageAt // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as DateTime?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as DateTime?,
       updatedAt: freezed == updatedAt
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as DateTime?,
+      deletedAt: freezed == deletedAt
+          ? _value.deletedAt
+          : deletedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      hidden: null == hidden
+          ? _value.hidden
+          : hidden // ignore: cast_nullable_to_non_nullable
+              as bool,
+      activeNotify: null == activeNotify
+          ? _value.activeNotify
+          : activeNotify // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -110,9 +132,12 @@ abstract class _$$_ChannelModelCopyWith<$Res>
       {@JsonKey(name: '_id') String id,
       String? avatar,
       String? name,
-      String? lastMessageAt,
-      String? createdAt,
-      String? updatedAt});
+      DateTime? lastMessageAt,
+      DateTime? createdAt,
+      DateTime? updatedAt,
+      DateTime? deletedAt,
+      @JsonKey(name: 'hiddenChannel') bool hidden,
+      bool activeNotify});
 }
 
 /// @nodoc
@@ -132,6 +157,9 @@ class __$$_ChannelModelCopyWithImpl<$Res>
     Object? lastMessageAt = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
+    Object? deletedAt = freezed,
+    Object? hidden = null,
+    Object? activeNotify = null,
   }) {
     return _then(_$_ChannelModel(
       id: null == id
@@ -149,15 +177,27 @@ class __$$_ChannelModelCopyWithImpl<$Res>
       lastMessageAt: freezed == lastMessageAt
           ? _value.lastMessageAt
           : lastMessageAt // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as DateTime?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as DateTime?,
       updatedAt: freezed == updatedAt
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as DateTime?,
+      deletedAt: freezed == deletedAt
+          ? _value.deletedAt
+          : deletedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      hidden: null == hidden
+          ? _value.hidden
+          : hidden // ignore: cast_nullable_to_non_nullable
+              as bool,
+      activeNotify: null == activeNotify
+          ? _value.activeNotify
+          : activeNotify // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -167,11 +207,14 @@ class __$$_ChannelModelCopyWithImpl<$Res>
 class _$_ChannelModel implements _ChannelModel {
   const _$_ChannelModel(
       {@JsonKey(name: '_id') required this.id,
-      required this.avatar,
-      required this.name,
-      required this.lastMessageAt,
-      required this.createdAt,
-      required this.updatedAt});
+      this.avatar,
+      this.name,
+      this.lastMessageAt,
+      this.createdAt,
+      this.updatedAt,
+      this.deletedAt,
+      @JsonKey(name: 'hiddenChannel') required this.hidden,
+      required this.activeNotify});
 
   factory _$_ChannelModel.fromJson(Map<String, dynamic> json) =>
       _$$_ChannelModelFromJson(json);
@@ -184,15 +227,22 @@ class _$_ChannelModel implements _ChannelModel {
   @override
   final String? name;
   @override
-  final String? lastMessageAt;
+  final DateTime? lastMessageAt;
   @override
-  final String? createdAt;
+  final DateTime? createdAt;
   @override
-  final String? updatedAt;
+  final DateTime? updatedAt;
+  @override
+  final DateTime? deletedAt;
+  @override
+  @JsonKey(name: 'hiddenChannel')
+  final bool hidden;
+  @override
+  final bool activeNotify;
 
   @override
   String toString() {
-    return 'ChannelModel(id: $id, avatar: $avatar, name: $name, lastMessageAt: $lastMessageAt, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'ChannelModel(id: $id, avatar: $avatar, name: $name, lastMessageAt: $lastMessageAt, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, hidden: $hidden, activeNotify: $activeNotify)';
   }
 
   @override
@@ -208,13 +258,18 @@ class _$_ChannelModel implements _ChannelModel {
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
-                other.updatedAt == updatedAt));
+                other.updatedAt == updatedAt) &&
+            (identical(other.deletedAt, deletedAt) ||
+                other.deletedAt == deletedAt) &&
+            (identical(other.hidden, hidden) || other.hidden == hidden) &&
+            (identical(other.activeNotify, activeNotify) ||
+                other.activeNotify == activeNotify));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, avatar, name, lastMessageAt, createdAt, updatedAt);
+  int get hashCode => Object.hash(runtimeType, id, avatar, name, lastMessageAt,
+      createdAt, updatedAt, deletedAt, hidden, activeNotify);
 
   @JsonKey(ignore: true)
   @override
@@ -233,11 +288,14 @@ class _$_ChannelModel implements _ChannelModel {
 abstract class _ChannelModel implements ChannelModel {
   const factory _ChannelModel(
       {@JsonKey(name: '_id') required final String id,
-      required final String? avatar,
-      required final String? name,
-      required final String? lastMessageAt,
-      required final String? createdAt,
-      required final String? updatedAt}) = _$_ChannelModel;
+      final String? avatar,
+      final String? name,
+      final DateTime? lastMessageAt,
+      final DateTime? createdAt,
+      final DateTime? updatedAt,
+      final DateTime? deletedAt,
+      @JsonKey(name: 'hiddenChannel') required final bool hidden,
+      required final bool activeNotify}) = _$_ChannelModel;
 
   factory _ChannelModel.fromJson(Map<String, dynamic> json) =
       _$_ChannelModel.fromJson;
@@ -250,45 +308,56 @@ abstract class _ChannelModel implements ChannelModel {
   @override
   String? get name;
   @override
-  String? get lastMessageAt;
+  DateTime? get lastMessageAt;
   @override
-  String? get createdAt;
+  DateTime? get createdAt;
   @override
-  String? get updatedAt;
+  DateTime? get updatedAt;
+  @override
+  DateTime? get deletedAt;
+  @override
+  @JsonKey(name: 'hiddenChannel')
+  bool get hidden;
+  @override
+  bool get activeNotify;
   @override
   @JsonKey(ignore: true)
   _$$_ChannelModelCopyWith<_$_ChannelModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
-Channel _$ChannelFromJson(Map<String, dynamic> json) {
-  return _Channel.fromJson(json);
+ChannelState _$ChannelStateFromJson(Map<String, dynamic> json) {
+  return _ChannelState.fromJson(json);
 }
 
 /// @nodoc
-mixin _$Channel {
+mixin _$ChannelState {
   ChannelModel? get channel => throw _privateConstructorUsedError;
-  List<Message>? get messages => throw _privateConstructorUsedError;
+  List<Message> get messages => throw _privateConstructorUsedError;
+  List<Member> get members => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $ChannelCopyWith<Channel> get copyWith => throw _privateConstructorUsedError;
+  $ChannelStateCopyWith<ChannelState> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $ChannelCopyWith<$Res> {
-  factory $ChannelCopyWith(Channel value, $Res Function(Channel) then) =
-      _$ChannelCopyWithImpl<$Res, Channel>;
+abstract class $ChannelStateCopyWith<$Res> {
+  factory $ChannelStateCopyWith(
+          ChannelState value, $Res Function(ChannelState) then) =
+      _$ChannelStateCopyWithImpl<$Res, ChannelState>;
   @useResult
-  $Res call({ChannelModel? channel, List<Message>? messages});
+  $Res call(
+      {ChannelModel? channel, List<Message> messages, List<Member> members});
 
   $ChannelModelCopyWith<$Res>? get channel;
 }
 
 /// @nodoc
-class _$ChannelCopyWithImpl<$Res, $Val extends Channel>
-    implements $ChannelCopyWith<$Res> {
-  _$ChannelCopyWithImpl(this._value, this._then);
+class _$ChannelStateCopyWithImpl<$Res, $Val extends ChannelState>
+    implements $ChannelStateCopyWith<$Res> {
+  _$ChannelStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -299,17 +368,22 @@ class _$ChannelCopyWithImpl<$Res, $Val extends Channel>
   @override
   $Res call({
     Object? channel = freezed,
-    Object? messages = freezed,
+    Object? messages = null,
+    Object? members = null,
   }) {
     return _then(_value.copyWith(
       channel: freezed == channel
           ? _value.channel
           : channel // ignore: cast_nullable_to_non_nullable
               as ChannelModel?,
-      messages: freezed == messages
+      messages: null == messages
           ? _value.messages
           : messages // ignore: cast_nullable_to_non_nullable
-              as List<Message>?,
+              as List<Message>,
+      members: null == members
+          ? _value.members
+          : members // ignore: cast_nullable_to_non_nullable
+              as List<Member>,
     ) as $Val);
   }
 
@@ -327,111 +401,137 @@ class _$ChannelCopyWithImpl<$Res, $Val extends Channel>
 }
 
 /// @nodoc
-abstract class _$$_ChannelCopyWith<$Res> implements $ChannelCopyWith<$Res> {
-  factory _$$_ChannelCopyWith(
-          _$_Channel value, $Res Function(_$_Channel) then) =
-      __$$_ChannelCopyWithImpl<$Res>;
+abstract class _$$_ChannelStateCopyWith<$Res>
+    implements $ChannelStateCopyWith<$Res> {
+  factory _$$_ChannelStateCopyWith(
+          _$_ChannelState value, $Res Function(_$_ChannelState) then) =
+      __$$_ChannelStateCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({ChannelModel? channel, List<Message>? messages});
+  $Res call(
+      {ChannelModel? channel, List<Message> messages, List<Member> members});
 
   @override
   $ChannelModelCopyWith<$Res>? get channel;
 }
 
 /// @nodoc
-class __$$_ChannelCopyWithImpl<$Res>
-    extends _$ChannelCopyWithImpl<$Res, _$_Channel>
-    implements _$$_ChannelCopyWith<$Res> {
-  __$$_ChannelCopyWithImpl(_$_Channel _value, $Res Function(_$_Channel) _then)
+class __$$_ChannelStateCopyWithImpl<$Res>
+    extends _$ChannelStateCopyWithImpl<$Res, _$_ChannelState>
+    implements _$$_ChannelStateCopyWith<$Res> {
+  __$$_ChannelStateCopyWithImpl(
+      _$_ChannelState _value, $Res Function(_$_ChannelState) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? channel = freezed,
-    Object? messages = freezed,
+    Object? messages = null,
+    Object? members = null,
   }) {
-    return _then(_$_Channel(
+    return _then(_$_ChannelState(
       channel: freezed == channel
           ? _value.channel
           : channel // ignore: cast_nullable_to_non_nullable
               as ChannelModel?,
-      messages: freezed == messages
+      messages: null == messages
           ? _value._messages
           : messages // ignore: cast_nullable_to_non_nullable
-              as List<Message>?,
+              as List<Message>,
+      members: null == members
+          ? _value._members
+          : members // ignore: cast_nullable_to_non_nullable
+              as List<Member>,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$_Channel implements _Channel {
-  const _$_Channel({this.channel, final List<Message>? messages})
-      : _messages = messages;
+class _$_ChannelState implements _ChannelState {
+  const _$_ChannelState(
+      {this.channel,
+      required final List<Message> messages,
+      required final List<Member> members})
+      : _messages = messages,
+        _members = members;
 
-  factory _$_Channel.fromJson(Map<String, dynamic> json) =>
-      _$$_ChannelFromJson(json);
+  factory _$_ChannelState.fromJson(Map<String, dynamic> json) =>
+      _$$_ChannelStateFromJson(json);
 
   @override
   final ChannelModel? channel;
-  final List<Message>? _messages;
+  final List<Message> _messages;
   @override
-  List<Message>? get messages {
-    final value = _messages;
-    if (value == null) return null;
+  List<Message> get messages {
     if (_messages is EqualUnmodifiableListView) return _messages;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
+    return EqualUnmodifiableListView(_messages);
+  }
+
+  final List<Member> _members;
+  @override
+  List<Member> get members {
+    if (_members is EqualUnmodifiableListView) return _members;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_members);
   }
 
   @override
   String toString() {
-    return 'Channel(channel: $channel, messages: $messages)';
+    return 'ChannelState(channel: $channel, messages: $messages, members: $members)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_Channel &&
+            other is _$_ChannelState &&
             (identical(other.channel, channel) || other.channel == channel) &&
-            const DeepCollectionEquality().equals(other._messages, _messages));
+            const DeepCollectionEquality().equals(other._messages, _messages) &&
+            const DeepCollectionEquality().equals(other._members, _members));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType, channel, const DeepCollectionEquality().hash(_messages));
+      runtimeType,
+      channel,
+      const DeepCollectionEquality().hash(_messages),
+      const DeepCollectionEquality().hash(_members));
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_ChannelCopyWith<_$_Channel> get copyWith =>
-      __$$_ChannelCopyWithImpl<_$_Channel>(this, _$identity);
+  _$$_ChannelStateCopyWith<_$_ChannelState> get copyWith =>
+      __$$_ChannelStateCopyWithImpl<_$_ChannelState>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_ChannelToJson(
+    return _$$_ChannelStateToJson(
       this,
     );
   }
 }
 
-abstract class _Channel implements Channel {
-  const factory _Channel(
+abstract class _ChannelState implements ChannelState {
+  const factory _ChannelState(
       {final ChannelModel? channel,
-      final List<Message>? messages}) = _$_Channel;
+      required final List<Message> messages,
+      required final List<Member> members}) = _$_ChannelState;
 
-  factory _Channel.fromJson(Map<String, dynamic> json) = _$_Channel.fromJson;
+  factory _ChannelState.fromJson(Map<String, dynamic> json) =
+      _$_ChannelState.fromJson;
 
   @override
   ChannelModel? get channel;
   @override
-  List<Message>? get messages;
+  List<Message> get messages;
+  @override
+  List<Member> get members;
   @override
   @JsonKey(ignore: true)
-  _$$_ChannelCopyWith<_$_Channel> get copyWith =>
+  _$$_ChannelStateCopyWith<_$_ChannelState> get copyWith =>
       throw _privateConstructorUsedError;
 }

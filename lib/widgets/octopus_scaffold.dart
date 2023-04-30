@@ -1,37 +1,38 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter/material.dart' hide MenuItem;
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
-import 'package:octopus/pages/channelList/channel_list_page.dart';
-import 'package:octopus/pages/notification_list_screen.dart';
 import 'package:octopus/widgets/left_drawer.dart';
 import 'package:octopus/widgets/menu_item.dart';
 import 'package:octopus/widgets/screen_header.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class OctopusScaffold extends StatefulWidget {
+  const OctopusScaffold({super.key, required this.body});
+
+  final Widget? body;
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<OctopusScaffold> createState() => _OctopusScaffoldState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _OctopusScaffoldState extends State<OctopusScaffold> {
   int _currentIndex = 0;
 
   bool _isSelected(int index) => _currentIndex == index;
 
-  List<OCMenuItem> get _menuItems {
-    return <OCMenuItem>[
-      OCMenuItem(
+  List<MenuItem> get _menuItems {
+    return <MenuItem>[
+      MenuItem(
         title: "Home",
         urlIcon: "assets/icons/home.svg",
         isSelected: _isSelected(0),
       ),
-      OCMenuItem(
+      MenuItem(
         title: "Notification",
         urlIcon: "assets/icons/notification.svg",
         isSelected: _isSelected(1),
       ),
-      OCMenuItem(
+      MenuItem(
         title: "Messages",
         urlIcon: "assets/icons/messages.svg",
         isSelected: _isSelected(2),
@@ -49,6 +50,43 @@ class _HomeScreenState extends State<HomeScreen> {
         return 'Messages';
       default:
         return "";
+    }
+  }
+
+  List<Widget> _action(int index) {
+    switch (index) {
+      case 0:
+        return [];
+      case 1:
+        return [];
+      case 2:
+        return [
+          IconButton(
+            splashColor: Colors.transparent,
+            onPressed: () {
+              context.push('/messages/newMessage');
+            },
+            icon: SvgPicture.asset(
+              'assets/icons/edit.svg',
+              color: OctopusTheme.of(context).colorTheme.icon,
+            ),
+          )
+        ];
+      default:
+        return [];
+    }
+  }
+
+  String _navigate(int index) {
+    switch (index) {
+      case 0:
+        return '/home';
+      case 1:
+        return '/notifications';
+      case 2:
+        return '/messages';
+      default:
+        return '';
     }
   }
 
@@ -70,45 +108,18 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
+        actions: _action(_currentIndex),
       ),
       drawer: LeftDrawer(
         currentIndex: _currentIndex,
         items: _menuItems,
         onTap: (index) {
-          Navigator.pop(context);
           setState(() => _currentIndex = index);
+          context.go(_navigate(index));
+          Navigator.pop(context);
         },
       ),
-      body: IndexedStack(
-        index: _currentIndex,
-        children: [
-          Container(),
-          NotificationListScreen(),
-          ChannelListPage(),
-        ],
-      ),
+      body: widget.body,
     );
   }
 }
-
-// menuItem(
-            //   context: context,
-            //   title: "Home",
-            //   urlIcon: "assets/icons/home.svg",
-            //   isSelected: true,
-            //   onTap: () {},
-            // ),
-            // menuItem(
-            //   context: context,
-            //   title: "Notification",
-            //   urlIcon: "assets/icons/notification.svg",
-            //   isSelected: false,
-            //   onTap: () {},
-            // ),
-            // menuItem(
-            //   context: context,
-            //   title: "Messages",
-            //   urlIcon: "assets/icons/messages.svg",
-            //   isSelected: false,
-            //   onTap: () {},
-            // ),
