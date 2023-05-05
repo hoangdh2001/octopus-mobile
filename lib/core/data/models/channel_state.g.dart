@@ -45,11 +45,14 @@ _$_ChannelState _$$_ChannelStateFromJson(Map<String, dynamic> json) =>
       channel: json['channel'] == null
           ? null
           : ChannelModel.fromJson(json['channel'] as Map<String, dynamic>),
-      messages: (json['messages'] as List<dynamic>)
-          .map((e) => Message.fromJson(e as Map<String, dynamic>))
+      messages: (json['messages'] as List<dynamic>?)
+          ?.map((e) => Message.fromJson(e as Map<String, dynamic>))
           .toList(),
-      members: (json['members'] as List<dynamic>)
-          .map((e) => Member.fromJson(e as Map<String, dynamic>))
+      members: (json['members'] as List<dynamic>?)
+          ?.map((e) => Member.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      read: (json['read'] as List<dynamic>?)
+          ?.map((e) => Read.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
@@ -58,4 +61,5 @@ Map<String, dynamic> _$$_ChannelStateToJson(_$_ChannelState instance) =>
       'channel': instance.channel,
       'messages': instance.messages,
       'members': instance.members,
+      'read': instance.read,
     };

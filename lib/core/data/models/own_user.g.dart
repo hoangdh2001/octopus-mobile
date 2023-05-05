@@ -16,7 +16,7 @@ OwnUser _$OwnUserFromJson(Map<String, dynamic> json) => OwnUser(
           ? null
           : DateTime.parse(json['birthday'] as String),
       gender: json['gender'] as bool?,
-      active: json['active'] as bool?,
+      active: json['active'] as bool? ?? false,
       lastActive: json['lastActive'] == null
           ? null
           : DateTime.parse(json['lastActive'] as String),

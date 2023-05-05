@@ -24,7 +24,6 @@ class Octopus extends StatefulWidget {
     this.backgroundKeepAlive = const Duration(minutes: 1),
     this.connectivityStream,
     required this.firebaseMessaging,
-    this.routeObserver,
   });
 
   final Client client;
@@ -38,8 +37,6 @@ class Octopus extends StatefulWidget {
   final EventHandler? onBackgroundEventReceived;
 
   final FirebaseMessaging firebaseMessaging;
-
-  final RouteObserver<PageRoute>? routeObserver;
 
   @visibleForTesting
   final Stream<ConnectivityResult>? connectivityStream;
@@ -77,7 +74,6 @@ class OctopusState extends State<Octopus> {
             final streamTheme = OctopusTheme.of(context);
             return OctopusCore(
               client: client,
-              observer: widget.routeObserver,
               onBackgroundEventReceived: widget.onBackgroundEventReceived,
               backgroundKeepAlive: widget.backgroundKeepAlive,
               connectivityStream: widget.connectivityStream,

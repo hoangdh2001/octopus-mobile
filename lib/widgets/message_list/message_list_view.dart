@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jiffy/jiffy.dart';
@@ -16,9 +17,7 @@ import 'package:octopus/core/ui/scroll_position_list/item_positions_listener.dar
 import 'package:octopus/core/ui/scroll_position_list/lazy_load_scroll_view.dart';
 import 'package:octopus/core/ui/scroll_position_list/scrollable_positioned_list.dart';
 import 'package:octopus/core/ui/swipeable.dart';
-import 'package:octopus/octopus.dart';
 import 'package:octopus/octopus_channel.dart';
-import 'package:octopus/pages/channel/channel_page.dart';
 import 'package:octopus/widgets/message/message_widget.dart';
 import 'package:octopus/widgets/message_list/date_divider.dart';
 import 'package:octopus/widgets/message_list/message_core.dart';
@@ -203,6 +202,8 @@ class _MessageListViewState extends State<MessageListView> {
   late OctopusThemeData _streamTheme;
 
   StreamSubscription? _messageNewListener;
+
+  late int unreadCount;
 
   @override
   void initState() {
@@ -459,7 +460,7 @@ class _MessageListViewState extends State<MessageListView> {
 
                 final isNextUserSame =
                     message.sender!.id == nextMessage.sender?.id;
-                final isDeleted = message.status == MessageStatus.deleted;
+                final isDeleted = message.isDeleted;
                 final hasTimeDiff = timeDiff >= 1;
 
                 final spacingRules = [
@@ -544,7 +545,16 @@ class _MessageListViewState extends State<MessageListView> {
               final message = messages[i - 2];
               Widget messageWidget;
 
-              if (i == bottomMessageIndex) {
+              final currentUser =
+                  OctopusChannel.of(context).channel.client.state.currentUser;
+
+              final hasHidden = message.ignoreUser
+                  ?.where((user) => user == currentUser!.id)
+                  .length;
+
+              if (hasHidden != null && hasHidden > 0) {
+                messageWidget = const Offstage();
+              } else if (i == bottomMessageIndex) {
                 messageWidget = _buildBottomMessage(
                   context,
                   message,
@@ -561,23 +571,20 @@ class _MessageListViewState extends State<MessageListView> {
             },
           ),
         ),
-        // if (widget.showScrollToBottom)
-        // BetterStreamBuilder<bool>(
-        //   stream: channelPageState!.channel.state!.isUpToDateStream,
-        //   initialData: channelPageState!.channel.state!.isUpToDate,
-        //   builder: (context, snapshot) => ValueListenableBuilder<bool>(
-        //     valueListenable: _showScrollToBottom,
-        //     child: _buildScrollToBottom(),
-        //     builder: (context, value, child) {
-        //       if (!snapshot || value) {
-        //         return child!;
-        //       }
-        //       return const Offstage();
-        //     },
-        //   ),
-        // ),
-        // if (widget.showFloatingDateDivider)
-        //   _buildFloatingDateDivider(itemCount),
+        BetterStreamBuilder<bool>(
+          stream: octopusChannelState!.channel.state!.isUpToDateStream,
+          initialData: octopusChannelState!.channel.state!.isUpToDate,
+          builder: (context, snapshot) => ValueListenableBuilder<bool>(
+            valueListenable: _showScrollToBottom,
+            child: _buildScrollToBottom(),
+            builder: (context, value, child) {
+              if (!snapshot || value) {
+                return child!;
+              }
+              return const Offstage();
+            },
+          ),
+        ),
       ],
     );
 
@@ -721,7 +728,7 @@ class _MessageListViewState extends State<MessageListView> {
     Widget messageWidget = MessageWidget(
       message: message,
       reverse: isMyMessage,
-      showReactions: !(message.status == MessageStatus.deleted),
+      showReactions: !message.isDeleted,
       padding: const EdgeInsets.symmetric(horizontal: 8),
       // showThreadReplyIndicator: showThreadReplyIndicator,
       showUsername: showUsername,
@@ -756,29 +763,29 @@ class _MessageListViewState extends State<MessageListView> {
       borderSide: borderSide,
       // onThreadTap: _onThreadTap,
       attachmentBorderRadiusGeometry: BorderRadius.only(
-          topLeft: Radius.circular(attachmentBorderRadius),
-          bottomLeft: isMyMessage
-              ? Radius.circular(attachmentBorderRadius)
-              : Radius.circular(
-                  (timeDiff >= 1 || !isNextUserSame) &&
-                          !(
+        topLeft: Radius.circular(attachmentBorderRadius),
+        bottomLeft: isMyMessage
+            ? Radius.circular(attachmentBorderRadius)
+            : Radius.circular(
+                (timeDiff >= 1 || !isNextUserSame) &&
+                        !(
                             // hasReplies ||
-                           hasFileAttachment)
-                      ? 0
-                      : attachmentBorderRadius,
-                ),
-          topRight: Radius.circular(attachmentBorderRadius),
-          bottomRight: isMyMessage
-              ? Radius.circular(
-                  (timeDiff >= 1 || !isNextUserSame) &&
-                          !(
-                            // hasReplies || 
-                          hasFileAttachment)
-                      ? 0
-                      : attachmentBorderRadius,
-                )
-              : Radius.circular(attachmentBorderRadius),
-          ),
+                            hasFileAttachment)
+                    ? 0
+                    : attachmentBorderRadius,
+              ),
+        topRight: Radius.circular(attachmentBorderRadius),
+        bottomRight: isMyMessage
+            ? Radius.circular(
+                (timeDiff >= 1 || !isNextUserSame) &&
+                        !(
+                            // hasReplies ||
+                            hasFileAttachment)
+                    ? 0
+                    : attachmentBorderRadius,
+              )
+            : Radius.circular(attachmentBorderRadius),
+      ),
       attachmentPadding: EdgeInsets.all(hasFileAttachment ? 4 : 2),
       borderRadiusGeometry: BorderRadius.only(
         topLeft: const Radius.circular(16),
@@ -817,7 +824,7 @@ class _MessageListViewState extends State<MessageListView> {
         widget.onMessageTap?.call(message);
         FocusScope.of(context).unfocus();
       },
-      
+
       // showPinButton: currentUserMember != null &&
       //     _userPermissions.contains(PermissionType.pinMessage),
     );
@@ -837,7 +844,7 @@ class _MessageListViewState extends State<MessageListView> {
     }
 
     var child = messageWidget;
-    if (!(message.status == MessageStatus.deleted) &&
+    if (!message.isDeleted &&
         !(message.type == MessageType.systemNotification) &&
         // !message.isEphemeral &&
         widget.onMessageSwiped != null) {
@@ -851,7 +858,7 @@ class _MessageListViewState extends State<MessageListView> {
           },
           backgroundIcon: SvgPicture.asset(
             'assets/icons/reply.svg',
-            // color: _streamTheme.colorTheme.accentPrimary,
+            color: _streamTheme.colorTheme.brandPrimary,
           ),
           child: child,
         ),
@@ -884,68 +891,96 @@ class _MessageListViewState extends State<MessageListView> {
     return child;
   }
 
-  // Widget _buildScrollToBottom() => StreamBuilder<int>(
-  //       stream: channelPageState!.channel.state!.unreadCountStream,
-  //       builder: (_, snapshot) {
-  //         if (snapshot.hasError) {
-  //           return const Offstage();
-  //         } else if (!snapshot.hasData) {
-  //           return const Offstage();
-  //         }
-  //         final unreadCount = snapshot.data!;
-  //         if (widget.scrollToBottomBuilder != null) {
-  //           return widget.scrollToBottomBuilder!(
-  //             unreadCount,
-  //             scrollToBottomDefaultTapAction,
-  //           );
-  //         }
-  //         final showUnreadCount = unreadCount > 0 &&
-  //             streamChannel!.channel.state!.members.any((e) =>
-  //                 e.userId ==
-  //                 streamChannel!.channel.client.state.currentUser!.id);
-  //         return Positioned(
-  //           bottom: 8,
-  //           right: 8,
-  //           width: 40,
-  //           height: 40,
-  //           child: Stack(
-  //             clipBehavior: Clip.none,
-  //             children: [
-  //               FloatingActionButton(
-  //                 backgroundColor: _streamTheme.colorTheme.barsBg,
-  //                 onPressed: () => scrollToBottomDefaultTapAction(unreadCount),
-  //                 child: widget.reverse
-  //                     ? StreamSvgIcon.down(
-  //                         color: _streamTheme.colorTheme.textHighEmphasis,
-  //                       )
-  //                     : StreamSvgIcon.up(
-  //                         color: _streamTheme.colorTheme.textHighEmphasis,
-  //                       ),
-  //               ),
-  //               if (showUnreadCount)
-  //                 Positioned(
-  //                   width: 20,
-  //                   height: 20,
-  //                   left: 10,
-  //                   top: -10,
-  //                   child: CircleAvatar(
-  //                     child: Padding(
-  //                       padding: const EdgeInsets.all(3),
-  //                       child: Text(
-  //                         '$unreadCount',
-  //                         style: const TextStyle(
-  //                           fontSize: 11,
-  //                           fontWeight: FontWeight.bold,
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ),
-  //             ],
-  //           ),
-  //         );
-  //       },
-  //     );
+  Future<void> scrollToBottomDefaultTapAction(int unreadCount) async {
+    this.unreadCount = unreadCount;
+    if (unreadCount > 0) {
+      octopusChannelState!.channel.markRead();
+    }
+
+    final index = unreadCount > 0 ? unreadCount + 1 : 0;
+
+    if (!_upToDate) {
+      _bottomPaginationActive = false;
+      initialAlignment = 0;
+      initialIndex = 0;
+      await octopusChannelState!.reloadChannel();
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollController!.jumpTo(index: index);
+      });
+    } else {
+      _scrollController!.scrollTo(
+        index: index,
+        duration: const Duration(seconds: 1),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  Widget _buildScrollToBottom() => StreamBuilder<int>(
+        stream: octopusChannelState!.channel.state!.unreadCountStream,
+        builder: (_, snapshot) {
+          if (snapshot.hasError) {
+            return const Offstage();
+          } else if (!snapshot.hasData) {
+            return const Offstage();
+          }
+          final unreadCount = snapshot.data!;
+          // if (widget.scrollToBottomBuilder != null) {
+          //   return widget.scrollToBottomBuilder!(
+          //     unreadCount,
+          //     scrollToBottomDefaultTapAction,
+          //   );
+          // }
+          final showUnreadCount = unreadCount > 0 &&
+              octopusChannelState!.channel.state!.members.any((e) =>
+                  e.userID ==
+                  octopusChannelState!.channel.client.state.currentUser!.id);
+          return Positioned(
+            bottom: 8,
+            right: 8,
+            width: 40,
+            height: 40,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                FloatingActionButton(
+                  backgroundColor: _streamTheme.colorTheme.contentView,
+                  onPressed: () => scrollToBottomDefaultTapAction(unreadCount),
+                  child: widget.reverse
+                      ? SvgPicture.asset(
+                          'assets/icons/arrow_down.svg',
+                          color: _streamTheme.colorTheme.primaryGrey,
+                        )
+                      : SvgPicture.asset(
+                          'assets/icons/arrow_up.svg',
+                          color: _streamTheme.colorTheme.primaryGrey,
+                        ),
+                ),
+                if (showUnreadCount)
+                  Positioned(
+                    width: 20,
+                    height: 20,
+                    left: 10,
+                    top: -10,
+                    child: CircleAvatar(
+                      child: Padding(
+                        padding: const EdgeInsets.all(3),
+                        child: Text(
+                          '$unreadCount',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
+      );
 
   Widget _loadingIndicator(
     OctopusChannelState octopusChannel,
@@ -1010,20 +1045,34 @@ class _LoadingIndicator extends StatelessWidget {
       errorBuilder: (context, error) => ColoredBox(
         // color: streamTheme.colorTheme.accentError.withOpacity(0.2),
         color: OctopusTheme.of(context).colorTheme.brandPrimary,
-        child: Center(
+        child: const Center(
           child: Text('loading error'),
         ),
       ),
       builder: (context, data) {
         if (!data) return const Offstage();
         return indicatorBuilder?.call(context) ??
-            const Center(
+            Center(
               child: Padding(
-                padding: EdgeInsets.all(8),
-                child: CircularProgressIndicator(),
+                padding: const EdgeInsets.all(8),
+                child: _getIndicatorWidget(Theme.of(context).platform),
               ),
             );
       },
     );
+  }
+
+  Widget _getIndicatorWidget(TargetPlatform platform) {
+    switch (platform) {
+      case TargetPlatform.iOS:
+        return const CupertinoActivityIndicator(
+          color: Colors.grey,
+        );
+      case TargetPlatform.android:
+      default:
+        return const CircularProgressIndicator(
+          color: Colors.grey,
+        );
+    }
   }
 }

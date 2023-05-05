@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:octopus/core/extensions/extension_message.dart';
-import 'package:octopus/core/extensions/extension_string.dart';
 import 'package:octopus/core/theme/oc_message_theme_data.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/octopus_channel.dart';
@@ -25,6 +25,7 @@ class ImageAttachment extends AttachmentWidget {
     this.imageThumbnailSize = const Size(400, 400),
     this.imageThumbnailResizeType = 'crop',
     this.imageThumbnailCropType = 'center',
+    this.scale = 1,
   });
 
   final OCMessageThemeData messageTheme;
@@ -42,6 +43,8 @@ class ImageAttachment extends AttachmentWidget {
   final String /*clip|crop|scale|fill*/ imageThumbnailResizeType;
 
   final String /*center|top|bottom|left|right*/ imageThumbnailCropType;
+
+  final double scale;
 
   @override
   Widget build(BuildContext context) => source.when(
@@ -72,23 +75,26 @@ class ImageAttachment extends AttachmentWidget {
             context,
             AspectRatio(
               aspectRatio: size.aspectRatio,
-              child: CachedNetworkImage(
-                imageUrl: imageUrl,
-                fit: BoxFit.cover,
-                placeholder: (context, __) {
-                  final image = Image.asset(
-                    'assets/images/placeholder.png',
-                    fit: BoxFit.cover,
-                  );
-                  final colorTheme = OctopusTheme.of(context).colorTheme;
-                  return Shimmer.fromColors(
-                    baseColor: colorTheme.disabled,
-                    highlightColor: colorTheme.brandPrimary,
-                    child: image,
-                  );
-                },
-                errorWidget: (context, url, error) =>
-                    AttachmentError(size: size),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(5),
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl,
+                  fit: BoxFit.cover,
+                  placeholder: (context, __) {
+                    final image = Image.asset(
+                      'assets/images/placeholder.png',
+                      fit: BoxFit.cover,
+                    );
+                    final colorTheme = OctopusTheme.of(context).colorTheme;
+                    return Shimmer.fromColors(
+                      baseColor: colorTheme.disabled,
+                      highlightColor: colorTheme.brandPrimary,
+                      child: image,
+                    );
+                  },
+                  errorWidget: (context, url, error) =>
+                      AttachmentError(size: size),
+                ),
               ),
             ),
           );
@@ -96,59 +102,65 @@ class ImageAttachment extends AttachmentWidget {
       );
 
   Widget _buildImageAttachment(BuildContext context, Widget imageWidget) =>
-      AspectRatio(
-        aspectRatio: size.aspectRatio,
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: Stack(
-                children: [
-                  GestureDetector(
-                    onTap: onAttachmentTap ??
-                        () async {
-                          final result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) {
-                                final channel =
-                                    OctopusChannel.of(context).channel;
-                                return OctopusChannel(
-                                  channel: channel,
-                                  child: FullScreenMedia(
-                                    mediaAttachmentPackages:
-                                        message.getAttachmentPackageList(),
-                                    startIndex:
-                                        message.attachments.indexOf(attachment),
-                                    userName: message.sender?.name,
-                                    onShowMessage: onShowMessage,
-                                  ),
-                                );
-                              },
-                            ),
-                          );
-                          if (result != null) onReturnAction?.call(result);
-                        },
-                    child: imageWidget,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: AttachmentUploadStateBuilder(
-                      message: message,
-                      attachment: attachment,
+      SizedBox(
+        width: (size.width > size.height
+                ? (size.height / size.width).sw
+                : (size.width / size.height).sw) *
+            scale,
+        child: AspectRatio(
+          aspectRatio: size.aspectRatio,
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: Stack(
+                  children: [
+                    GestureDetector(
+                      onTap: onAttachmentTap ??
+                          () async {
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) {
+                                  final channel =
+                                      OctopusChannel.of(context).channel;
+                                  return OctopusChannel(
+                                    channel: channel,
+                                    child: FullScreenMedia(
+                                      mediaAttachmentPackages:
+                                          message.getAttachmentPackageList(),
+                                      startIndex: message.attachments
+                                          .indexOf(attachment),
+                                      userName: message.sender?.name,
+                                      onShowMessage: onShowMessage,
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                            if (result != null) onReturnAction?.call(result);
+                          },
+                      child: imageWidget,
                     ),
-                  ),
-                ],
-              ),
-            ),
-            if (showTitle && attachment.title != null)
-              Material(
-                color: messageTheme.messageBackgroundColor,
-                child: AttachmentTitle(
-                  messageTheme: messageTheme,
-                  attachment: attachment,
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: AttachmentUploadStateBuilder(
+                        message: message,
+                        attachment: attachment,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-          ],
+              if (showTitle && attachment.title != null)
+                Material(
+                  color: messageTheme.messageBackgroundColor,
+                  child: AttachmentTitle(
+                    messageTheme: messageTheme,
+                    attachment: attachment,
+                  ),
+                ),
+            ],
+          ),
         ),
       );
 }

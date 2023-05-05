@@ -121,7 +121,8 @@ class _NewGroupPageState extends State<NewGroupPage> {
                                 children: [
                                   UserAvatar(
                                     user: user,
-                                    size: 60,
+                                    constraints: const BoxConstraints.tightFor(
+                                        width: 40, height: 40),
                                   ),
                                   Positioned(
                                     top: 0,

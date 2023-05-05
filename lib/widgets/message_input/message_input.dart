@@ -1,11 +1,15 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:octopus/core/data/models/attachment.dart';
 import 'package:octopus/core/data/models/attachment_file.dart';
 import 'package:octopus/core/data/models/message.dart';
 import 'package:octopus/core/extensions/extension_iterable.dart';
@@ -17,9 +21,9 @@ import 'package:octopus/widgets/auto_complete_input/auto_complete_input.dart';
 import 'package:octopus/widgets/message_input/message_input_controller.dart';
 import 'package:octopus/widgets/message_input/message_send_button.dart';
 import 'package:octopus/core/ui/simple_safe_area.dart';
+import 'package:octopus/widgets/message_input/quoted_message_input.dart';
 import 'package:rate_limiter/rate_limiter.dart';
 import 'package:octopus/core/extensions/extension_platformfile.dart';
-import 'package:octopus/core/extensions/extension_string.dart';
 
 typedef MessageValidator = bool Function(Message message);
 
@@ -144,6 +148,9 @@ class _MessageInputState extends State<MessageInput>
   @override
   String? get restorationId => widget.restorationId;
 
+  bool get _hasQuotedMessage =>
+      _effectiveController.value.quotedMessage != null;
+
   void _createLocalController([Message? message]) {
     assert(_controller == null, '');
     _controller = RestorableMessageInputController(message: message);
@@ -240,6 +247,12 @@ class _MessageInputState extends State<MessageInput>
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      child: _hasQuotedMessage
+                          ? _buildReplyToMessage()
+                          : const Offstage(),
+                    ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: _buildTextField(context),
@@ -509,17 +522,17 @@ class _MessageInputState extends State<MessageInput>
         builder: (_) => Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            ListTile(
+            const ListTile(
               title: Text(
                 'ssdfds',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
             ListTile(
               leading: const Icon(Icons.image),
-              title: Text('sdfdsfsdfsd'),
+              title: const Text('sdfdsfsdfsd'),
               onTap: () {
                 pickFile(DefaultAttachmentTypes.image);
                 Navigator.pop(context);
@@ -527,7 +540,7 @@ class _MessageInputState extends State<MessageInput>
             ),
             ListTile(
               leading: const Icon(Icons.video_library),
-              title: Text('sdfsdfds'),
+              title: const Text('sdfsdfds'),
               onTap: () {
                 pickFile(DefaultAttachmentTypes.video);
                 Navigator.pop(context);
@@ -535,7 +548,7 @@ class _MessageInputState extends State<MessageInput>
             ),
             ListTile(
               leading: const Icon(Icons.insert_drive_file),
-              title: Text('sdfdsfds'),
+              title: const Text('sdfdsfds'),
               onTap: () {
                 pickFile(DefaultAttachmentTypes.file);
                 Navigator.pop(context);
@@ -555,6 +568,8 @@ class _MessageInputState extends State<MessageInput>
 
     AttachmentFile? file;
     String? attachmentType;
+    int? originalWidth;
+    int? originalHeight;
 
     if (fileType == DefaultAttachmentTypes.image) {
       attachmentType = 'image';
@@ -568,8 +583,12 @@ class _MessageInputState extends State<MessageInput>
       XFile? pickedFile;
       if (fileType == DefaultAttachmentTypes.image) {
         pickedFile = await _imagePicker.pickImage(source: ImageSource.camera);
+        originalWidth = 3024;
+        originalHeight = 4032;
       } else if (fileType == DefaultAttachmentTypes.video) {
         pickedFile = await _imagePicker.pickVideo(source: ImageSource.camera);
+        originalWidth = 1080;
+        originalHeight = 1920;
       }
       if (pickedFile != null) {
         final bytes = await pickedFile.readAsBytes();
@@ -600,22 +619,13 @@ class _MessageInputState extends State<MessageInput>
 
     if (file == null) return;
 
-    final mimeType = file.name?.mimeType ?? file.path!.split('/').last.mimeType;
-
-    final extraDataMap = <String, Object>{};
-
-    if (mimeType?.subtype != null) {
-      extraDataMap['mime_type'] = mimeType!.subtype.toLowerCase();
-    }
-
-    extraDataMap['file_size'] = file.size!;
-
-    // final attachment = Attachment(
-    //   file: file,
-    //   type: attachmentType,
-    //   uploadState: const UploadState.preparing(),
-    //   extraData: extraDataMap,
-    // );
+    final attachment = Attachment(
+      file: file,
+      type: attachmentType,
+      uploadState: const UploadState.preparing(),
+      originalWidth: originalWidth,
+      originalHeight: originalHeight,
+    );
 
     // if (file.size! > widget.maxAttachmentSize) {
     //   return _showErrorAlert(
@@ -625,13 +635,83 @@ class _MessageInputState extends State<MessageInput>
     //   );
     // }
 
-    // _addAttachments([
-    //   attachment.copyWith(
-    //     file: file,
-    //     extraData: {...attachment.extraData}
-    //       ..update('file_size', ((_) => file!.size!)),
-    //   ),
-    // ]);
+    _addAttachments([
+      attachment.copyWith(
+        file: file,
+        // extraData: {...attachment.extraData}
+        //   ..update('file_size', ((_) => file!.size!)),
+      ),
+    ]);
+  }
+
+  void _addAttachments(Iterable<Attachment> attachments) {
+    // final limit = widget.attachmentLimit;
+    // final length = _effectiveController.attachments.length + attachments.length;
+    // if (length > limit) {
+    //   final onAttachmentLimitExceed = widget.onAttachmentLimitExceed;
+    //   if (onAttachmentLimitExceed != null) {
+    //     return onAttachmentLimitExceed(
+    //       widget.attachmentLimit,
+    //       context.translations.attachmentLimitExceedError(limit),
+    //     );
+    //   }
+    //   return _showErrorAlert(
+    //     context.translations.attachmentLimitExceedError(limit),
+    //   );
+    // }
+
+    for (final attachment in attachments) {
+      _effectiveController.addAttachment(attachment);
+    }
+
+    final channel = OctopusChannel.of(context).channel;
+    if (Theme.of(context).platform == Platform.isAndroid) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          actions: [
+            TextButton(
+                onPressed: () {
+                  _effectiveController.clearAttachments();
+                  context.pop();
+                },
+                child: const Text("Cancel")),
+            TextButton(
+                onPressed: () {
+                  context.pop();
+                  sendMessage();
+                },
+                child: const Text("Send"))
+          ],
+          content: Text("You want to send file to ${channel.name}"),
+        ),
+      );
+    } else {
+      showCupertinoDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          content: Text("You want to send file to ${channel.name}"),
+          actions: [
+            CupertinoDialogAction(
+              isDestructiveAction: true,
+              onPressed: () {
+                _effectiveController.clearAttachments();
+                context.pop();
+              },
+              child: const Text("Cancel"),
+            ),
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              onPressed: () {
+                context.pop();
+                sendMessage();
+              },
+              child: const Text("Send"),
+            )
+          ],
+        ),
+      );
+    }
   }
 
   Widget _buildSendButton(BuildContext context) {
@@ -649,15 +729,17 @@ class _MessageInputState extends State<MessageInput>
       value = value.trim();
 
       final channel = OctopusChannel.of(context).channel;
-      // if (value.isNotEmpty &&
-      //     channel.ownCapabilities.contains(PermissionType.sendTypingEvents)) {
-      //   // Notify the server that the user started typing.
-      //   channel.keyStroke(_effectiveController.message.parentId).onError(
-      //     (error, stackTrace) {
-      //       widget.onError?.call(error!, stackTrace);
-      //     },
-      //   );
-      // }
+      if (value.isNotEmpty
+          // &&
+          //     channel.ownCapabilities.contains(PermissionType.sendTypingEvents)
+          ) {
+        // Notify the server that the user started typing.
+        channel.keyStroke().onError(
+          (error, stackTrace) {
+            widget.onError?.call(error!, stackTrace);
+          },
+        );
+      }
 
       var actionsLength = widget.actions.length;
       if (widget.showCommandsButton) actionsLength += 1;
@@ -698,6 +780,33 @@ class _MessageInputState extends State<MessageInput>
     // }
 
     return picker;
+  }
+
+  Widget _buildReplyToMessage() {
+    // if (!_hasQuotedMessage) return const Offstage();
+    // final containsUrl = _effectiveController.value.quotedMessage!.attachments
+    //     .any((element) => element.titleLink != null);
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: OctopusTheme.of(context).colorTheme.disabled,
+            width: 1,
+          ),
+        ),
+      ),
+      child: QuotedMessageInput(
+        reverse: true,
+        // showBorder: !containsUrl,
+        message: _effectiveController.value.quotedMessage!,
+        messageTheme: OctopusTheme.of(context).otherMessageTheme,
+        padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+        onCancelReply: () {
+          _effectiveController.clearQuotedMessage();
+          _focusNode.unfocus();
+        },
+      ),
+    );
   }
 
   @override

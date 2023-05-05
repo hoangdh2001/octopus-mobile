@@ -241,9 +241,8 @@ class _FullScreenMediaState extends State<FullScreenMedia> {
                         // errorBuilder: (_, __, ___) => const AttachmentError(),
                         loadingBuilder: (context, _) {
                           final image = Image.asset(
-                            'images/placeholder.png',
+                            'assets/images/placeholder.png',
                             fit: BoxFit.cover,
-                            package: 'stream_chat_flutter',
                           );
                           final colorTheme =
                               OctopusTheme.of(context).colorTheme;

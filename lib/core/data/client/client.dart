@@ -2,12 +2,15 @@ import 'dart:async';
 
 import 'package:logging/logging.dart';
 import 'package:octopus/core/data/client/channel.dart';
+import 'package:octopus/core/data/client/connection_id_manager.dart';
 import 'package:octopus/core/data/http/interceptors/token_manager.dart';
 import 'package:octopus/core/data/http/interceptors/token_raw.dart';
 import 'package:octopus/core/data/models/channel_state.dart';
 import 'package:octopus/core/data/models/device.dart';
 import 'package:octopus/core/data/models/event.dart';
+import 'package:octopus/core/data/models/member.dart';
 import 'package:octopus/core/data/models/own_user.dart';
+import 'package:octopus/core/data/models/pagination_params.dart';
 import 'package:octopus/core/data/models/token.dart';
 import 'package:octopus/core/data/models/user.dart';
 import 'package:octopus/core/data/repositories/channel_repository.dart';
@@ -16,6 +19,7 @@ import 'package:octopus/core/data/socketio/chat_error.dart';
 import 'package:octopus/core/data/socketio/connection_status.dart';
 import 'package:octopus/core/data/socketio/event_type.dart';
 import 'package:octopus/core/data/socketio/socketio_manager.dart';
+import 'package:octopus/utils.dart';
 import 'package:rxdart/rxdart.dart';
 
 class Client {
@@ -46,6 +50,8 @@ class Client {
   final _tokenManager = TokenManager();
 
   final UserRepository _userRepository;
+
+  final _connectionIdManager = ConnectionIdManager();
 
   Client({
     required ChannelRepository channelRepository,
@@ -185,21 +191,136 @@ class Client {
 
     handleEvent(Event(
       type: EventType.connectionChanged,
-      // online: status == ConnectionStatus.connected,
+      active: status == ConnectionStatus.connected,
     ));
 
     if (currentState == ConnectionStatus.connected &&
         previousState != ConnectionStatus.connected) {
       handleEvent(Event(
         type: EventType.connectionRecovered,
+        active: true,
       ));
     }
   }
 
-  List<Channel> addChannel(List<ChannelState> channels) {
-    final updateData = _mapChannelStateToChannel(channels);
-    state.addChannels(updateData.key);
+  final _queryChannelsStreams = <String, Future<List<Channel>>>{};
 
+  Stream<List<Channel>> queryChannels({
+    bool state = true,
+    bool watch = true,
+    bool presence = false,
+    int? memberLimit,
+    int? messageLimit,
+    PaginationParams paginationParams = const PaginationParams(),
+    bool waitForConnect = true,
+  }) async* {
+    if (!_connectionIdManager.hasConnectionId) {
+      // ignore: parameter_assignments
+      watch = false;
+    }
+
+    final hash = generateHash([
+      state,
+      watch,
+      presence,
+      memberLimit,
+      messageLimit,
+      paginationParams,
+    ]);
+
+    if (_queryChannelsStreams.containsKey(hash)) {
+      yield await _queryChannelsStreams[hash]!;
+    } else {
+      // final channels = await queryChannelsOffline(
+      //   filter: filter,
+      //   sort: sort,
+      //   paginationParams: paginationParams,
+      // );
+      // if (channels.isNotEmpty) yield channels;
+
+      try {
+        final newQueryChannelsFuture = queryChannelsOnline(
+          state: state,
+          watch: watch,
+          presence: presence,
+          memberLimit: memberLimit,
+          messageLimit: messageLimit,
+          paginationParams: paginationParams,
+          waitForConnect: waitForConnect,
+        ).whenComplete(() {
+          _queryChannelsStreams.remove(hash);
+        });
+
+        _queryChannelsStreams[hash] = newQueryChannelsFuture;
+
+        yield await newQueryChannelsFuture;
+      } catch (_) {
+        // if (channels.isEmpty) rethrow;
+      }
+    }
+  }
+
+  Future<List<Channel>> queryChannelsOnline({
+    bool state = true,
+    bool watch = true,
+    bool presence = false,
+    int? memberLimit,
+    int? messageLimit,
+    bool waitForConnect = true,
+    PaginationParams paginationParams = const PaginationParams(),
+  }) async {
+    if (waitForConnect) {
+      if (_io.connectionCompleter?.isCompleted == false) {
+        logger.info('awaiting connection completer');
+        await _io.connectionCompleter?.future;
+      }
+      if (ioConnectionStatus != ConnectionStatus.connected) {
+        throw const OCError(
+          'You cannot use queryChannels without an active connection. '
+          'Please call `connectUser` to connect the client.',
+        );
+      }
+    }
+
+    if (!_connectionIdManager.hasConnectionId) {
+      // ignore: parameter_assignments
+      watch = false;
+    }
+
+    logger.info('Query channel start');
+    final page = await _channelRepository.getChannels(
+      limit: paginationParams.limit,
+    );
+
+    if (page.data.isEmpty && paginationParams.skip == 0) {
+      logger.warning('''
+        We could not find any channel for this query.
+        Please make sure to take a look at the Flutter tutorial: https://getstream.io/chat/flutter/tutorial
+        If your application already has users and channels, you might need to adjust your query channel as explained in the docs https://getstream.io/chat/docs/query_channels/?language=dart
+        ''');
+      return <Channel>[];
+    }
+
+    final channels = page.data;
+
+    // final users = channels
+    //     .expand((it) => it.members ?? <Member>[])
+    //     .map((it) => it.user)
+    //     .toList(growable: false);
+
+    // this.state.updateUsers(users);
+
+    logger.info('Got ${page.data.length} channels from api');
+
+    final updateData = _mapChannelStateToChannel(channels);
+
+    // await _chatPersistenceClient?.updateChannelQueries(
+    //   filter,
+    //   channels.map((c) => c.channel!.cid).toList(),
+    //   clearQueryCache: paginationParams.offset == 0,
+    // );
+
+    this.state.channels = updateData.key;
     return updateData.value;
   }
 
@@ -225,7 +346,20 @@ class Client {
     return MapEntry(channels, newChannels);
   }
 
+  void _handleHealthCheckEvent(Event event) {
+    final user = event.me;
+    if (user != null) state.currentUser = user;
+
+    final connectionId = event.connectionID;
+    if (connectionId != null) {
+      _connectionIdManager.setConnectionId(connectionId);
+    }
+  }
+
   void handleEvent(Event event) {
+    if (event.type == EventType.healthCheck) {
+      return _handleHealthCheckEvent(event);
+    }
     // state.updateUser(event.user);
     return _eventController.add(event);
   }
@@ -365,17 +499,17 @@ class ClientState {
   //   );
   // }
 
-  // void _listenAllChannelsRead() {
-  //   _eventsSubscription?.add(
-  //     _client.on(EventType.notificationMarkRead).listen((event) {
-  //       if (event.cid == null) {
-  //         channels.forEach((key, value) {
-  //           value.state?.unreadCount = 0;
-  //         });
-  //       }
-  //     }),
-  //   );
-  // }
+  void _listenAllChannelsRead() {
+    _eventsSubscription?.add(
+      _client.on(EventType.notificationMarkRead).listen((event) {
+        if (event.channelID == null) {
+          channels.forEach((key, value) {
+            value.state?.unreadCount = 0;
+          });
+        }
+      }),
+    );
+  }
 
   void _listenChannelDeleted() {
     _eventsSubscription?.add(
@@ -398,8 +532,15 @@ class ClientState {
 
   OwnUser? get currentUser => _currentUserController.valueOrNull;
 
-  /// The current user as a stream
   Stream<OwnUser?> get currentUserStream => _currentUserController.stream;
+
+  int get unreadChannels => _unreadChannelsController.value;
+
+  Stream<int> get unreadChannelsStream => _unreadChannelsController.stream;
+
+  int get totalUnreadCount => _totalUnreadCountController.value;
+
+  Stream<int> get totalUnreadCountStream => _totalUnreadCountController.stream;
 
   Stream<Map<String, Channel>> get channelsStream => _channelsController.stream;
 
@@ -423,6 +564,8 @@ class ClientState {
 
   final _channelsController = BehaviorSubject<Map<String, Channel>>.seeded({});
   final _currentUserController = BehaviorSubject<OwnUser?>();
+  final _unreadChannelsController = BehaviorSubject<int>.seeded(0);
+  final _totalUnreadCountController = BehaviorSubject<int>.seeded(0);
 
   void dispose() {
     cancelEventSubscription();

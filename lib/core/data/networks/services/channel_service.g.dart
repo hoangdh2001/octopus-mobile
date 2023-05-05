@@ -128,6 +128,35 @@ class _ChannelService implements ChannelService {
   }
 
   @override
+  Future<EmptyResponse> deleteMessage(
+    String channelID,
+    String messageID,
+    bool? hard,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'hard': hard,
+    };
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<EmptyResponse>(Options(
+      method: 'DELETE',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/channels/${channelID}/messages/${messageID}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = EmptyResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<Attachment> sendFile(
     channelID,
     attachmentID,
@@ -202,6 +231,114 @@ class _ChannelService implements ChannelService {
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = Attachment.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<EmptyResponse> sendEvent(
+    String channelID,
+    Event event,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(event.toJson());
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<EmptyResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/channels/${channelID}/event',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = EmptyResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<EmptyResponse> markRead(
+    String channelID,
+    MarkReadRequest markRequestRequest,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(markRequestRequest.toJson());
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<EmptyResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/channels/${channelID}/read',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = EmptyResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<SendReactionResponse> sendReaction(
+    String channelID,
+    String messageID,
+    String reactionType,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<SendReactionResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/channels/${channelID}/messages/${messageID}/reactions/${reactionType}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = SendReactionResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<EmptyResponse> deleteReaction(
+    String channelID,
+    String messageID,
+    String reactionType,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<EmptyResponse>(Options(
+      method: 'DELETE',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/channels/${channelID}/messages/${messageID}/reactions/${reactionType}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = EmptyResponse.fromJson(_result.data!);
     return value;
   }
 

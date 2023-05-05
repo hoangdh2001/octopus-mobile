@@ -2,27 +2,42 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:octopus/core/data/models/channel_state.dart';
 import 'package:octopus/core/data/models/message.dart';
 import 'package:octopus/core/data/models/own_user.dart';
-part 'event.freezed.dart';
+import 'package:octopus/core/data/models/user.dart';
 part 'event.g.dart';
 
-@freezed
-class Event with _$Event {
-  factory Event({
-    @Default('local.event') String type,
-    ChannelState? channel,
-    String? channelID,
-    Message? message,
-    String? connectionID,
-    OwnUser? me,
-  }) = _Event;
+@JsonSerializable()
+class Event {
+  Event({
+    this.type = 'local.event',
+    this.connectionID,
+    DateTime? createdAt,
+    this.channel,
+    this.channelID,
+    this.message,
+    this.me,
+    this.user,
+    this.active,
+  }) : createdAt = createdAt?.toUtc() ?? DateTime.now().toUtc();
+
+  final String type;
+
+  final ChannelState? channel;
+
+  final String? channelID;
+
+  final Message? message;
+
+  final String? connectionID;
+
+  final OwnUser? me;
+
+  final User? user;
+
+  final DateTime createdAt;
+
+  final bool? active;
 
   factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
 
-  /// Known top level fields.
-  /// Useful for [Serializer] methods.
-  static final topLevelFields = [
-    'type',
-    'channel',
-    'message',
-  ];
+  Map<String, dynamic> toJson() => _$EventToJson(this);
 }

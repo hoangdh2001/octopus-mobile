@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:octopus/core/data/client/channel.dart';
 import 'package:octopus/core/data/models/enums/message_status.dart';
 import 'package:octopus/core/data/models/message.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
-import 'package:octopus/octopus.dart';
 import 'package:octopus/octopus_channel.dart';
 import 'package:octopus/widgets/channel/channel_header.dart';
+import 'package:octopus/widgets/indicators/typing_indicator.dart';
+import 'package:octopus/widgets/message/visible_footnote.dart';
 import 'package:octopus/widgets/message_input/message_input.dart';
 import 'package:octopus/widgets/message_input/message_input_controller.dart';
 import 'package:octopus/widgets/message_list/message_list_view.dart';
@@ -39,10 +41,10 @@ class _ChannelPageState extends State<ChannelPage> {
   }
 
   void _reply(Message message) {
-    // _messageInputController.quotedMessage = message;
-    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-    //   _focusNode!.requestFocus();
-    // });
+    _messageInputController.quotedMessage = message;
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _focusNode!.requestFocus();
+    });
   }
 
   @override
@@ -50,14 +52,17 @@ class _ChannelPageState extends State<ChannelPage> {
     return Scaffold(
       backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
       appBar: ChannelHeader(
-        channel: widget.channel,
+        onTitleTap: () {},
         showBackButton: true,
         centerTitle: false,
         actions: [
           Padding(
             padding: const EdgeInsets.fromLTRB(5, 5, 16, 5),
-            child: Center(
-              child: SvgPicture.asset(
+            child: IconButton(
+              onPressed: () {
+                context.push('/messages/channel/videoCall');
+              },
+              icon: SvgPicture.asset(
                 'assets/icons/phone.svg',
                 color: OctopusTheme.of(context).colorTheme.icon,
               ),
@@ -81,14 +86,37 @@ class _ChannelPageState extends State<ChannelPage> {
             child: Stack(
               children: [
                 MessageListView(
+                  onMessageSwiped: _reply,
+                  messageFilter: defaultFilter,
                   messageBuilder: (context, details, messages, defaultMessage) {
                     return defaultMessage.copyWith(
                       onReplyTap: _reply,
-                      // deletedBottomRowBuilder: (context, message) {
-                      //   return const StreamVisibleFootnote();
-                      // },
+                      deletedBottomRowBuilder: (context, message) {
+                        return const VisibleFootnote();
+                      },
                     );
                   },
+                ),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    color: OctopusTheme.of(context)
+                        .colorTheme
+                        .contentView
+                        .withOpacity(.9),
+                    child: TypingIndicator(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      style: OctopusTheme.of(context)
+                          .textTheme
+                          .primaryGreyFootnote,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -106,7 +134,7 @@ class _ChannelPageState extends State<ChannelPage> {
     var _currentUser =
         OctopusChannel.of(context).channel.client.state.currentUser;
     final isMyMessage = m.sender?.id == _currentUser?.id;
-    final isDeleted = m.status == MessageStatus.deleted;
+    final isDeleted = m.isDeleted;
     if (isDeleted && !isMyMessage) return false;
     return true;
   }

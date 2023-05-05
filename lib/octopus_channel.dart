@@ -111,8 +111,8 @@ class OctopusChannelState extends State<OctopusChannel> {
 
     rs.fold((channelState) {
       channel.updateChannelState(channelState);
-      if (channelState.messages.isEmpty ||
-          channelState.messages.length < limit) {
+      if (channelState.messages!.isEmpty ||
+          channelState.messages!.length < limit) {
         _topPaginationEnded = true;
       }
       _queryTopMessagesController.safeAdd(false);
@@ -140,8 +140,8 @@ class OctopusChannelState extends State<OctopusChannel> {
 
     rs.fold((channelState) {
       channel.updateChannelState(channelState);
-      if (channelState.messages.isEmpty ||
-          channelState.messages.length < limit) {
+      if (channelState.messages!.isEmpty ||
+          channelState.messages!.length < limit) {
         _bottomPaginationEnded = true;
       }
       _queryBottomMessagesController.safeAdd(false);

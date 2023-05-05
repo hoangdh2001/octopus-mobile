@@ -21,6 +21,7 @@ class OCTextTheme {
   final TextStyle hint;
   final TextStyle primaryGreyInput;
   final TextStyle logoutColorBody;
+  final TextStyle primaryGreyFootnote;
 
   const OCTextTheme({
     required this.brandPrimaryBodyBold,
@@ -41,6 +42,7 @@ class OCTextTheme {
     required this.hint,
     required this.primaryGreyInput,
     required this.logoutColorBody,
+    required this.primaryGreyFootnote,
   });
 
   factory OCTextTheme.light({required OCStyleGuide styleGuide}) => OCTextTheme(
@@ -115,6 +117,10 @@ class OCTextTheme {
           font: styleGuide.body,
           color: styleGuide.logoutColor.lightAppearance,
         ),
+        primaryGreyFootnote: OCTextStyle(
+          font: styleGuide.footnote,
+          color: styleGuide.primaryGrey.lightAppearance,
+        ),
       );
 
   factory OCTextTheme.dark({required OCStyleGuide styleGuide}) => OCTextTheme(
@@ -187,6 +193,10 @@ class OCTextTheme {
         logoutColorBody: OCTextStyle(
           font: styleGuide.body,
           color: styleGuide.logoutColor.darkAppearance,
+        ),
+        primaryGreyFootnote: OCTextStyle(
+          font: styleGuide.footnote,
+          color: styleGuide.primaryGrey.darkAppearance,
         ),
       );
 }

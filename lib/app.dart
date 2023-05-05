@@ -15,13 +15,12 @@ import 'package:octopus/core/data/models/enums/verification_type.dart';
 import 'package:octopus/core/data/models/token.dart';
 import 'package:octopus/core/data/repositories/channel_repository.dart';
 import 'package:octopus/core/data/repositories/user_repository.dart';
-import 'package:octopus/core/data/socketio/event_type.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:go_router/go_router.dart';
-import 'package:octopus/core/ui/notification_service.dart';
 import 'package:octopus/di/service_locator.dart';
 import 'package:octopus/octopus.dart';
 import 'package:octopus/octopus_channel.dart';
+import 'package:octopus/pages/calls/video_call_page.dart';
 import 'package:octopus/pages/channelList/channel_list_page.dart';
 import 'package:octopus/pages/channel/channel_page.dart';
 import 'package:octopus/pages/email/email_page.dart';
@@ -41,8 +40,6 @@ import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
-
-RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -187,81 +184,89 @@ class _MyAppState extends State<MyApp>
       navigatorKey: _rootNavigatorKey,
       routes: [
         ShellRoute(
-            navigatorKey: _shellNavigatorKey,
-            pageBuilder: (context, state, child) {
-              var client = state.extra as Client?;
-              if (client == null) {
-                client = _initData?.client;
-              }
-              return NoTransitionPage(
-                name: state.fullpath,
-                child: Octopus(
-                  routeObserver: routeObserver,
-                  client: client!,
-                  firebaseMessaging: getIt<FirebaseMessaging>(),
-                  child: OctopusScaffold(body: child),
+          navigatorKey: _shellNavigatorKey,
+          pageBuilder: (context, state, child) {
+            var client = state.extra as Client?;
+            if (client == null) {
+              client = _initData?.client;
+            }
+            return NoTransitionPage(
+              name: state.fullpath,
+              child: Octopus(
+                client: client!,
+                firebaseMessaging: getIt<FirebaseMessaging>(),
+                child: OctopusScaffold(body: child),
+              ),
+            );
+          },
+          routes: [
+            GoRoute(
+              parentNavigatorKey: _shellNavigatorKey,
+              path: '/home',
+              pageBuilder: (context, state) => NoTransitionPage(
+                  child: const HomeScreen(), name: state.fullpath),
+            ),
+            GoRoute(
+              parentNavigatorKey: _shellNavigatorKey,
+              path: '/notifications',
+              pageBuilder: (context, state) => NoTransitionPage(
+                  child: const NotificationListScreen(), name: state.fullpath),
+            ),
+            GoRoute(
+              parentNavigatorKey: _shellNavigatorKey,
+              path: '/messages',
+              pageBuilder: (context, state) => NoTransitionPage(
+                  child: const ChannelListPage(), name: state.fullpath),
+              routes: [
+                GoRoute(
+                  path: 'newMessage',
+                  parentNavigatorKey: _rootNavigatorKey,
+                  pageBuilder: (context, state) => MaterialPage(
+                      child: const NewMessagePage(), name: state.fullpath),
                 ),
-              );
-            },
-            routes: [
-              GoRoute(
-                parentNavigatorKey: _shellNavigatorKey,
-                path: '/home',
-                pageBuilder: (context, state) => NoTransitionPage(
-                    child: const HomeScreen(), name: state.fullpath),
-              ),
-              GoRoute(
-                parentNavigatorKey: _shellNavigatorKey,
-                path: '/notifications',
-                pageBuilder: (context, state) => NoTransitionPage(
-                    child: const NotificationListScreen(),
-                    name: state.fullpath),
-              ),
-              GoRoute(
-                  parentNavigatorKey: _shellNavigatorKey,
-                  path: '/messages',
-                  pageBuilder: (context, state) => NoTransitionPage(
-                      child: const ChannelListPage(), name: state.fullpath),
-                  routes: [
-                    GoRoute(
-                      path: 'newMessage',
-                      parentNavigatorKey: _rootNavigatorKey,
-                      pageBuilder: (context, state) => MaterialPage(
-                          child: const NewMessagePage(), name: state.fullpath),
-                    ),
-                    GoRoute(
-                      path: 'newGroup',
-                      parentNavigatorKey: _rootNavigatorKey,
-                      pageBuilder: (context, state) => MaterialPage(
-                          child: const NewGroupPage(), name: state.fullpath),
-                    ),
-                    GoRoute(
-                      path: 'channel',
-                      parentNavigatorKey: _rootNavigatorKey,
-                      pageBuilder: (context, state) {
-                        var channel = state.extra as Channel?;
-                        var channelID = state.queryParams['channelID'];
-                        if (channel == null) {
-                          final client = Octopus.of(context).client;
-                          if (client == null) debugPrint('error client');
-                        }
-                        return MaterialPage(
-                          arguments: channel,
-                          child: OctopusChannel(
-                            channel: channel!,
-                            child: ChannelPage(
-                              channel: channel,
-                            ),
+                GoRoute(
+                  path: 'newGroup',
+                  parentNavigatorKey: _rootNavigatorKey,
+                  pageBuilder: (context, state) => MaterialPage(
+                      child: const NewGroupPage(), name: state.fullpath),
+                ),
+                GoRoute(
+                    path: 'channel',
+                    parentNavigatorKey: _rootNavigatorKey,
+                    pageBuilder: (context, state) {
+                      var channel = state.extra as Channel?;
+                      var channelID = state.queryParams['channelID'];
+                      if (channel == null) {
+                        final client = Octopus.of(context).client;
+                        if (client == null) debugPrint('error client');
+                      }
+                      return MaterialPage(
+                        arguments: channel,
+                        child: OctopusChannel(
+                          channel: channel!,
+                          child: ChannelPage(
+                            channel: channel,
                           ),
-                          name: state.fullpath,
-                        );
-                      },
-                    ),
-                  ]),
-            ],
-            observers: [
-              routeObserver
-            ]),
+                        ),
+                        name: state.fullpath,
+                      );
+                    },
+                    routes: [
+                      GoRoute(
+                        path: 'videoCall',
+                        parentNavigatorKey: _rootNavigatorKey,
+                        pageBuilder: (context, state) {
+                          return MaterialPage(
+                            child: const VideoCallPage(),
+                            name: state.fullpath,
+                          );
+                        },
+                      ),
+                    ]),
+              ],
+            ),
+          ],
+        ),
         GoRoute(
           path: '/login',
           builder: (context, state) => const EmailPage(),

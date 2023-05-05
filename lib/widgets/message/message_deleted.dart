@@ -1,29 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:octopus/core/theme/oc_message_theme_data.dart';
+import 'package:octopus/core/theme/oc_theme.dart';
 
 class MessageDeleted extends StatelessWidget {
   const MessageDeleted({
     super.key,
+    required this.messageTheme,
     this.borderRadiusGeometry,
     this.shape,
     this.borderSide,
     this.reverse = false,
   });
 
-  /// The border radius of the message text
+  final OCMessageThemeData messageTheme;
+
   final BorderRadiusGeometry? borderRadiusGeometry;
 
-  /// The shape of the message text
   final ShapeBorder? shape;
 
-  /// The borderside of the message text
   final BorderSide? borderSide;
 
-  /// If true the widget will be mirrored
   final bool reverse;
 
   @override
   Widget build(BuildContext context) {
-    // final chatThemeData = StreamChatTheme.of(context);
+    final chatThemeData = OctopusTheme.of(context);
     return Material(
       // color: messageTheme.messageBackgroundColor,
       shape: shape ??
@@ -31,10 +32,10 @@ class MessageDeleted extends StatelessWidget {
             borderRadius: borderRadiusGeometry ?? BorderRadius.zero,
             side: borderSide ??
                 BorderSide(
-                    // color: Theme.of(context).brightness == Brightness.dark
-                    //     ? chatThemeData.colorTheme.barsBg.withAlpha(24)
-                    //     : chatThemeData.colorTheme.textHighEmphasis.withAlpha(24),
-                    ),
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? chatThemeData.colorTheme.contentView.withAlpha(24)
+                      : chatThemeData.colorTheme.primaryGrey.withAlpha(24),
+                ),
           ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -42,11 +43,11 @@ class MessageDeleted extends StatelessWidget {
           horizontal: 16,
         ),
         child: Text(
-          "Message deleted",
-          // style: messageTheme.messageTextStyle?.copyWith(
-          //   fontStyle: FontStyle.italic,
-          //   color: messageTheme.createdAtStyle?.color,
-          // ),
+          "Message is retrived",
+          style: messageTheme.messageTextStyle?.copyWith(
+            fontStyle: FontStyle.italic,
+            color: messageTheme.createdAtStyle?.color,
+          ),
         ),
       ),
     );

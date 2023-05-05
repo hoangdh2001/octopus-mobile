@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:octopus/core/data/client/channel.dart';
-import 'package:octopus/core/data/models/channel_state.dart';
 import 'package:octopus/core/data/models/member.dart';
 import 'package:octopus/core/data/models/user.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
@@ -12,34 +11,36 @@ import 'package:octopus/widgets/avatars/user_avatar.dart';
 class ChannelAvatar extends StatelessWidget {
   const ChannelAvatar({
     super.key,
-    this.size = 40,
     this.borderRadius,
     required this.channel,
     this.onTap,
+    this.constraints,
   });
 
   final BorderRadius? borderRadius;
 
   final Channel channel;
 
-  final double size;
-
   final VoidCallback? onTap;
+
+  final BoxConstraints? constraints;
 
   @override
   Widget build(BuildContext context) {
     final client = channel.client.state;
 
     final chatThemeData = OctopusTheme.of(context);
+    final colorTheme = chatThemeData.colorTheme;
+    final previewTheme = chatThemeData.channelPreviewThemeData.avatarTheme;
 
     return BetterStreamBuilder(
       stream: channel.imageStream,
       builder: (context, channelImage) {
         final child = ClipRRect(
-          borderRadius: borderRadius ?? BorderRadius.circular(size / 2),
+          borderRadius: borderRadius ?? previewTheme?.borderRadius,
           child: Container(
-            constraints: BoxConstraints.tightFor(width: size, height: size),
-            // decoration: BoxDecoration(color: colorTheme.accentPrimary),
+            constraints: constraints ?? previewTheme?.constraints,
+            decoration: BoxDecoration(color: colorTheme.brandPrimary),
             child: InkWell(
               onTap: onTap,
               child: CachedNetworkImage(
@@ -48,7 +49,7 @@ class ChannelAvatar extends StatelessWidget {
                   child: Text(
                     channel.name?[0] ?? '',
                     style: TextStyle(
-                      // color: colorTheme.barsBg,
+                      color: colorTheme.contentView,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -71,9 +72,9 @@ class ChannelAvatar extends StatelessWidget {
             stream: client.currentUserStream.map((it) => it!),
             initialData: currentUser,
             builder: (context, user) => UserAvatar(
-              // borderRadius: borderRadius ?? previewTheme?.borderRadius,
+              borderRadius: borderRadius ?? previewTheme?.borderRadius,
               user: user,
-              // constraints: constraints ?? previewTheme?.constraints,
+              constraints: constraints ?? previewTheme?.constraints,
               // onTap: onTap != null ? (_) => onTap!() : null,
               // selected: selected,
               // selectionColor: selectionColor ?? colorTheme.accentPrimary,
@@ -93,9 +94,9 @@ class ChannelAvatar extends StatelessWidget {
             ),
             initialData: member,
             builder: (context, member) => UserAvatar(
-              // borderRadius: borderRadius ?? previewTheme?.borderRadius,
+              borderRadius: borderRadius ?? previewTheme?.borderRadius,
               user: member.user!,
-              // constraints: constraints ?? previewTheme?.constraints,
+              constraints: constraints ?? previewTheme?.constraints,
               // onTap: onTap != null ? (_) => onTap!() : null,
               // selected: selected,
               // selectionColor: selectionColor ?? colorTheme.accentPrimary,
@@ -107,8 +108,8 @@ class ChannelAvatar extends StatelessWidget {
         return GroupAvatar(
           channel: channel,
           members: otherMembers,
-          // borderRadius: borderRadius ?? previewTheme?.borderRadius,
-          // constraints: constraints ?? previewTheme?.constraints,
+          borderRadius: borderRadius ?? previewTheme?.borderRadius,
+          constraints: constraints ?? previewTheme?.constraints,
           // onTap: onTap,
           // selected: selected,
           // selectionColor: selectionColor ?? colorTheme.accentPrimary,

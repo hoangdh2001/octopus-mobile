@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:octopus/core/data/models/member.dart';
 import 'package:octopus/core/data/models/message.dart';
-import 'package:octopus/core/data/models/user.dart';
+import 'package:octopus/core/data/models/read.dart';
 
 part 'channel_state.freezed.dart';
 
@@ -29,8 +29,9 @@ class ChannelModel with _$ChannelModel {
 class ChannelState with _$ChannelState {
   const factory ChannelState({
     ChannelModel? channel,
-    required List<Message> messages,
-    required List<Member> members,
+    List<Message>? messages,
+    List<Member>? members,
+    List<Read>? read,
   }) = _ChannelState;
 
   factory ChannelState.fromJson(Map<String, dynamic> json) =>

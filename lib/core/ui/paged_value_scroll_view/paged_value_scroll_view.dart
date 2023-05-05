@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:octopus/core/data/models/error.dart';
+import 'package:octopus/core/data/socketio/chat_error.dart';
 import 'package:octopus/core/ui/paged_value_scroll_view/bloc/paged_value_bloc.dart';
 
 /// Signature for a function that creates a widget for a given index, e.g., in a
@@ -16,7 +17,7 @@ typedef PagedValueScrollViewIndexedWidgetBuilder<T> = Widget Function(
 /// [PagedValueListView] and [PagedValueGridView].
 typedef PagedValueScrollViewLoadMoreErrorBuilder = Widget Function(
   BuildContext context,
-  Error error,
+  OCError error,
 );
 
 /// A [ListView] that loads more pages when the user scrolls to the end of the
@@ -78,7 +79,7 @@ class PagedValueListView<K, V> extends StatefulWidget {
   final WidgetBuilder loadingBuilder;
 
   /// A builder that is called to build the error state of the list.
-  final Widget Function(BuildContext, Error) errorBuilder;
+  final Widget Function(BuildContext, OCError) errorBuilder;
 
   /// The index to take into account when triggering [controller.loadMore].
   final int loadMoreTriggerIndex;

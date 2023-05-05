@@ -36,7 +36,7 @@ class PaginationParams extends Equatable {
   final int limit;
 
   /// The amount of items requested before message ID from the APIs.
-  @Deprecated('before is deprecated, use limit instead')
+  @JsonKey(name: 'skip')
   final int skip;
 
   @JsonKey(name: 'id_around')

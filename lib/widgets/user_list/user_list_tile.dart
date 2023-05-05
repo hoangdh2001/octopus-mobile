@@ -88,7 +88,8 @@ class UserListTile extends StatelessWidget {
     final leading = this.leading ??
         UserAvatar(
           user: user,
-          size: 50,
+          constraints: const BoxConstraints.tightFor(width: 50, height: 50),
+          borderRadius: BorderRadius.circular(25),
         );
 
     final title = this.title ??

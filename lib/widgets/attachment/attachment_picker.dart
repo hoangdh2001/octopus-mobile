@@ -417,6 +417,7 @@ class _AttachmentPickerState extends State<AttachmentPicker> {
               ),
             ),
           ),
+          if (messageInputController.attachments.where((attachment) => attachment.type == 'image' || attachment.type == 'video').isNotEmpty)
           AnimatedPositioned(
             duration: const Duration(milliseconds: 100),
             bottom: messageInputController.attachments.isNotEmpty ? 30 : -80,
@@ -589,13 +590,13 @@ class _PickerWidgetState extends State<_PickerWidget> {
                 constraints: const BoxConstraints.expand(),
                 // color: widget.chatTheme.colorTheme.inputBg,
                 alignment: Alignment.center,
-                child: Text(
-                  'sdfdsfds',
-                  style: TextStyle(
-                    // color: widget.chatTheme.colorTheme.accentPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                // child: Text(
+                //   'sdfdsfds',
+                //   style: TextStyle(
+                //     // color: widget.chatTheme.colorTheme.accentPrimary,
+                //     fontWeight: FontWeight.bold,
+                //   ),
+                // ),
               ),
             );
           }

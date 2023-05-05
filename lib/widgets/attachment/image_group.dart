@@ -21,7 +21,7 @@ class ImageGroup extends StatelessWidget {
     this.onAttachmentTap,
     this.imageThumbnailSize = const Size(400, 400),
     this.imageThumbnailResizeType = 'crop',
-    this.imageThumbnailCropType = 'center',
+    this.imageThumbnailCropType = 'center', this.reverse = false,
   });
 
   /// List of attachments to show
@@ -58,22 +58,20 @@ class ImageGroup extends StatelessWidget {
   /// Defaults to [center]
   final String /*center|top|bottom|left|right*/ imageThumbnailCropType;
 
+  final bool reverse;
+
   @override
   Widget build(BuildContext context) => Container(
         width: 0.8.sw,
-        child: GridView.builder(
-          shrinkWrap: true,
-          primary: false,
-          padding: EdgeInsets.zero,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: images.length > 2 ? 3 : images.length,
-            crossAxisSpacing: 5,
-            mainAxisSpacing: 5,
-            childAspectRatio: 1,
-          ),
-          itemCount: images.length,
-          itemBuilder: (context, index) => _buildImage(images[index], context),
+        child: LayoutBuilder(
+          builder: (context, constraints) =>
+          Wrap(
+            alignment: reverse ? WrapAlignment.end : WrapAlignment.start,
+            direction: Axis.horizontal,
+            runSpacing: 5,
+            spacing: 5,
+            children: images.map((attachment) => _buildImage(attachment, context, constraints)).toList(),
+          )
         ),
       );
 
@@ -104,12 +102,12 @@ class ImageGroup extends StatelessWidget {
     if (res != null) onReturnAction?.call(res);
   }
 
-  Widget _buildImage(Attachment attachment, BuildContext context) => Container(
-        width: 100,
-        height: 100,
+  Widget _buildImage(Attachment attachment, BuildContext context, BoxConstraints constraints) => Container(
+        width: constraints.maxWidth / 3 - 4,
+        height: constraints.maxWidth / 3 - 4,
         child: ImageAttachment(
           attachment: attachment,
-          size: Size(100, 100),
+          size: Size(constraints.maxWidth / 3 - 4, constraints.maxWidth / 3 - 4),
           message: message,
           messageTheme: messageTheme,
           onAttachmentTap: () => _onTap(attachment, context),

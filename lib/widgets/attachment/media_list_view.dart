@@ -137,7 +137,7 @@ class _MediaListViewState extends State<MediaListView> {
                         left: 8,
                         bottom: 10,
                         child: SvgPicture.asset(
-                          'assets/icons/phone.svg',
+                          'assets/icons/record.svg',
                         ),
                       ),
                       Positioned(

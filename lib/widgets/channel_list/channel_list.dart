@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:octopus/core/data/client/channel.dart';
 import 'package:octopus/core/data/models/channel_state.dart';
 import 'package:octopus/core/data/models/error.dart';
+import 'package:octopus/core/data/socketio/chat_error.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/core/ui/paged_value_scroll_view/paged_value_scroll_view.dart';
 import 'package:octopus/core/ui/scroll_view/scroll_view_empty_widget.dart';
@@ -61,7 +62,7 @@ class ChannelList extends StatelessWidget {
 
   final WidgetBuilder? loadingBuilder;
 
-  final Widget Function(BuildContext, Error)? errorBuilder;
+  final Widget Function(BuildContext, OCError)? errorBuilder;
 
   final void Function(Channel)? onChannelTap;
 
@@ -129,6 +130,7 @@ class ChannelList extends StatelessWidget {
           channel: channel,
           onTap: onTap == null ? null : () => onTap(channel),
           onLongPress: onLongPress == null ? null : () => onLongPress(channel),
+          visualDensity: const VisualDensity(vertical: 2),
         );
 
         return itemBuilder?.call(context, channels, index, channelListTile) ??
@@ -141,7 +143,7 @@ class ChannelList extends StatelessWidget {
                 padding: const EdgeInsets.all(8),
                 child: ScrollViewEmptyWidget(
                   emptyIcon: Container(),
-                  emptyTitle: Text('Test'),
+                  emptyTitle: const Text('Empty'),
                 ),
               ),
             );
@@ -172,7 +174,7 @@ class ChannelListSeparator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effect = OctopusTheme.of(context).colorTheme.border;
+    final effect = OctopusTheme.of(context).colorTheme.border.withOpacity(.5);
     return Container(
       height: 1,
       color: effect,

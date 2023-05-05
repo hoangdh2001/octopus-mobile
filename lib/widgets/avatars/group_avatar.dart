@@ -1,30 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:octopus/core/data/client/channel.dart';
 import 'package:octopus/core/data/models/member.dart';
+import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/core/ui/better_stream_builder.dart';
+import 'package:octopus/octopus_channel.dart';
 import 'package:octopus/widgets/avatars/user_avatar.dart';
 
 class GroupAvatar extends StatelessWidget {
   const GroupAvatar({
     super.key,
-    this.size = 40,
-    required this.channel,
+    this.channel,
     required this.members,
+    this.borderRadius,
+    this.constraints,
   });
 
-  final Channel channel;
+  final Channel? channel;
 
   final List<Member> members;
 
-  final double size;
+  final BorderRadius? borderRadius;
+
+  final BoxConstraints? constraints;
 
   @override
   Widget build(BuildContext context) {
+    final channel = this.channel ?? OctopusChannel.of(context).channel;
+
+    assert(channel.state != null, 'Channel ${channel.id} is not initialized');
+
+    final streamChatTheme = OctopusTheme.of(context);
+    final colorTheme = streamChatTheme.colorTheme;
+    final previewTheme = streamChatTheme.channelPreviewThemeData.avatarTheme;
     Widget avatar = ClipRRect(
-      borderRadius: BorderRadius.circular(size / 2),
+      borderRadius: borderRadius ?? previewTheme?.borderRadius,
       child: Container(
-        constraints: BoxConstraints.tightFor(width: size, height: size),
-        // decoration: BoxDecoration(color: colorTheme.accentPrimary),
+        constraints: constraints ?? previewTheme?.constraints,
+        decoration: BoxDecoration(color: colorTheme.brandPrimary),
         child: Flex(
           direction: Axis.vertical,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -53,9 +65,9 @@ class GroupAvatar extends StatelessWidget {
                               ),
                               initialData: member,
                               builder: (context, member) => UserAvatar(
-                                // showOnlineStatus: false,
+                                showOnlineStatus: false,
                                 user: member.user!,
-                                // borderRadius: BorderRadius.zero,
+                                borderRadius: BorderRadius.zero,
                               ),
                             ),
                           ),
@@ -91,9 +103,9 @@ class GroupAvatar extends StatelessWidget {
                                 ),
                                 initialData: member,
                                 builder: (context, member) => UserAvatar(
-                                  // showOnlineStatus: false,
+                                  showOnlineStatus: false,
                                   user: member.user!,
-                                  // borderRadius: BorderRadius.zero,
+                                  borderRadius: BorderRadius.zero,
                                 ),
                               ),
                             ),

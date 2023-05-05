@@ -333,8 +333,9 @@ ChannelState _$ChannelStateFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$ChannelState {
   ChannelModel? get channel => throw _privateConstructorUsedError;
-  List<Message> get messages => throw _privateConstructorUsedError;
-  List<Member> get members => throw _privateConstructorUsedError;
+  List<Message>? get messages => throw _privateConstructorUsedError;
+  List<Member>? get members => throw _privateConstructorUsedError;
+  List<Read>? get read => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -349,7 +350,10 @@ abstract class $ChannelStateCopyWith<$Res> {
       _$ChannelStateCopyWithImpl<$Res, ChannelState>;
   @useResult
   $Res call(
-      {ChannelModel? channel, List<Message> messages, List<Member> members});
+      {ChannelModel? channel,
+      List<Message>? messages,
+      List<Member>? members,
+      List<Read>? read});
 
   $ChannelModelCopyWith<$Res>? get channel;
 }
@@ -368,22 +372,27 @@ class _$ChannelStateCopyWithImpl<$Res, $Val extends ChannelState>
   @override
   $Res call({
     Object? channel = freezed,
-    Object? messages = null,
-    Object? members = null,
+    Object? messages = freezed,
+    Object? members = freezed,
+    Object? read = freezed,
   }) {
     return _then(_value.copyWith(
       channel: freezed == channel
           ? _value.channel
           : channel // ignore: cast_nullable_to_non_nullable
               as ChannelModel?,
-      messages: null == messages
+      messages: freezed == messages
           ? _value.messages
           : messages // ignore: cast_nullable_to_non_nullable
-              as List<Message>,
-      members: null == members
+              as List<Message>?,
+      members: freezed == members
           ? _value.members
           : members // ignore: cast_nullable_to_non_nullable
-              as List<Member>,
+              as List<Member>?,
+      read: freezed == read
+          ? _value.read
+          : read // ignore: cast_nullable_to_non_nullable
+              as List<Read>?,
     ) as $Val);
   }
 
@@ -409,7 +418,10 @@ abstract class _$$_ChannelStateCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {ChannelModel? channel, List<Message> messages, List<Member> members});
+      {ChannelModel? channel,
+      List<Message>? messages,
+      List<Member>? members,
+      List<Read>? read});
 
   @override
   $ChannelModelCopyWith<$Res>? get channel;
@@ -427,22 +439,27 @@ class __$$_ChannelStateCopyWithImpl<$Res>
   @override
   $Res call({
     Object? channel = freezed,
-    Object? messages = null,
-    Object? members = null,
+    Object? messages = freezed,
+    Object? members = freezed,
+    Object? read = freezed,
   }) {
     return _then(_$_ChannelState(
       channel: freezed == channel
           ? _value.channel
           : channel // ignore: cast_nullable_to_non_nullable
               as ChannelModel?,
-      messages: null == messages
+      messages: freezed == messages
           ? _value._messages
           : messages // ignore: cast_nullable_to_non_nullable
-              as List<Message>,
-      members: null == members
+              as List<Message>?,
+      members: freezed == members
           ? _value._members
           : members // ignore: cast_nullable_to_non_nullable
-              as List<Member>,
+              as List<Member>?,
+      read: freezed == read
+          ? _value._read
+          : read // ignore: cast_nullable_to_non_nullable
+              as List<Read>?,
     ));
   }
 }
@@ -452,35 +469,51 @@ class __$$_ChannelStateCopyWithImpl<$Res>
 class _$_ChannelState implements _ChannelState {
   const _$_ChannelState(
       {this.channel,
-      required final List<Message> messages,
-      required final List<Member> members})
+      final List<Message>? messages,
+      final List<Member>? members,
+      final List<Read>? read})
       : _messages = messages,
-        _members = members;
+        _members = members,
+        _read = read;
 
   factory _$_ChannelState.fromJson(Map<String, dynamic> json) =>
       _$$_ChannelStateFromJson(json);
 
   @override
   final ChannelModel? channel;
-  final List<Message> _messages;
+  final List<Message>? _messages;
   @override
-  List<Message> get messages {
+  List<Message>? get messages {
+    final value = _messages;
+    if (value == null) return null;
     if (_messages is EqualUnmodifiableListView) return _messages;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_messages);
+    return EqualUnmodifiableListView(value);
   }
 
-  final List<Member> _members;
+  final List<Member>? _members;
   @override
-  List<Member> get members {
+  List<Member>? get members {
+    final value = _members;
+    if (value == null) return null;
     if (_members is EqualUnmodifiableListView) return _members;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_members);
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<Read>? _read;
+  @override
+  List<Read>? get read {
+    final value = _read;
+    if (value == null) return null;
+    if (_read is EqualUnmodifiableListView) return _read;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
   }
 
   @override
   String toString() {
-    return 'ChannelState(channel: $channel, messages: $messages, members: $members)';
+    return 'ChannelState(channel: $channel, messages: $messages, members: $members, read: $read)';
   }
 
   @override
@@ -490,7 +523,8 @@ class _$_ChannelState implements _ChannelState {
             other is _$_ChannelState &&
             (identical(other.channel, channel) || other.channel == channel) &&
             const DeepCollectionEquality().equals(other._messages, _messages) &&
-            const DeepCollectionEquality().equals(other._members, _members));
+            const DeepCollectionEquality().equals(other._members, _members) &&
+            const DeepCollectionEquality().equals(other._read, _read));
   }
 
   @JsonKey(ignore: true)
@@ -499,7 +533,8 @@ class _$_ChannelState implements _ChannelState {
       runtimeType,
       channel,
       const DeepCollectionEquality().hash(_messages),
-      const DeepCollectionEquality().hash(_members));
+      const DeepCollectionEquality().hash(_members),
+      const DeepCollectionEquality().hash(_read));
 
   @JsonKey(ignore: true)
   @override
@@ -518,8 +553,9 @@ class _$_ChannelState implements _ChannelState {
 abstract class _ChannelState implements ChannelState {
   const factory _ChannelState(
       {final ChannelModel? channel,
-      required final List<Message> messages,
-      required final List<Member> members}) = _$_ChannelState;
+      final List<Message>? messages,
+      final List<Member>? members,
+      final List<Read>? read}) = _$_ChannelState;
 
   factory _ChannelState.fromJson(Map<String, dynamic> json) =
       _$_ChannelState.fromJson;
@@ -527,9 +563,11 @@ abstract class _ChannelState implements ChannelState {
   @override
   ChannelModel? get channel;
   @override
-  List<Message> get messages;
+  List<Message>? get messages;
   @override
-  List<Member> get members;
+  List<Member>? get members;
+  @override
+  List<Read>? get read;
   @override
   @JsonKey(ignore: true)
   _$$_ChannelStateCopyWith<_$_ChannelState> get copyWith =>

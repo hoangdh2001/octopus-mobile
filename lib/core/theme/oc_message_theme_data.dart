@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:octopus/core/theme/oc_avatar_theme_data.dart';
 
 class OCMessageThemeData with Diagnosticable {
   /// Creates a [OCMessageThemeData].
@@ -15,6 +16,7 @@ class OCMessageThemeData with Diagnosticable {
     this.reactionsMaskColor,
     this.createdAtStyle,
     this.linkBackgroundColor,
+    this.avatarTheme,
   });
 
   /// Text style for message text
@@ -50,6 +52,8 @@ class OCMessageThemeData with Diagnosticable {
   /// Background color for messages with url attachments.
   final Color? linkBackgroundColor;
 
+  final AvatarThemeData? avatarTheme;
+
   /// Copy with a theme
   OCMessageThemeData copyWith({
     TextStyle? messageTextStyle,
@@ -63,6 +67,7 @@ class OCMessageThemeData with Diagnosticable {
     Color? reactionsBorderColor,
     Color? reactionsMaskColor,
     Color? linkBackgroundColor,
+    AvatarThemeData? avatarTheme,
   }) =>
       OCMessageThemeData(
         messageTextStyle: messageTextStyle ?? this.messageTextStyle,
@@ -78,6 +83,7 @@ class OCMessageThemeData with Diagnosticable {
         reactionsBorderColor: reactionsBorderColor ?? this.reactionsBorderColor,
         reactionsMaskColor: reactionsMaskColor ?? this.reactionsMaskColor,
         linkBackgroundColor: linkBackgroundColor ?? this.linkBackgroundColor,
+        avatarTheme: avatarTheme ?? this.avatarTheme,
       );
 
   /// Linearly interpolate from one [OCMessageThemeData] to another.
@@ -87,30 +93,31 @@ class OCMessageThemeData with Diagnosticable {
     double t,
   ) =>
       OCMessageThemeData(
-        createdAtStyle: TextStyle.lerp(a.createdAtStyle, b.createdAtStyle, t),
-        messageAuthorStyle:
-            TextStyle.lerp(a.messageAuthorStyle, b.messageAuthorStyle, t),
-        messageBackgroundColor:
-            Color.lerp(a.messageBackgroundColor, b.messageBackgroundColor, t),
-        messageBorderColor:
-            Color.lerp(a.messageBorderColor, b.messageBorderColor, t),
-        messageLinksStyle:
-            TextStyle.lerp(a.messageLinksStyle, b.messageLinksStyle, t),
-        messageTextStyle:
-            TextStyle.lerp(a.messageTextStyle, b.messageTextStyle, t),
-        reactionsBackgroundColor: Color.lerp(
-          a.reactionsBackgroundColor,
-          b.reactionsBackgroundColor,
-          t,
-        ),
-        reactionsBorderColor:
-            Color.lerp(a.messageBorderColor, b.reactionsBorderColor, t),
-        reactionsMaskColor:
-            Color.lerp(a.reactionsMaskColor, b.reactionsMaskColor, t),
-        repliesStyle: TextStyle.lerp(a.repliesStyle, b.repliesStyle, t),
-        linkBackgroundColor:
-            Color.lerp(a.linkBackgroundColor, b.linkBackgroundColor, t),
-      );
+          createdAtStyle: TextStyle.lerp(a.createdAtStyle, b.createdAtStyle, t),
+          messageAuthorStyle:
+              TextStyle.lerp(a.messageAuthorStyle, b.messageAuthorStyle, t),
+          messageBackgroundColor:
+              Color.lerp(a.messageBackgroundColor, b.messageBackgroundColor, t),
+          messageBorderColor:
+              Color.lerp(a.messageBorderColor, b.messageBorderColor, t),
+          messageLinksStyle:
+              TextStyle.lerp(a.messageLinksStyle, b.messageLinksStyle, t),
+          messageTextStyle:
+              TextStyle.lerp(a.messageTextStyle, b.messageTextStyle, t),
+          reactionsBackgroundColor: Color.lerp(
+            a.reactionsBackgroundColor,
+            b.reactionsBackgroundColor,
+            t,
+          ),
+          reactionsBorderColor:
+              Color.lerp(a.messageBorderColor, b.reactionsBorderColor, t),
+          reactionsMaskColor:
+              Color.lerp(a.reactionsMaskColor, b.reactionsMaskColor, t),
+          repliesStyle: TextStyle.lerp(a.repliesStyle, b.repliesStyle, t),
+          linkBackgroundColor:
+              Color.lerp(a.linkBackgroundColor, b.linkBackgroundColor, t),
+          avatarTheme:
+              const AvatarThemeData().lerp(a.avatarTheme!, b.avatarTheme!, t));
 
   /// Merge with a theme
   OCMessageThemeData merge(OCMessageThemeData? other) {
@@ -132,6 +139,7 @@ class OCMessageThemeData with Diagnosticable {
       reactionsBorderColor: other.reactionsBorderColor,
       reactionsMaskColor: other.reactionsMaskColor,
       linkBackgroundColor: other.linkBackgroundColor,
+      avatarTheme: other.avatarTheme,
     );
   }
 
@@ -150,7 +158,8 @@ class OCMessageThemeData with Diagnosticable {
           reactionsBackgroundColor == other.reactionsBackgroundColor &&
           reactionsBorderColor == other.reactionsBorderColor &&
           reactionsMaskColor == other.reactionsMaskColor &&
-          linkBackgroundColor == other.linkBackgroundColor;
+          linkBackgroundColor == other.linkBackgroundColor &&
+          avatarTheme == other.avatarTheme;
 
   @override
   int get hashCode =>
@@ -164,7 +173,8 @@ class OCMessageThemeData with Diagnosticable {
       reactionsBackgroundColor.hashCode ^
       reactionsBorderColor.hashCode ^
       reactionsMaskColor.hashCode ^
-      linkBackgroundColor.hashCode;
+      linkBackgroundColor.hashCode ^
+      avatarTheme.hashCode;
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -180,6 +190,7 @@ class OCMessageThemeData with Diagnosticable {
       ..add(ColorProperty('reactionsBackgroundColor', reactionsBackgroundColor))
       ..add(ColorProperty('reactionsBorderColor', reactionsBorderColor))
       ..add(ColorProperty('reactionsMaskColor', reactionsMaskColor))
-      ..add(ColorProperty('linkBackgroundColor', linkBackgroundColor));
+      ..add(ColorProperty('linkBackgroundColor', linkBackgroundColor))
+      ..add(DiagnosticsProperty('avatarTheme', avatarTheme));
   }
 }

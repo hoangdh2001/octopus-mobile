@@ -14,10 +14,13 @@ abstract class OCStyleGuide {
   OCFont get labelPrimary;
   OCFont get labelSecondary;
   OCFont get input;
+  OCFont get footnote;
+  OCFont get footnoteBold;
 
   // MARK: Generic colors
   OCColor get brandPrimary;
   OCColor get brandPrimarySelect;
+  OCColor get accentInfo;
   OCColor get primaryGrey;
   OCColor get primaryGreyDisible;
   OCColor get secondaryGrey;
@@ -34,6 +37,7 @@ abstract class OCStyleGuide {
   OCColor get errorBackgroundColor;
   OCColor get errorLightBackgroundColor;
   OCColor get logoutColor;
+  OCColor get overlay;
   OCColor get overlayDark;
   OCColor get disabled;
 }

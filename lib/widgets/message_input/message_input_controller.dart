@@ -73,6 +73,21 @@ class MessageInputController extends ValueNotifier<Message> {
     value = message;
   }
 
+  set quotedMessage(Message message) {
+    value = value.copyWith(
+      quotedMessage: message,
+      quotedMessageID: message.id,
+    );
+  }
+
+  /// Clears the quoted message.
+  void clearQuotedMessage() {
+    value = value.copyWith(
+      quotedMessageID: null,
+      quotedMessage: null,
+    );
+  }
+
   set text(String newText) {
     var newTextWithCommand = newText;
 

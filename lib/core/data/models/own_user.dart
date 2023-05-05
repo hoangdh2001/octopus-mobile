@@ -14,7 +14,7 @@ class OwnUser extends User {
     super.phoneNumber,
     super.birthday,
     super.gender,
-    super.active,
+    super.active = false,
     super.lastActive,
     super.avatar,
     super.enabled,

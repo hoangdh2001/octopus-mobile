@@ -6,6 +6,8 @@ class OCColorTheme {
 
   final Color brandPrimarySelect;
 
+  final Color accentInfo;
+
   final Color primaryGrey;
 
   final Color secondaryGrey;
@@ -32,6 +34,8 @@ class OCColorTheme {
 
   final Color errorLightBackgroundColor;
 
+  final Color overlay;
+
   final Color overlayDark;
 
   final Color disabled;
@@ -39,6 +43,7 @@ class OCColorTheme {
   const OCColorTheme({
     required this.brandPrimary,
     required this.brandPrimarySelect,
+    required this.accentInfo,
     required this.primaryGrey,
     required this.secondaryGrey,
     required this.mediumGrey,
@@ -52,6 +57,7 @@ class OCColorTheme {
     required this.error,
     required this.errorBackgroundColor,
     required this.errorLightBackgroundColor,
+    required this.overlay,
     required this.overlayDark,
     required this.disabled,
   });
@@ -60,6 +66,7 @@ class OCColorTheme {
       OCColorTheme(
         brandPrimary: styleGuide.brandPrimary.lightAppearance,
         brandPrimarySelect: styleGuide.brandPrimarySelect.lightAppearance,
+        accentInfo: styleGuide.accentInfo.lightAppearance,
         primaryGrey: styleGuide.primaryGrey.lightAppearance,
         secondaryGrey: styleGuide.primaryGrey.lightAppearance,
         mediumGrey: styleGuide.mediumGrey.lightAppearance,
@@ -75,6 +82,7 @@ class OCColorTheme {
         errorBackgroundColor: styleGuide.errorBackgroundColor.lightAppearance,
         errorLightBackgroundColor:
             styleGuide.errorLightBackgroundColor.lightAppearance,
+        overlay: styleGuide.overlay.lightAppearance,
         overlayDark: styleGuide.overlayDark.lightAppearance,
         disabled: styleGuide.disabled.lightAppearance,
       );
@@ -82,6 +90,7 @@ class OCColorTheme {
   factory OCColorTheme.dark({required OCStyleGuide styleGuide}) => OCColorTheme(
         brandPrimary: styleGuide.brandPrimary.darkAppearance,
         brandPrimarySelect: styleGuide.brandPrimarySelect.darkAppearance,
+        accentInfo: styleGuide.accentInfo.darkAppearance,
         primaryGrey: styleGuide.primaryGrey.darkAppearance,
         secondaryGrey: styleGuide.primaryGrey.darkAppearance,
         mediumGrey: styleGuide.primaryGrey.darkAppearance,
@@ -97,6 +106,7 @@ class OCColorTheme {
         errorBackgroundColor: styleGuide.errorBackgroundColor.darkAppearance,
         errorLightBackgroundColor:
             styleGuide.errorLightBackgroundColor.darkAppearance,
+        overlay: styleGuide.overlay.darkAppearance,
         overlayDark: styleGuide.overlayDark.darkAppearance,
         disabled: styleGuide.disabled.darkAppearance,
       );

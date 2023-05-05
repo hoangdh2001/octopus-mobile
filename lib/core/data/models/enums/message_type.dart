@@ -5,4 +5,6 @@ enum MessageType {
   systemNotification,
   @JsonValue('NORMAL')
   normal,
+  @JsonValue('DELETED')
+  deleted;
 }

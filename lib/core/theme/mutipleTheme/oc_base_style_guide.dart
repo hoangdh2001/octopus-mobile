@@ -8,7 +8,7 @@ class OCBaseStyleGuide extends OCStyleGuide {
   final OCBrandFont _brandFont = OCBrandFontFactory().base();
 
   @override
-  OCFont get h1 => _brandFont.medium(18.sp);
+  OCFont get h1 => _brandFont.bold(16.sp);
 
   @override
   OCFont get h2 => _brandFont.bold(15.sp);
@@ -41,12 +41,22 @@ class OCBaseStyleGuide extends OCStyleGuide {
   OCFont get input => _brandFont.main(16.sp);
 
   @override
+  OCFont get footnote => _brandFont.main(10.sp);
+
+  @override
+  OCFont get footnoteBold => _brandFont.bold(10.sp);
+
+  @override
   OCColor get brandPrimary => const OCColor(
       lightAppearance: Color(0xFF7C68EC), darkAppearance: Color(0xFF7C68EC));
 
   @override
   OCColor get brandPrimarySelect => const OCColor(
       lightAppearance: Color(0xFF584F89), darkAppearance: Color(0xFF584F89));
+
+  @override
+  OCColor get accentInfo => const OCColor(
+      lightAppearance: Color(0xff20E070), darkAppearance: Color(0xff20E070));
 
   @override
   OCColor get primaryGrey => const OCColor(
@@ -111,6 +121,11 @@ class OCBaseStyleGuide extends OCStyleGuide {
   @override
   OCColor get logoutColor => const OCColor(
       lightAppearance: Color(0xFFB05959), darkAppearance: Color(0xFFB05959));
+
+  @override
+  OCColor get overlay => const OCColor(
+      lightAppearance: Color.fromRGBO(0, 0, 0, 0.2),
+      darkAppearance: Color.fromRGBO(0, 0, 0, 0.4));
 
   @override
   OCColor get overlayDark => const OCColor(

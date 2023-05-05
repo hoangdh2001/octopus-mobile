@@ -1,18 +1,16 @@
-import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:octopus/core/data/models/message.dart';
 import 'package:octopus/core/data/models/user.dart';
-import 'package:octopus/core/ui/better_stream_builder.dart';
-import 'package:octopus/octopus.dart';
+import 'package:octopus/core/theme/oc_message_theme_data.dart';
 import 'package:octopus/octopus_channel.dart';
-import 'package:octopus/pages/channel/channel_page.dart';
 
 class MessageText extends StatelessWidget {
   /// Constructor for creating a [MessageText] widget
   const MessageText({
     super.key,
     required this.message,
+    required this.messageTheme,
     this.onMentionTap,
     this.onLinkTap,
   });
@@ -25,6 +23,8 @@ class MessageText extends StatelessWidget {
 
   /// Callback for when link is tapped
   final void Function(String)? onLinkTap;
+
+  final OCMessageThemeData messageTheme;
 
   @override
   Widget build(BuildContext context) {
@@ -58,17 +58,17 @@ class MessageText extends StatelessWidget {
       styleSheet: MarkdownStyleSheet.fromTheme(
         themeData.copyWith(
           textTheme: themeData.textTheme.apply(
-              // bodyColor: messageTheme.messageTextStyle?.color,
-              // decoration: messageTheme.messageTextStyle?.decoration,
-              // decorationColor: messageTheme.messageTextStyle?.decorationColor,
-              // decorationStyle: messageTheme.messageTextStyle?.decorationStyle,
-              // fontFamily: messageTheme.messageTextStyle?.fontFamily,
-              ),
+            bodyColor: messageTheme.messageTextStyle?.color,
+            decoration: messageTheme.messageTextStyle?.decoration,
+            decorationColor: messageTheme.messageTextStyle?.decorationColor,
+            decorationStyle: messageTheme.messageTextStyle?.decorationStyle,
+            fontFamily: messageTheme.messageTextStyle?.fontFamily,
+          ),
         ),
       ).copyWith(
-          // a: messageTheme.messageLinksStyle,
-          // p: messageTheme.messageTextStyle,
-          ),
+        a: messageTheme.messageLinksStyle,
+        p: messageTheme.messageTextStyle,
+      ),
     );
   }
 }

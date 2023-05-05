@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:octopus/core/data/repositories/channel_repository.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:octopus/core/ui/paged_value_scroll_view/bloc/paged_value_bloc.dart';
+import 'package:octopus/core/ui/scroll_view/scroll_view_empty_widget.dart';
 import 'package:octopus/di/service_locator.dart';
 import 'package:octopus/octopus.dart';
 import 'package:octopus/pages/channelList/bloc/channel_list_bloc.dart';
@@ -22,7 +24,7 @@ class _ChannelListPageState extends State<ChannelListPage> {
   final ScrollController _scrollController = ScrollController();
   TextEditingController? _controller;
   late final ChannelListBloc _channelListBloc =
-      ChannelListBloc(getIt<ChannelRepository>(), Octopus.of(context).client);
+      ChannelListBloc(client: Octopus.of(context).client, limit: 30);
 
   @override
   void initState() {
@@ -81,7 +83,7 @@ class _ChannelListPageState extends State<ChannelListPage> {
             child: ChannelList(
               scrollController: _scrollController,
               controller: _channelListBloc,
-              separatorBuilder: (context, values, index) => Container(),
+              separatorBuilder: (context, values, index) => const Offstage(),
               itemBuilder: (context, channels, index, defaultWidget) {
                 final chatTheme = OctopusTheme.of(context);
                 final channel = channels[index];
@@ -97,7 +99,7 @@ class _ChannelListPageState extends State<ChannelListPage> {
                       ),
                       CustomSlidableAction(
                         backgroundColor: Colors.pink,
-                        child: Icon(Icons.delete),
+                        child: SvgPicture.asset('assets/icons/trash.svg'),
                         onPressed: (_) async {},
                       ),
                     ],
@@ -106,7 +108,38 @@ class _ChannelListPageState extends State<ChannelListPage> {
                 );
               },
               onChannelTap: (channel) {
-                context.push('/messages/channel', extra: channel);
+                context.push('/messages/channel?channelID=${channel.id}',
+                    extra: channel);
+              },
+              emptyBuilder: (context) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: ScrollViewEmptyWidget(
+                      emptyIcon: SvgPicture.asset(
+                        'assets/icons/message.svg',
+                        width: 148,
+                        color: OctopusTheme.of(context).colorTheme.disabled,
+                      ),
+                      emptyTitle: TextButton(
+                        onPressed: () {
+                          context.push('/newMessage');
+                        },
+                        child: Text(
+                          'Start a chat',
+                          style: OctopusTheme.of(context)
+                              .textTheme
+                              .primaryGreyBody
+                              .copyWith(
+                                color: OctopusTheme.of(context)
+                                    .colorTheme
+                                    .brandPrimary,
+                              ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
               },
             ),
           ),

@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:octopus/app.dart';
 import 'package:octopus/core/data/client/channel.dart';
 import 'package:octopus/core/data/client/client.dart';
 import 'package:octopus/core/data/models/user.dart';
@@ -19,7 +21,6 @@ class OctopusCore extends StatefulWidget {
     this.backgroundKeepAlive = const Duration(minutes: 1),
     this.connectivityStream,
     this.tokenRefreshStream,
-    this.observer,
   });
 
   final Client client;
@@ -34,8 +35,6 @@ class OctopusCore extends StatefulWidget {
   final Stream<ConnectivityResult>? connectivityStream;
 
   final Stream<String?>? tokenRefreshStream;
-
-  final RouteObserver<PageRoute>? observer;
 
   @override
   OctopusCoreState createState() => OctopusCoreState();
@@ -54,8 +53,7 @@ class OctopusCore extends StatefulWidget {
   }
 }
 
-class OctopusCoreState extends State<OctopusCore>
-    with WidgetsBindingObserver, RouteAware {
+class OctopusCoreState extends State<OctopusCore> with WidgetsBindingObserver {
   Client get client => widget.client;
 
   Timer? _disconnectTimer;
@@ -75,17 +73,12 @@ class OctopusCoreState extends State<OctopusCore>
 
   StreamSubscription? _subscription;
 
-  RouteObserver<PageRoute>? get _observer => widget.observer;
-
   var _isInForeground = true;
   var _isConnectionAvailable = true;
-
-  Route? currentRoute;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _observer?.subscribe(this, ModalRoute.of(context) as PageRoute);
   }
 
   @override
@@ -108,9 +101,11 @@ class OctopusCoreState extends State<OctopusCore>
         return;
       }
       final channelId = event.channelID;
-      if (currentRoute?.settings.name == '/channels') {
-        final channel = currentRoute?.settings.arguments as Channel;
-        if (channel.id == channelId) {
+      final location = GoRouter.of(context).location;
+      if (location.startsWith('/messages/channel')) {
+        final uri = Uri.parse(location);
+        final channelID = uri.queryParameters['channelID'];
+        if (channelID == channelId) {
           return;
         }
       }
@@ -235,23 +230,5 @@ class OctopusCoreState extends State<OctopusCore>
     _disconnectTimer?.cancel();
     _subscription?.cancel();
     super.dispose();
-  }
-
-  @override
-  void didPop() {
-    super.didPop();
-    currentRoute = ModalRoute.of(context);
-  }
-
-  @override
-  void didPush() {
-    super.didPush();
-    currentRoute = ModalRoute.of(context);
-  }
-
-  @override
-  void didPopNext() {
-    super.didPopNext();
-    currentRoute = ModalRoute.of(context);
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:octopus/core/data/models/error.dart';
 import 'package:octopus/core/data/models/user.dart';
+import 'package:octopus/core/data/socketio/chat_error.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/core/ui/paged_value_scroll_view/paged_value_scroll_view.dart';
 import 'package:octopus/core/ui/scroll_view/scroll_view_empty_widget.dart';
@@ -60,7 +61,7 @@ class UserListView extends StatelessWidget {
 
   final WidgetBuilder? loadingBuilder;
 
-  final Widget Function(BuildContext, Error)? errorBuilder;
+  final Widget Function(BuildContext, OCError)? errorBuilder;
 
   final void Function(User)? onUserTap;
 

@@ -1,13 +1,17 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     hide Message;
 import 'package:go_router/go_router.dart';
 import 'package:octopus/core/data/models/event.dart';
+import 'package:octopus/core/data/models/member.dart';
 import 'package:octopus/core/data/socketio/event_type.dart';
+import 'package:octopus/di/service_locator.dart';
 import 'package:octopus/octopus.dart';
+import 'package:path_provider/path_provider.dart';
 
 /// Defines a iOS/MacOS notification category for text input actions.
 const String darwinNotificationCategoryText = 'textCategory';
@@ -55,50 +59,6 @@ void showLocalNotification(
       : await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
   const initializationSettingsAndroid =
       AndroidInitializationSettings('ic_launcher_foreground');
-  final List<DarwinNotificationCategory> darwinNotificationCategories =
-      <DarwinNotificationCategory>[
-    DarwinNotificationCategory(
-      darwinNotificationCategoryText,
-      actions: <DarwinNotificationAction>[
-        DarwinNotificationAction.text(
-          'text_1',
-          'Action 1',
-          buttonTitle: 'Send',
-          placeholder: 'Placeholder',
-        ),
-      ],
-    ),
-    DarwinNotificationCategory(
-      darwinNotificationCategoryPlain,
-      actions: <DarwinNotificationAction>[
-        DarwinNotificationAction.plain('id_1', 'Action 1'),
-        DarwinNotificationAction.plain(
-          'id_2',
-          'Action 2 (destructive)',
-          options: <DarwinNotificationActionOption>{
-            DarwinNotificationActionOption.destructive,
-          },
-        ),
-        DarwinNotificationAction.plain(
-          navigationActionId,
-          'Action 3 (foreground)',
-          options: <DarwinNotificationActionOption>{
-            DarwinNotificationActionOption.foreground,
-          },
-        ),
-        DarwinNotificationAction.plain(
-          'id_4',
-          'Action 4 (auth required)',
-          options: <DarwinNotificationActionOption>{
-            DarwinNotificationActionOption.authenticationRequired,
-          },
-        ),
-      ],
-      options: <DarwinNotificationCategoryOption>{
-        DarwinNotificationCategoryOption.hiddenPreviewShowTitle,
-      },
-    )
-  ];
   final DarwinInitializationSettings initializationSettingsDarwin =
       DarwinInitializationSettings(
     requestAlertPermission: false,
@@ -106,7 +66,6 @@ void showLocalNotification(
     requestSoundPermission: false,
     onDidReceiveLocalNotification:
         (int id, String? title, String? body, String? payload) async {},
-    notificationCategories: darwinNotificationCategories,
   );
   final initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
@@ -127,22 +86,78 @@ void showLocalNotification(
           );
           await channel.watch();
         }
-        context.push('/messages/channel', extra: channel);
+        context.push('/messages/channel?channelID=${channel.id}',
+            extra: channel);
         return;
       }
       context.push('/home');
     },
   );
+  final attachmentsLength = event.message?.attachments
+          .where((attachment) => attachment.type == 'image')
+          .length ??
+      0;
+  final hasImage = attachmentsLength > 0;
+
+  final client = Octopus.of(context).client;
+  final currentUser = Octopus.of(context).client.state.currentUser;
+  var channel = client.state.channels[event.channelID];
+
+  if (channel == null) {
+    channel = client.channel(
+      id: event.channelID,
+    );
+    await channel.watch();
+  }
+
+  final isGroup = channel.memberCount! > 2;
+
+  var channelName = channel.name;
+  if (channelName == null) {
+    final otherMembers = channel.state!.members.where(
+      (member) => member.userID != currentUser!.id,
+    );
+
+    if (otherMembers.isNotEmpty) {
+      if (otherMembers.length == 1) {
+        final user = otherMembers.first.user;
+        if (user != null) {
+          channelName = user.name;
+        }
+      } else {
+        const maxWidth = 200;
+        const maxChars = maxWidth / 11;
+        var currentChars = 0;
+        final currentMembers = <Member>[];
+        otherMembers.forEach((element) {
+          final newLength = currentChars + (element.user?.name.length ?? 0);
+          if (newLength < maxChars) {
+            currentChars = newLength;
+            currentMembers.add(element);
+          }
+        });
+
+        final exceedingMembers = otherMembers.length - currentMembers.length;
+        channelName = '${currentMembers.map((e) => e.user?.name).join(', ')} '
+            '${exceedingMembers > 0 ? '+ $exceedingMembers' : ''}';
+      }
+    }
+  }
+
   await flutterLocalNotificationsPlugin.show(
     event.message!.id.hashCode,
-    event.message!.sender!.name,
-    event.message!.text,
+    isGroup ? channelName : event.message!.sender!.name,
+    hasImage
+        ? '${isGroup ? '${event.message!.sender!.name}: ' : ''}Đã gửi bạn ${event.message!.attachments.length} ảnh'
+        : '${isGroup ? '${event.message!.sender!.name}: ' : ''}${event.message!.text}',
     const NotificationDetails(
       android: AndroidNotificationDetails(
-          'your channel id', 'your channel name',
-          channelDescription: 'your channel description',
-          priority: Priority.high,
-          importance: Importance.high),
+        'your channel id',
+        'your channel name',
+        channelDescription: 'your channel description',
+        priority: Priority.high,
+        importance: Importance.high,
+      ),
       iOS: DarwinNotificationDetails(
         categoryIdentifier: darwinNotificationCategoryText,
       ),

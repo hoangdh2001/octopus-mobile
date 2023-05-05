@@ -24,6 +24,8 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FirebaseMessagingAutoInitEnabled</key>
+	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>googlegmail</string>
@@ -43,11 +45,21 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Octopus would like to save photos to your Camera.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Octopus would like access to your Microphone.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Octopus would like to save photos to your photo gallery.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Octopus would like access to your photo gallery.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
+		<string>audio</string>
 		<string>fetch</string>
+		<string>push-to-talk</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
@@ -71,15 +83,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>FirebaseMessagingAutoInitEnabled</key>
-	<false/>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Octopus would like access to your photo gallery.</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Octopus would like to save photos to your photo gallery.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Octopus would like to save photos to your Camera.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Octopus would like access to your Microphone.</string>
 </dict>
 </plist>

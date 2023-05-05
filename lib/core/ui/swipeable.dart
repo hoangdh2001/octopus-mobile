@@ -149,8 +149,7 @@ class _SwipeableState extends State<Swipeable> with TickerProviderStateMixin {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          // color:
-                          //     OctopusTheme.of(context).colorTheme.primaryGrey,
+                          color: OctopusTheme.of(context).colorTheme.disabled,
                         ),
                       ),
                       child: widget.backgroundIcon,

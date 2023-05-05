@@ -3,19 +3,29 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:octopus/core/data/client/client.dart';
+import 'package:octopus/core/data/client/key_stroke_handler.dart';
 import 'package:octopus/core/data/models/attachment.dart';
 import 'package:octopus/core/data/models/attachment_file.dart';
 import 'package:octopus/core/data/models/channel_state.dart';
+import 'package:octopus/core/data/models/empty_response.dart';
 import 'package:octopus/core/data/models/enums/message_status.dart';
+import 'package:octopus/core/data/models/enums/message_type.dart';
 import 'package:octopus/core/data/models/event.dart';
 import 'package:octopus/core/data/models/member.dart';
 import 'package:octopus/core/data/models/message.dart';
+import 'package:octopus/core/data/models/pagination_params.dart';
+import 'package:octopus/core/data/models/reaction.dart';
+import 'package:octopus/core/data/models/read.dart';
+import 'package:octopus/core/data/models/send_reaction_response.dart';
+import 'package:octopus/core/data/models/user.dart';
 import 'package:octopus/core/data/repositories/channel_repository.dart';
 import 'package:octopus/core/data/socketio/chat_error.dart';
 import 'package:octopus/core/data/socketio/event_type.dart';
 import 'package:rate_limiter/rate_limiter.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:uuid/uuid.dart';
+
+const incomingTypingStartEventTimeout = 7;
 
 class Channel {
   Channel(
@@ -127,25 +137,33 @@ class Channel {
     return state!.channelStateStream.map((cs) => cs.channel?.avatar);
   }
 
-  List<Member> get members {
+  List<Member>? get members {
     _checkInitialized();
     return state!.channelState.members;
   }
 
-  Stream<List<Member>> get membersStream {
+  Stream<List<Member>?> get membersStream {
     _checkInitialized();
     return state!.channelStateStream.map((cs) => cs.members);
   }
 
-  int get memberCount {
+  int? get memberCount {
     _checkInitialized();
-    return state!.channelState.members.length;
+    return state!.channelState.members?.length;
   }
 
-  Stream<int> get memberCountStream {
+  Stream<int?> get memberCountStream {
     _checkInitialized();
-    return state!.channelStateStream.map((cs) => cs.members.length);
+    return state!.channelStateStream.map((cs) => cs.members?.length);
   }
+
+  bool get isActiveNotify => state!.channelState.channel?.activeNotify ?? true;
+
+  /// Returns true if the channel is muted, as a stream.
+  Stream<bool> get isActiveNotifyStream =>
+      state!.channelStateStream.map((cs) => cs.channel?.activeNotify ?? true);
+
+  bool get isGroup => memberCount != 2;
 
   void updateChannelState(ChannelState channelState) {
     state!.updateChannelState(channelState);
@@ -246,6 +264,64 @@ class Channel {
       return rs;
     } catch (e) {
       // if (e is StreamChatNetworkError && e.isRetriable) {
+      //   state!._retryQueue.add([message]);
+      // }
+      rethrow;
+    }
+  }
+
+  Future<EmptyResponse> deleteMessage(Message message, {bool? hard}) async {
+    final hardDelete = hard ?? false;
+    final currentUser = client.state.currentUser;
+    if (message.status == MessageStatus.sending ||
+        message.status == MessageStatus.error) {
+      final deleteMessage = hardDelete
+          ? message.copyWith(
+              status: MessageStatus.ready,
+              type: MessageType.deleted,
+            )
+          : message.copyWith(
+              status: MessageStatus.ready,
+              ignoreUser: [
+                if (message.ignoreUser != null) ...message.ignoreUser!,
+                currentUser!.id
+              ],
+            );
+      state!.deleteMessage(deleteMessage);
+
+      _messageAttachmentsUploadCompleter
+          .remove(message.id)
+          ?.completeError(Exception('Message deleted'));
+      return EmptyResponse();
+    }
+
+    try {
+      // ignore: parameter_assignments
+      message = hardDelete
+          ? message.copyWith(
+              type: MessageType.deleted,
+              status: MessageStatus.deleting,
+            )
+          : message.copyWith(
+              status: MessageStatus.ready,
+              ignoreUser: [
+                if (message.ignoreUser != null) ...message.ignoreUser!,
+                currentUser!.id
+              ],
+            );
+
+      state?.deleteMessage(message);
+
+      final response =
+          await _channelRepository.deleteMessage(id!, message.id, hard: hard);
+
+      state?.deleteMessage(
+        message.copyWith(status: MessageStatus.ready),
+      );
+
+      return response;
+    } catch (e) {
+      // if (e is ChatNetworkError && e.isRetriable) {
       //   state!._retryQueue.add([message]);
       // }
       rethrow;
@@ -373,7 +449,8 @@ class Channel {
     ChannelState? response;
 
     try {
-      final rs = await _channelRepository.queryChannel(id!);
+      final rs = await _channelRepository.queryChannel(id!,
+          messagesPagination: const PaginationParams(skip: 0));
       rs.fold((channelState) {
         response = channelState;
       }, (error) {
@@ -429,6 +506,11 @@ class Channel {
     );
   }
 
+  Future<EmptyResponse> sendEvent(Event event) {
+    _checkInitialized();
+    return _channelRepository.sendEvent(id!, event);
+  }
+
   void _initState(ChannelState channelState) {
     state = ChannelClientState(this, channelState);
 
@@ -440,6 +522,20 @@ class Channel {
     }
   }
 
+  Future<EmptyResponse> markRead({String? messageID}) async {
+    _checkInitialized();
+    // client.state.totalUnreadCount =
+    //     max(0, (client.state.totalUnreadCount) - (state!.unreadCount));
+    state!.unreadCount = 0;
+    return _markChannelRead(id!, messageID: messageID);
+  }
+
+  Future<EmptyResponse> _markChannelRead(
+    String channelID, {
+    String? messageID,
+  }) =>
+      _channelRepository.markChannelRead(channelID, messageID: messageID);
+
   String? get id => state?._channelState.channel?.id ?? _id;
 
   Client get client => _client;
@@ -449,10 +545,142 @@ class Channel {
 
   Future<bool> get initialized => _initializedCompleter.future;
 
+  late final _keyStrokeHandler = KeyStrokeHandler(
+    onStartTyping: startTyping,
+    onStopTyping: stopTyping,
+  );
+
+  Future<void> keyStroke() async {
+    client.logger.info('KeyStroke received');
+    return _keyStrokeHandler();
+  }
+
+  Future<void> startTyping() async {
+    client.logger.info('start typing');
+    await sendEvent(Event(
+      type: EventType.typingStart,
+    ));
+  }
+
+  Future<void> stopTyping() async {
+    client.logger.info('stop typing');
+    await sendEvent(Event(
+      type: EventType.typingStop,
+    ));
+  }
+
+  Future<SendReactionResponse> sendReaction(
+    Message message,
+    String type, {
+    int score = 1,
+    Map<String, Object?> extraData = const {},
+  }) async {
+    _checkInitialized();
+    final messageId = message.id;
+    final now = DateTime.now();
+    final user = _client.state.currentUser;
+
+    var latestReactions = [...message.reactions ?? <Reaction>[]];
+    latestReactions.removeWhere((it) => it.reacterID == user!.id);
+
+    final newReaction = Reaction(
+      // messageId: messageId,
+      createdAt: now,
+      type: type,
+      reacter: user,
+      // score: score,
+      // extraData: extraData,
+    );
+
+    latestReactions = (latestReactions
+          // Inserting at the 0th index as it's the latest reaction
+          ..insert(0, newReaction))
+        .take(10)
+        .toList();
+    final ownReactions = <Reaction>[newReaction];
+
+    final newMessage = message.copyWith(
+      reactionCounts: {...message.reactionCounts ?? <String, int>{}}
+        ..update(type, (value) {
+          return value;
+        }, ifAbsent: () => 1), // ignore: prefer-trailing-comma
+      // reactionScores: {...message.reactionScores ?? <String, int>{}}
+      //   ..update(type, (value) {
+      //     if (enforceUnique) return value;
+      //     return value + 1;
+      //   }, ifAbsent: () => 1), // ignore: prefer-trailing-comma
+      reactions: latestReactions,
+      ownReactions: ownReactions,
+    );
+
+    state?.updateMessage(newMessage);
+
+    try {
+      final reactionResp = await _channelRepository.sendReaction(
+        id!,
+        messageId,
+        type,
+      );
+      return reactionResp;
+    } catch (_) {
+      // Reset the message if the update fails
+      state?.updateMessage(message);
+      rethrow;
+    }
+  }
+
+  /// Delete a reaction from this channel.
+  Future<EmptyResponse> deleteReaction(
+    Message message,
+    Reaction reaction,
+  ) async {
+    final type = reaction.type;
+
+    final reactionCounts = {...message.reactionCounts ?? <String, int>{}};
+    if (reactionCounts.containsKey(type)) {
+      reactionCounts.update(type, (value) => value - 1);
+    }
+    // final reactionScores = {...message.reactionScores ?? <String, int>{}};
+    // if (reactionScores.containsKey(type)) {
+    //   reactionScores.update(type, (value) => value - 1);
+    // }
+
+    final latestReactions = [...message.reactions ?? <Reaction>[]]..removeWhere(
+        (r) => r.reacterID == reaction.reacterID && r.type == reaction.type);
+
+    // final ownReactions = message.ownReactions
+    //   ?..removeWhere((r) =>
+    //       r.userId == reaction.userId &&
+    //       r.type == reaction.type &&
+    //       r.messageId == reaction.messageId);
+
+    final newMessage = message.copyWith(
+      reactionCounts: reactionCounts..removeWhere((_, value) => value == 0),
+      // reactionScores: reactionScores..removeWhere((_, value) => value == 0),
+      reactions: latestReactions,
+      // ownReactions: ownReactions,
+    );
+
+    state?.updateMessage(newMessage);
+
+    try {
+      final deleteResponse = await _channelRepository.deleteReaction(
+        id!,
+        message.id,
+        reaction.type,
+      );
+      return deleteResponse;
+    } catch (_) {
+      // Reset the message if the update fails
+      state?.updateMessage(message);
+      rethrow;
+    }
+  }
+
   void dispose() {
     client.state.removeChannel('$id');
     state?.dispose();
-    // _keyStrokeHandler.cancel();
+    _keyStrokeHandler.cancel();
   }
 
   void _checkInitialized() {
@@ -491,9 +719,24 @@ class ChannelClientState {
   ) {
     _channelStateController = BehaviorSubject.seeded(channelState);
 
+    _listenTypingEvents();
+
     _listenMessageNew();
 
+    _listenMessageDeleted();
+
+    _listenReactions();
+
+    _startCleaningStaleTypingEvents();
+
     updateChannelState(channelState);
+  }
+
+  void _listenMessageDeleted() {
+    _subscriptions.add(_channel.on(EventType.messageDeleted).listen((event) {
+      final message = event.message!;
+      updateMessage(message);
+    }));
   }
 
   void _listenMessageNew() {
@@ -516,17 +759,28 @@ class ChannelClientState {
     }));
   }
 
+  void _listenReactions() {
+    _subscriptions.add(_channel.on(EventType.reactionNew).listen((event) {
+      final oldMessage =
+          messages.firstWhereOrNull((it) => it.id == event.message?.id);
+      final message = event.message!.copyWith(
+        ownReactions: oldMessage?.ownReactions,
+      );
+      updateMessage(message);
+    }));
+  }
+
   void updateMessage(Message message) {
     final newMessages = [...messages];
     final oldIndex = newMessages.indexWhere((m) => m.id == message.id);
     if (oldIndex != -1) {
       Message? m;
-      // if (message.quotedMessageId != null && message.quotedMessage == null) {
-      //   final oldMessage = newMessages[oldIndex];
-      //   m = message.copyWith(
-      //     quotedMessage: oldMessage.quotedMessage,
-      //   );
-      // }
+      if (message.quotedMessageID != null && message.quotedMessage == null) {
+        final oldMessage = newMessages[oldIndex];
+        m = message.copyWith(
+          quotedMessage: oldMessage.quotedMessage,
+        );
+      }
       newMessages[oldIndex] = m ?? message;
     } else {
       newMessages.add(message);
@@ -556,12 +810,23 @@ class ChannelClientState {
     );
   }
 
+  void removeMessage(Message message) async {
+    final allMessages = [...messages];
+    _channelState = _channelState.copyWith(
+      messages: allMessages..removeWhere((e) => e.id == message.id),
+    );
+  }
+
+  void deleteMessage(Message message) {
+    return updateMessage(message);
+  }
+
   int _sortByCreatedAt(Message a, Message b) =>
       a.createdAt.compareTo(b.createdAt);
 
   void updateChannelState(ChannelState updatedState) {
-    final _existingStateMessages = _channelState.messages;
-    final _updatedStateMessages = updatedState.messages;
+    final _existingStateMessages = _channelState.messages ?? [];
+    final _updatedStateMessages = updatedState.messages ?? [];
     final newMessages = <Message>[
       ..._updatedStateMessages,
       ..._existingStateMessages
@@ -581,22 +846,138 @@ class ChannelClientState {
     );
   }
 
+  /// Channel related typing users stream.
+  Stream<Map<User, Event>> get typingEventsStream =>
+      _typingEventsController.stream;
+
+  /// Channel related typing users last value.
+  Map<User, Event> get typingEvents => _typingEventsController.value;
+  final _typingEventsController = BehaviorSubject.seeded(<User, Event>{});
+
+  void _listenTypingEvents() {
+    final currentUser = _channel.client.state.currentUser;
+    if (currentUser == null) return;
+
+    _subscriptions
+      ..add(
+        _channel.on(EventType.typingStart).listen(
+          (event) {
+            final user = event.user;
+            if (user != null && user.id != currentUser.id) {
+              final events = {...typingEvents};
+              events[user] = event;
+              _typingEventsController.add(events);
+            }
+          },
+        ),
+      )
+      ..add(
+        _channel.on(EventType.typingStop).listen(
+          (event) {
+            final user = event.user;
+            if (user != null && user.id != currentUser.id) {
+              final events = {...typingEvents}..remove(user);
+              _typingEventsController.add(events);
+            }
+          },
+        ),
+      )
+      ..add(
+        _channel.on().where((event) {
+          final user = event.user;
+          if (user == null) return false;
+          return members.any((m) => m.userID == user.id);
+        }).listen(
+          (event) {
+            final newMembers = List<Member>.from(members);
+            final oldMemberIndex =
+                newMembers.indexWhere((m) => m.userID == event.user!.id);
+            if (oldMemberIndex > -1) {
+              final oldMember = newMembers.removeAt(oldMemberIndex);
+              updateChannelState(
+                ChannelState(
+                  members: [
+                    ...newMembers,
+                    oldMember.copyWith(
+                      user: event.user,
+                    ),
+                  ],
+                ),
+              );
+            }
+          },
+        ),
+      );
+  }
+
+  Timer? _staleTypingEventsCleanerTimer;
+
+  void _startCleaningStaleTypingEvents() {
+    _staleTypingEventsCleanerTimer = Timer.periodic(
+      const Duration(seconds: 1),
+      (_) {
+        final now = DateTime.now();
+        typingEvents.forEach((user, event) {
+          if (now.difference(event.createdAt).inSeconds >
+              incomingTypingStartEventTimeout) {
+            _channel.client.handleEvent(
+              Event(
+                type: EventType.typingStop,
+                user: user,
+                channelID: _channel.id,
+              ),
+            );
+          }
+        });
+      },
+    );
+  }
+
+  List<Read> get read => _channelState.read ?? <Read>[];
+
+  Stream<List<Read>> get readStream =>
+      channelStateStream.map((cs) => cs.read ?? <Read>[]);
+
+  bool _isCurrentUserRead(Read read) =>
+      read.user.id == _channel._client.state.currentUser!.id;
+
+  Read? get currentUserRead => read.firstWhereOrNull(_isCurrentUserRead);
+
+  Stream<Read?> get currentUserReadStream =>
+      readStream.map((read) => read.firstWhereOrNull(_isCurrentUserRead));
+
+  Stream<int> get unreadCountStream =>
+      currentUserReadStream.map((read) => read?.unreadMessages ?? 0);
+
+  int get unreadCount => currentUserRead?.unreadMessages ?? 0;
+
+  set unreadCount(int count) {
+    final reads = [...read];
+    final currentUserReadIndex = reads.indexWhere(_isCurrentUserRead);
+
+    if (currentUserReadIndex < 0) return;
+
+    reads[currentUserReadIndex] =
+        reads[currentUserReadIndex].copyWith(unreadMessages: count);
+    _channelState = _channelState.copyWith(read: reads);
+  }
+
   void truncate() {
     _channelState = _channelState.copyWith(
       messages: [],
     );
   }
 
-  List<Message> get messages => _channelState.messages;
+  List<Message> get messages => _channelState.messages ?? <Message>[];
 
   Stream<List<Message>> get messagesStream => channelStateStream
-      .map((cs) => cs.messages)
+      .map((cs) => cs.messages ?? <Message>[])
       .distinct(const ListEquality().equals);
 
-  List<Member> get members => _channelState.members;
+  List<Member> get members => _channelState.members ?? <Member>[];
 
   Stream<List<Member>> get membersStream => channelStateStream
-      .map((cs) => cs.members)
+      .map((cs) => cs.members ?? <Member>[])
       .distinct(const ListEquality().equals);
 
   bool get isUpToDate => _isUpToDateController.value;
@@ -622,5 +1003,9 @@ class ChannelClientState {
 
   void dispose() {
     _channelStateController.close();
+    _staleTypingEventsCleanerTimer?.cancel();
+    _typingEventsController.close();
+    _subscriptions.cancel();
+    _isUpToDateController.close();
   }
 }

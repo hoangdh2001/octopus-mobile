@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:octopus/core/data/models/user.dart';
 import 'package:octopus/core/data/repositories/user_repository.dart';
+import 'package:octopus/core/data/socketio/chat_error.dart';
 import 'package:octopus/core/ui/paged_value_scroll_view/bloc/paged_value_bloc.dart';
 
 const defaultChannelPagedLimit = 10;
@@ -22,7 +23,7 @@ class UserListBloc extends PagedValueBloc<int, User> {
     emit(result.fold((users) {
       final nextKey = users.length < limit ? null : users.length;
       return PagedValueState(items: users, nextPageKey: nextKey);
-    }, (error) => PagedValueState.error(error)));
+    }, (error) => PagedValueState.error(OCError(error.toString()))));
   }
 
   @override
@@ -37,7 +38,7 @@ class UserListBloc extends PagedValueBloc<int, User> {
       final nextKey = users.length < limit ? null : newItems.length;
       return previousState.copyWith(items: newItems, nextPageKey: nextKey);
     }, (error) {
-      return previousState.copyWith(error: error);
+      return previousState.copyWith(error: OCError(error.toString()));
     }));
   }
 }
