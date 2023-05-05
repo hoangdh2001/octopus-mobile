@@ -60,7 +60,10 @@ class _ChannelPageState extends State<ChannelPage> {
             padding: const EdgeInsets.fromLTRB(5, 5, 16, 5),
             child: IconButton(
               onPressed: () {
-                context.push('/messages/channel/videoCall');
+                context.push(
+                  '/messages/channel/videoCall',
+                  extra: widget.channel,
+                );
               },
               icon: SvgPicture.asset(
                 'assets/icons/phone.svg',

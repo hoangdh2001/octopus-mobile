@@ -9,6 +9,7 @@ class BackButton extends StatelessWidget {
     this.onPressed,
     this.showUnreads = false,
     this.id,
+    this.iconColor,
   });
 
   final VoidCallback? onPressed;
@@ -16,6 +17,8 @@ class BackButton extends StatelessWidget {
   final bool showUnreads;
 
   final String? id;
+
+  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) => Stack(
@@ -41,7 +44,7 @@ class BackButton extends StatelessWidget {
               'assets/icons/chevron-left.svg',
               width: 24,
               height: 24,
-              color: OctopusTheme.of(context).colorTheme.icon,
+              color: iconColor ?? OctopusTheme.of(context).colorTheme.icon,
             ),
           ),
           if (showUnreads)

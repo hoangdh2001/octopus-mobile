@@ -1,55 +1,143 @@
-import 'package:agora_uikit/agora_uikit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_callkit_incoming/entities/android_params.dart';
+import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
+import 'package:flutter_callkit_incoming/entities/ios_params.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:octopus/core/data/client/channel.dart';
+import 'package:octopus/core/theme/oc_theme.dart';
+import 'package:octopus/widgets/channel/channel_name.dart';
+import 'package:octopus/widgets/channel_preview/channel_avatar.dart';
+import 'package:octopus/widgets/screen_header.dart';
+import 'package:uuid/uuid.dart';
 
 class VideoCallPage extends StatefulWidget {
-  const VideoCallPage({super.key});
+  const VideoCallPage({super.key, required this.channel});
+
+  final Channel channel;
 
   @override
   State<StatefulWidget> createState() => _VideoCallPageState();
 }
 
 class _VideoCallPageState extends State<VideoCallPage> {
-  final AgoraClient _client = AgoraClient(
-      agoraConnectionData: AgoraConnectionData(
-    appId: '509316ca45954759bbbc95c5a7186933',
-    channelName: 'flutterring',
-    tempToken:
-        '007eJxTYMicmC9Q2vHuXtvRRUxHbjWvEzPPW/PuqkBKQ/aqvXtM2I8rMJgaWBobmiUnmphampqYm1omJSUlW5ommyaaG1qYWRobP+0LSWkIZGSomdbBzMgAgSA+N0NaTmlJSWpRUWZeOgMDAIJGIzE=',
-  ));
+  late String _currentUuid;
+  late CallKitParams _calling;
+
+  void _startCall() async {
+    _currentUuid = const Uuid().v4();
+    _calling = CallKitParams(
+      id: _currentUuid,
+      nameCaller: 'Hien Nguyen',
+      appName: 'Callkit',
+      avatar: 'https://i.pravatar.cc/100',
+      handle: '0123456789',
+      type: 0,
+      textAccept: 'Accept',
+      textDecline: 'Decline',
+      textMissedCall: 'Missed call',
+      textCallback: 'Call back',
+      duration: 30000,
+      extra: <String, dynamic>{'userId': '1a2b3c4d'},
+      headers: <String, dynamic>{'apiKey': 'Abc@123!', 'platform': 'flutter'},
+      android: const AndroidParams(
+          isCustomNotification: true,
+          isShowLogo: false,
+          isShowCallback: false,
+          isShowMissedCallNotification: true,
+          ringtonePath: 'system_ringtone_default',
+          backgroundColor: '#0955fa',
+          backgroundUrl: 'https://i.pravatar.cc/500',
+          actionColor: '#4CAF50',
+          incomingCallNotificationChannelName: "Incoming Call",
+          missedCallNotificationChannelName: "Missed Call"),
+      ios: IOSParams(
+        iconName: 'CallKitLogo',
+        handleType: 'generic',
+        supportsVideo: true,
+        maximumCallGroups: 2,
+        maximumCallsPerCallGroup: 1,
+        audioSessionMode: 'default',
+        audioSessionActive: true,
+        audioSessionPreferredSampleRate: 44100.0,
+        audioSessionPreferredIOBufferDuration: 0.005,
+        supportsDTMF: true,
+        supportsHolding: true,
+        supportsGrouping: false,
+        supportsUngrouping: false,
+        ringtonePath: 'system_ringtone_default',
+      ),
+    );
+    await FlutterCallkitIncoming.showCallkitIncoming(_calling);
+  }
 
   @override
   void initState() {
-    _client.initialize();
+    _startCall();
     super.initState();
   }
 
   @override
   void dispose() {
+    FlutterCallkitIncoming.endCall(_calling.id!);
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(
-        title: Text("Video call"),
-      ),
-      body: SafeArea(
-        child: Stack(
+  Widget build(BuildContext context) {
+    final channel = widget.channel;
+    return Scaffold(
+        body: Stack(
+      children: [
+        Positioned.fill(child: ChannelAvatar(channel: channel)),
+        Positioned(
+          child: Container(
+            color: OctopusTheme.of(context).colorTheme.overlayDark,
+          ),
+        ),
+        Column(
           children: [
-            AgoraVideoViewer(
-              client: _client,
-              layoutType: Layout.floating,
-              showNumberOfUsers: true,
+            ScreenHeader(
+              title: channel.name!,
+              centerTitle: false,
+              backgroundColor: Colors.transparent,
+              titleSpacing: 0,
+              titleStyle:
+                  OctopusTheme.of(context).textTheme.navigationTitle.copyWith(
+                        color: Colors.white,
+                      ),
+              iconBackColor: Colors.white,
             ),
-            AgoraVideoButtons(
-              client: _client,
-              enabledButtons: const [
-                BuiltInButtons.toggleCamera,
-                BuiltInButtons.callEnd,
-                BuiltInButtons.toggleMic
-              ],
-            )
+            SizedBox(
+              width: 1.sw,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ChannelAvatar(
+                    channel: channel,
+                    constraints:
+                        const BoxConstraints.tightFor(width: 80, height: 80),
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  const SizedBox(
+                    height: 9,
+                  ),
+                  ChannelName(
+                    channel: channel,
+                    textStyle: OctopusTheme.of(context)
+                        .channelHeaderTheme
+                        .titleStyle
+                        ?.copyWith(
+                          color: Colors.white,
+                        ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
-      ));
+      ],
+    ));
+  }
 }

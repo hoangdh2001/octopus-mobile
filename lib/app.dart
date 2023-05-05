@@ -256,8 +256,16 @@ class _MyAppState extends State<MyApp>
                         path: 'videoCall',
                         parentNavigatorKey: _rootNavigatorKey,
                         pageBuilder: (context, state) {
+                          var channel = state.extra as Channel;
+                          // var channelID = state.queryParams['channelID'];
+                          // if (channel == null) {
+                          //   final client = Octopus.of(context).client;
+                          //   if (client == null) debugPrint('error client');
+                          // }
                           return MaterialPage(
-                            child: const VideoCallPage(),
+                            child: VideoCallPage(
+                              channel: channel,
+                            ),
                             name: state.fullpath,
                           );
                         },
