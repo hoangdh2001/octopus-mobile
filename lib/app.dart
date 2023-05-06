@@ -1,11 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:firebase_core/firebase_core.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_callkit_incoming/entities/android_params.dart';
+import 'package:flutter_callkit_incoming/entities/call_event.dart';
+import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
+import 'package:flutter_callkit_incoming/entities/ios_params.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logging/logging.dart';
@@ -18,6 +23,7 @@ import 'package:octopus/core/data/repositories/user_repository.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:go_router/go_router.dart';
 import 'package:octopus/di/service_locator.dart';
+import 'package:octopus/navigator_service.dart';
 import 'package:octopus/octopus.dart';
 import 'package:octopus/octopus_channel.dart';
 import 'package:octopus/pages/calls/video_call_page.dart';
@@ -38,13 +44,121 @@ import 'package:octopus/utils/constants.dart';
 import 'package:octopus/widgets/octopus_scaffold.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
-final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
+late StreamSubscription<CallEvent?>? _callKitSubcription;
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  // await Firebase.initializeApp();
+  final type = message.data['type'] as String?;
+  if (type == 'pushCall') {
+    showCallkitIncoming(message);
+    _listenerEvent(message);
+  }
+}
 
-  print("Handling a background message: ${message.messageId}");
+Future<void> showCallkitIncoming(RemoteMessage message) async {
+  var uuid = message.data["uuid"] as String;
+  var hasVideo = message.data["has_video"] == "true";
+  var callerName = message.data['callerName'] as String;
+
+  final params = CallKitParams(
+    id: uuid,
+    nameCaller: callerName,
+    appName: 'Octopus',
+    type: 0,
+    duration: 30000,
+    textAccept: 'Accept',
+    textDecline: 'Decline',
+    textMissedCall: 'Missed call',
+    textCallback: 'Call back',
+    extra: <String, dynamic>{'userId': '1a2b3c4d'},
+    headers: <String, dynamic>{'apiKey': 'Abc@123!', 'platform': 'flutter'},
+    android: const AndroidParams(
+      isCustomNotification: true,
+      isShowLogo: false,
+      isShowCallback: true,
+      isShowMissedCallNotification: true,
+      ringtonePath: 'system_ringtone_default',
+      backgroundColor: '#0955fa',
+      backgroundUrl: 'assets/test.png',
+      actionColor: '#4CAF50',
+    ),
+    ios: IOSParams(
+      iconName: 'CallKitLogo',
+      handleType: '',
+      supportsVideo: hasVideo,
+      maximumCallGroups: 2,
+      maximumCallsPerCallGroup: 1,
+      audioSessionMode: 'default',
+      audioSessionActive: true,
+      audioSessionPreferredSampleRate: 44100.0,
+      audioSessionPreferredIOBufferDuration: 0.005,
+      supportsDTMF: true,
+      supportsHolding: true,
+      supportsGrouping: false,
+      supportsUngrouping: false,
+      ringtonePath: 'system_ringtone_default',
+    ),
+  );
+  await FlutterCallkitIncoming.showCallkitIncoming(params);
+}
+
+Future<void> _listenerEvent(RemoteMessage message) async {
+  var uuid = message.data["uuid"] as String;
+  var callerName = message.data['callerName'] as String;
+  try {
+    _callKitSubcription = FlutterCallkitIncoming.onEvent.listen((event) async {
+      print('HOME: $event');
+      switch (event!.event) {
+        case Event.ACTION_CALL_INCOMING:
+          // TODO: received an incoming call
+          break;
+        case Event.ACTION_CALL_START:
+          // TODO: started an outgoing call
+          // TODO: show screen calling in Flutter
+          break;
+        case Event.ACTION_CALL_ACCEPT:
+          print("Accept");
+          break;
+        case Event.ACTION_CALL_DECLINE:
+          // TODO: declined an incoming call
+          print("Decline");
+          _callKitSubcription?.cancel();
+          break;
+        case Event.ACTION_CALL_ENDED:
+          // TODO: ended an incoming/outgoing call
+          _callKitSubcription?.cancel();
+          break;
+        case Event.ACTION_CALL_TIMEOUT:
+          // TODO: missed an incoming call
+          _callKitSubcription?.cancel();
+          break;
+        case Event.ACTION_CALL_CALLBACK:
+          // TODO: only Android - click action `Call back` from missed call notification
+          break;
+        case Event.ACTION_CALL_TOGGLE_HOLD:
+          // TODO: only iOS
+          break;
+        case Event.ACTION_CALL_TOGGLE_MUTE:
+          // TODO: only iOS
+          break;
+        case Event.ACTION_CALL_TOGGLE_DMTF:
+          // TODO: only iOS
+          break;
+        case Event.ACTION_CALL_TOGGLE_GROUP:
+          // TODO: only iOS
+          break;
+        case Event.ACTION_CALL_TOGGLE_AUDIO_SESSION:
+          // TODO: only iOS
+          break;
+        case Event.ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP:
+          // TODO: only iOS
+          break;
+      }
+    });
+  } on Exception catch (e) {
+    print(e);
+  }
 }
 
 class MyApp extends StatefulWidget {
@@ -61,6 +175,15 @@ class _MyAppState extends State<MyApp>
   Future<void> requestPermission() async {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+    FirebaseMessaging.onMessage.listen((message) {
+      print(
+          'Message title: ${message.notification?.title}, body: ${message.notification?.body}, data: ${message.data}');
+      final type = message.data['type'] as String?;
+      if (type == 'pushCall') {
+        showCallkitIncoming(message);
+        _listenerEvent(message);
+      }
+    });
   }
 
   void _handleMessage(RemoteMessage message) {
@@ -179,143 +302,144 @@ class _MyAppState extends State<MyApp>
   }
 
   GoRouter _router(bool isHomeInit) {
+    final rootNavigatorKey = NavigationService.instance.navigationKey;
     return GoRouter(
-      initialLocation: isHomeInit ? '/home' : '/welcome',
-      navigatorKey: _rootNavigatorKey,
-      routes: [
-        ShellRoute(
-          navigatorKey: _shellNavigatorKey,
-          pageBuilder: (context, state, child) {
-            var client = state.extra as Client?;
-            if (client == null) {
-              client = _initData?.client;
-            }
-            return NoTransitionPage(
-              name: state.fullpath,
-              child: Octopus(
-                client: client!,
-                firebaseMessaging: getIt<FirebaseMessaging>(),
-                child: OctopusScaffold(body: child),
+        initialLocation: isHomeInit ? '/home' : '/welcome',
+        navigatorKey: rootNavigatorKey,
+        routes: [
+          ShellRoute(
+            navigatorKey: _shellNavigatorKey,
+            pageBuilder: (context, state, child) {
+              var client = state.extra as Client?;
+              if (client == null) {
+                client = _initData?.client;
+              }
+              return NoTransitionPage(
+                name: state.fullpath,
+                child: Octopus(
+                  client: client!,
+                  firebaseMessaging: getIt<FirebaseMessaging>(),
+                  child: OctopusScaffold(body: child),
+                ),
+              );
+            },
+            routes: [
+              GoRoute(
+                parentNavigatorKey: _shellNavigatorKey,
+                path: '/home',
+                pageBuilder: (context, state) => NoTransitionPage(
+                    child: const HomeScreen(), name: state.fullpath),
               ),
-            );
-          },
-          routes: [
-            GoRoute(
-              parentNavigatorKey: _shellNavigatorKey,
-              path: '/home',
-              pageBuilder: (context, state) => NoTransitionPage(
-                  child: const HomeScreen(), name: state.fullpath),
-            ),
-            GoRoute(
-              parentNavigatorKey: _shellNavigatorKey,
-              path: '/notifications',
-              pageBuilder: (context, state) => NoTransitionPage(
-                  child: const NotificationListScreen(), name: state.fullpath),
-            ),
-            GoRoute(
-              parentNavigatorKey: _shellNavigatorKey,
-              path: '/messages',
-              pageBuilder: (context, state) => NoTransitionPage(
-                  child: const ChannelListPage(), name: state.fullpath),
-              routes: [
-                GoRoute(
-                  path: 'newMessage',
-                  parentNavigatorKey: _rootNavigatorKey,
-                  pageBuilder: (context, state) => MaterialPage(
-                      child: const NewMessagePage(), name: state.fullpath),
-                ),
-                GoRoute(
-                  path: 'newGroup',
-                  parentNavigatorKey: _rootNavigatorKey,
-                  pageBuilder: (context, state) => MaterialPage(
-                      child: const NewGroupPage(), name: state.fullpath),
-                ),
-                GoRoute(
-                    path: 'channel',
-                    parentNavigatorKey: _rootNavigatorKey,
-                    pageBuilder: (context, state) {
-                      var channel = state.extra as Channel?;
-                      var channelID = state.queryParams['channelID'];
-                      if (channel == null) {
-                        final client = Octopus.of(context).client;
-                        if (client == null) debugPrint('error client');
-                      }
-                      return MaterialPage(
-                        arguments: channel,
-                        child: OctopusChannel(
-                          channel: channel!,
-                          child: ChannelPage(
-                            channel: channel,
-                          ),
-                        ),
-                        name: state.fullpath,
-                      );
-                    },
-                    routes: [
-                      GoRoute(
-                        path: 'videoCall',
-                        parentNavigatorKey: _rootNavigatorKey,
-                        pageBuilder: (context, state) {
-                          var channel = state.extra as Channel;
-                          // var channelID = state.queryParams['channelID'];
-                          // if (channel == null) {
-                          //   final client = Octopus.of(context).client;
-                          //   if (client == null) debugPrint('error client');
-                          // }
-                          return MaterialPage(
-                            child: VideoCallPage(
+              GoRoute(
+                parentNavigatorKey: _shellNavigatorKey,
+                path: '/notifications',
+                pageBuilder: (context, state) => NoTransitionPage(
+                    child: const NotificationListScreen(),
+                    name: state.fullpath),
+              ),
+              GoRoute(
+                parentNavigatorKey: _shellNavigatorKey,
+                path: '/messages',
+                pageBuilder: (context, state) => NoTransitionPage(
+                    child: const ChannelListPage(), name: state.fullpath),
+                routes: [
+                  GoRoute(
+                    path: 'newMessage',
+                    parentNavigatorKey: rootNavigatorKey,
+                    pageBuilder: (context, state) => MaterialPage(
+                        child: const NewMessagePage(), name: state.fullpath),
+                  ),
+                  GoRoute(
+                    path: 'newGroup',
+                    parentNavigatorKey: rootNavigatorKey,
+                    pageBuilder: (context, state) => MaterialPage(
+                        child: const NewGroupPage(), name: state.fullpath),
+                  ),
+                  GoRoute(
+                      path: 'channel',
+                      parentNavigatorKey: rootNavigatorKey,
+                      pageBuilder: (context, state) {
+                        var channel = state.extra as Channel?;
+                        var channelID = state.queryParams['channelID'];
+                        if (channel == null) {
+                          final client = Octopus.of(context).client;
+                          if (client == null) debugPrint('error client');
+                        }
+                        return MaterialPage(
+                          arguments: channel,
+                          child: OctopusChannel(
+                            channel: channel!,
+                            child: ChannelPage(
                               channel: channel,
                             ),
-                            name: state.fullpath,
-                          );
-                        },
-                      ),
-                    ]),
-              ],
-            ),
-          ],
-        ),
-        GoRoute(
-          path: '/login',
-          builder: (context, state) => const EmailPage(),
-          routes: [
-            GoRoute(
-              path: 'verify',
-              builder: (context, state) {
-                final email = state.queryParams['email'];
-                final type =
-                    VerificationType.rawValue(state.queryParams['type']);
-                return LoginPage(email: email!, verificationType: type!);
-              },
-            ),
-            GoRoute(
-              path: 'options',
-              builder: (context, state) => const OptionsSignInScreen(),
-              routes: [
-                GoRoute(
-                  path: 'pass',
-                  builder: (context, state) => const LoginWithPassScreen(),
-                ),
-              ],
-            )
-          ],
-        ),
-        GoRoute(
-          path: '/sign_up',
-          builder: (context, state) {
-            final token = state.extra as Token;
-            return SignUpPage(
-              token: token,
-            );
-          },
-        ),
-        GoRoute(
-          path: '/welcome',
-          pageBuilder: (context, state) =>
-              const NoTransitionPage(child: WelcomePage()),
-        ),
-      ],
-    );
+                          ),
+                          name: state.fullpath,
+                        );
+                      },
+                      routes: [
+                        GoRoute(
+                          path: 'videoCall',
+                          parentNavigatorKey: rootNavigatorKey,
+                          pageBuilder: (context, state) {
+                            var channel = state.extra as Channel?;
+                            var channelID = state.queryParams['channelID'];
+                            return MaterialPage(
+                              child: VideoCallPage(
+                                channel: channel,
+                                channelID: channelID,
+                              ),
+                              name: state.fullpath,
+                            );
+                          },
+                        ),
+                      ]),
+                ],
+              ),
+            ],
+          ),
+          GoRoute(
+            path: '/login',
+            builder: (context, state) => const EmailPage(),
+            routes: [
+              GoRoute(
+                path: 'verify',
+                builder: (context, state) {
+                  final email = state.queryParams['email'];
+                  final type =
+                      VerificationType.rawValue(state.queryParams['type']);
+                  return LoginPage(email: email!, verificationType: type!);
+                },
+              ),
+              GoRoute(
+                path: 'options',
+                builder: (context, state) => const OptionsSignInScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'pass',
+                    builder: (context, state) => const LoginWithPassScreen(),
+                  ),
+                ],
+              )
+            ],
+          ),
+          GoRoute(
+            path: '/sign_up',
+            builder: (context, state) {
+              final token = state.extra as Token;
+              return SignUpPage(
+                token: token,
+              );
+            },
+          ),
+          GoRoute(
+            path: '/welcome',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: WelcomePage()),
+          ),
+        ],
+        observers: [
+          NavigationService.instance.routeObserver
+        ]);
   }
 }
 

@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:octopus/core/data/models/attachment.dart';
+import 'package:octopus/core/data/models/attachment_file.dart';
+import 'package:octopus/core/data/models/call_response.dart';
 import 'package:octopus/core/data/models/channel_query.dart';
 import 'package:octopus/core/data/models/channel_state.dart';
 import 'package:octopus/core/data/models/empty_response.dart';
@@ -77,4 +79,7 @@ abstract class ChannelService {
     @Path('messageID') String messageID,
     @Path('reactionType') String reactionType,
   );
+
+  @POST('/channels/{channelID}/call')
+  Future<String> call(@Path('channelID') String channelID);
 }

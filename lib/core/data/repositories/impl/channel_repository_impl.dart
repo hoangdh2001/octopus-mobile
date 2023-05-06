@@ -120,4 +120,9 @@ class ChannelRepositoryImpl implements ChannelRepository {
     return await _channelService.sendReaction(
         channelID, messageID, reactionType);
   }
+
+  @override
+  Future<String> call(String channelID) async {
+    return await _channelService.call(channelID);
+  }
 }

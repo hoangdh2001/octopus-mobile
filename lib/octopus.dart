@@ -5,13 +5,10 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_portal/flutter_portal.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:octopus/core/data/client/channel.dart';
 import 'package:octopus/core/data/client/client.dart';
 import 'package:octopus/core/data/models/user.dart';
-import 'package:octopus/core/data/socketio/event_type.dart';
 import 'package:octopus/core/octopus_core.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
-import 'package:octopus/core/ui/notification_service.dart';
 import 'package:octopus/core/ui/typedef.dart';
 
 class Octopus extends StatefulWidget {
@@ -110,39 +107,5 @@ class OctopusState extends State<Octopus> {
       Jiffy.locale(currentLocale);
     }
     super.didChangeDependencies();
-  }
-}
-
-class MyObserver extends RouteObserver<PageRoute> {
-  Route? currentRoute;
-  late final StreamSubscription _subscription;
-
-  MyObserver(
-    Client client,
-    GlobalKey<NavigatorState> navigatorKey,
-  ) {
-    _subscription = client
-        .on(
-      EventType.messageNew,
-      EventType.notificationMessageNew,
-    )
-        .listen((event) {
-      if (event.message?.sender?.id == client.state.currentUser?.id) {
-        return;
-      }
-      final channelId = event.channelID;
-      if (currentRoute?.settings.name == '/channels') {
-        final channel = currentRoute?.settings.arguments as Channel;
-        if (channel.id == channelId) {
-          return;
-        }
-      }
-
-      showLocalNotification(
-        event,
-        client.state.currentUser!.id,
-        navigatorKey.currentState!.context,
-      );
-    });
   }
 }

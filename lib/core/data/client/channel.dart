@@ -677,6 +677,11 @@ class Channel {
     }
   }
 
+  Future<String> call() async {
+    final uuid = await _channelRepository.call(id!);
+    return uuid;
+  }
+
   void dispose() {
     client.state.removeChannel('$id');
     state?.dispose();

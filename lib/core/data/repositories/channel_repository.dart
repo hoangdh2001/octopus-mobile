@@ -39,4 +39,6 @@ abstract class ChannelRepository {
 
   Future<EmptyResponse> deleteReaction(
       String channelID, String messageID, String reactionType);
+
+  Future<String> call(String channelID);
 }

@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:octopus/app.dart';
-import 'package:octopus/core/data/client/channel.dart';
 import 'package:octopus/core/data/client/client.dart';
 import 'package:octopus/core/data/models/user.dart';
 import 'package:octopus/core/data/socketio/connection_status.dart';
