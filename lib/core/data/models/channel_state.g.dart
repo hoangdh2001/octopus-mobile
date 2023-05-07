@@ -6,14 +6,13 @@ part of 'channel_state.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_ChannelModel _$$_ChannelModelFromJson(Map<String, dynamic> json) =>
-    _$_ChannelModel(
+ChannelModel _$ChannelModelFromJson(Map<String, dynamic> json) => ChannelModel(
       id: json['_id'] as String,
-      avatar: json['avatar'] as String?,
       name: json['name'] as String?,
       lastMessageAt: json['lastMessageAt'] == null
           ? null
           : DateTime.parse(json['lastMessageAt'] as String),
+      avatar: json['avatar'] as String?,
       createdAt: json['createdAt'] == null
           ? null
           : DateTime.parse(json['createdAt'] as String),
@@ -25,9 +24,12 @@ _$_ChannelModel _$$_ChannelModelFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['deletedAt'] as String),
       hidden: json['hiddenChannel'] as bool,
       activeNotify: json['activeNotify'] as bool,
+      // createdBy: json['createdBy'] == null
+      //     ? null
+      //     : User.fromJson(json['createdBy'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$_ChannelModelToJson(_$_ChannelModel instance) =>
+Map<String, dynamic> _$ChannelModelToJson(ChannelModel instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'avatar': instance.avatar,
@@ -38,10 +40,10 @@ Map<String, dynamic> _$$_ChannelModelToJson(_$_ChannelModel instance) =>
       'deletedAt': instance.deletedAt?.toIso8601String(),
       'hiddenChannel': instance.hidden,
       'activeNotify': instance.activeNotify,
+      // 'createdBy': instance.createdBy,
     };
 
-_$_ChannelState _$$_ChannelStateFromJson(Map<String, dynamic> json) =>
-    _$_ChannelState(
+ChannelState _$ChannelStateFromJson(Map<String, dynamic> json) => ChannelState(
       channel: json['channel'] == null
           ? null
           : ChannelModel.fromJson(json['channel'] as Map<String, dynamic>),
@@ -56,7 +58,7 @@ _$_ChannelState _$$_ChannelStateFromJson(Map<String, dynamic> json) =>
           .toList(),
     );
 
-Map<String, dynamic> _$$_ChannelStateToJson(_$_ChannelState instance) =>
+Map<String, dynamic> _$ChannelStateToJson(ChannelState instance) =>
     <String, dynamic>{
       'channel': instance.channel,
       'messages': instance.messages,

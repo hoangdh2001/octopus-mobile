@@ -140,8 +140,7 @@ extension GetItInjectableX on _i1.GetIt {
       gh<_i3.FlutterSecureStorage>(),
       gh<_i15.UserRepository>(),
     ));
-    gh.singleton<_i24.UserListBloc>(
-        _i24.UserListBloc(gh<_i15.UserRepository>()));
+    gh.singleton<_i24.UserListBloc>(_i24.UserListBloc(gh<_i18.Client>()));
     return this;
   }
 }

@@ -115,4 +115,10 @@ class ChannelRepositoryImpl implements ChannelRepository {
   Future<String> call(String channelID, {String callType = 'pushCall'}) async {
     return await _channelService.call(channelID, callType);
   }
+
+  @override
+  Future<ChannelState> udpateChannel(
+      String channelID, Map<String, Object?> data) async {
+    return await _channelService.updateChannel(channelID, data);
+  }
 }

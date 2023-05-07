@@ -165,6 +165,11 @@ class Channel {
 
   bool get isGroup => memberCount != 2;
 
+  // User? get createdBy => state!.channelState.channel?.createdBy;
+
+  // Stream<User?> get createdByStream =>
+  //     state!.channelStateStream.map((cs) => cs.channel?.createdBy);
+
   void updateChannelState(ChannelState channelState) {
     state!.updateChannelState(channelState);
   }
@@ -693,6 +698,13 @@ class Channel {
   Future<String> call() async {
     final uuid = await _channelRepository.call(id!);
     return uuid;
+  }
+
+  Future<ChannelState> update(Map<String, Object?> channelData,
+      [Message? updatedMessgage]) {
+    _checkInitialized();
+    final channel = _client.updateChannel(id!, channelData);
+    return channel;
   }
 
   void dispose() {

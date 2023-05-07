@@ -9,6 +9,7 @@ import 'package:octopus/core/data/models/channel_state.dart';
 import 'package:octopus/core/data/models/device.dart';
 import 'package:octopus/core/data/models/event.dart';
 import 'package:octopus/core/data/models/member.dart';
+import 'package:octopus/core/data/models/message.dart';
 import 'package:octopus/core/data/models/own_user.dart';
 import 'package:octopus/core/data/models/pagination_params.dart';
 import 'package:octopus/core/data/models/token.dart';
@@ -255,7 +256,7 @@ class Client {
 
         yield await newQueryChannelsFuture;
       } catch (_) {
-        // if (channels.isEmpty) rethrow;
+        rethrow;
       }
     }
   }
@@ -346,6 +347,11 @@ class Client {
     return MapEntry(channels, newChannels);
   }
 
+  Future<List<User>> queryUser({PaginationParams? messagePagination}) async {
+    final users = await _userRepository.getUsers();
+    return users;
+  }
+
   void _handleHealthCheckEvent(Event event) {
     final user = event.me;
     if (user != null) state.currentUser = user;
@@ -386,6 +392,11 @@ class Client {
   Future<void> removeDevice(String deviceID) async {
     await _userRepository.removeDevice(state.currentUser!.id, deviceID);
   }
+
+  Future<ChannelState> updateChannel(
+          String id, Map<String, Object?> channelData,
+          [Message? updateMessage]) =>
+      _channelRepository.udpateChannel(id, channelData);
 
   Stream<Event> on([
     String? eventType,

@@ -5,7 +5,7 @@ import 'package:octopus/core/data/models/error.dart';
 import 'package:octopus/core/data/models/user.dart';
 
 abstract class UserRepository {
-  Future<Either<List<User>, Error>> getUsers();
+  Future<List<User>> getUsers();
   Future<void> addDevice(String id, Device device);
   Future<void> removeDevice(String id, String deviceID);
   Future<List<Device>> getDevices(String id);

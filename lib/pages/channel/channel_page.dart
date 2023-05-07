@@ -9,6 +9,7 @@ import 'package:octopus/octopus.dart';
 import 'package:octopus/octopus_channel.dart';
 import 'package:octopus/pages/calls/video_call_page.dart';
 import 'package:octopus/pages/channel_info/channel_info_page.dart';
+import 'package:octopus/pages/channel_info/group_info_page.dart';
 import 'package:octopus/widgets/channel/channel_header.dart';
 import 'package:octopus/widgets/indicators/typing_indicator.dart';
 import 'package:octopus/widgets/message/visible_footnote.dart';
@@ -88,17 +89,17 @@ class _ChannelPageState extends State<ChannelPage> {
               }
             }
           } else {
-            // await Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => StreamChannel(
-            //       child: GroupInfoScreen(
-            //         messageTheme: StreamChatTheme.of(context).ownMessageTheme,
-            //       ),
-            //       channel: channel,
-            //     ),
-            //   ),
-            // );
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => OctopusChannel(
+                  channel: channel,
+                  child: GroupInfoScreen(
+                    messageTheme: OctopusTheme.of(context).ownMessageTheme,
+                  ),
+                ),
+              ),
+            );
           }
         },
         showBackButton: true,

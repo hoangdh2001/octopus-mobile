@@ -1,10 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:octopus/core/data/models/empty_response.dart';
 import 'package:octopus/core/data/models/device.dart';
-import 'package:octopus/core/data/models/error.dart';
 import 'package:octopus/core/data/models/user.dart';
-import 'package:dartz/dartz.dart';
 import 'package:octopus/core/data/networks/services/user_service.dart';
 import 'package:octopus/core/data/repositories/user_repository.dart';
 
@@ -14,17 +10,9 @@ class UserRepositoryImpl implements UserRepository {
   UserRepositoryImpl(this._userService);
 
   @override
-  Future<Either<List<User>, Error>> getUsers() async {
-    try {
-      final users = await _userService.getUsers();
-      return left(users);
-    } on DioError catch (e) {
-      if (e.response != null) {
-        final Map<String, dynamic> error = e.response!.data;
-        return right(Error.fromJson(error));
-      }
-      rethrow;
-    }
+  Future<List<User>> getUsers() async {
+    final users = await _userService.getUsers();
+    return users;
   }
 
   @override

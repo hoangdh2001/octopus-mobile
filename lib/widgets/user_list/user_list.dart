@@ -1,6 +1,5 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:octopus/core/data/models/error.dart';
 import 'package:octopus/core/data/models/user.dart';
 import 'package:octopus/core/data/socketio/chat_error.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
