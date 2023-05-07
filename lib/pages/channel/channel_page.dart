@@ -1,11 +1,14 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/data/client/channel.dart';
 import 'package:octopus/core/data/models/message.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
+import 'package:octopus/octopus.dart';
 import 'package:octopus/octopus_channel.dart';
 import 'package:octopus/pages/calls/video_call_page.dart';
+import 'package:octopus/pages/channel_info/channel_info_page.dart';
 import 'package:octopus/widgets/channel/channel_header.dart';
 import 'package:octopus/widgets/indicators/typing_indicator.dart';
 import 'package:octopus/widgets/message/visible_footnote.dart';
@@ -55,11 +58,49 @@ class _ChannelPageState extends State<ChannelPage> {
 
   @override
   Widget build(BuildContext context) {
-    final channel = OctopusChannel.of(context).channel;
     return Scaffold(
       backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
       appBar: ChannelHeader(
-        onTitleTap: () {},
+        onTitleTap: () async {
+          var channel = OctopusChannel.of(context).channel;
+
+          if (channel.memberCount == 2) {
+            final currentUser = Octopus.of(context).currentUser;
+            final otherUser = channel.state!.members.firstWhereOrNull(
+              (element) => element.user!.id != currentUser!.id,
+            );
+            if (otherUser != null) {
+              final pop = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OctopusChannel(
+                    channel: channel,
+                    child: ChannelInfoPage(
+                      messageTheme: OctopusTheme.of(context).ownMessageTheme,
+                      user: otherUser.user,
+                    ),
+                  ),
+                ),
+              );
+
+              if (pop == true) {
+                Navigator.pop(context);
+              }
+            }
+          } else {
+            // await Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => StreamChannel(
+            //       child: GroupInfoScreen(
+            //         messageTheme: StreamChatTheme.of(context).ownMessageTheme,
+            //       ),
+            //       channel: channel,
+            //     ),
+            //   ),
+            // );
+          }
+        },
         showBackButton: true,
         centerTitle: false,
         actions: [
@@ -67,6 +108,7 @@ class _ChannelPageState extends State<ChannelPage> {
             padding: const EdgeInsets.fromLTRB(5, 5, 16, 5),
             child: IconButton(
               onPressed: () {
+                final channel = OctopusChannel.of(context).channel;
                 Navigator.pushNamed(context, Routes.CALL_PAGE,
                     arguments: VideoCallArgs(channel: channel));
               },
