@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
+import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/data/repositories/channel_repository.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,6 +10,7 @@ import 'package:octopus/core/ui/paged_value_scroll_view/bloc/paged_value_bloc.da
 import 'package:octopus/core/ui/scroll_view/scroll_view_empty_widget.dart';
 import 'package:octopus/di/service_locator.dart';
 import 'package:octopus/octopus.dart';
+import 'package:octopus/pages/channel/channel_page.dart';
 import 'package:octopus/pages/channelList/bloc/channel_list_bloc.dart';
 import 'package:octopus/widgets/channel_list/channel_list.dart';
 
@@ -108,8 +109,8 @@ class _ChannelListPageState extends State<ChannelListPage> {
                 );
               },
               onChannelTap: (channel) {
-                context.push('/messages/channel?channelID=${channel.id}',
-                    extra: channel);
+                Navigator.pushNamed(context, Routes.CHANNEL_PAGE,
+                    arguments: ChannelPageArgs(channel: channel));
               },
               emptyBuilder: (context) {
                 return Center(
@@ -123,7 +124,7 @@ class _ChannelListPageState extends State<ChannelListPage> {
                       ),
                       emptyTitle: TextButton(
                         onPressed: () {
-                          context.push('/newMessage');
+                          Navigator.pushNamed(context, Routes.NEW_CHAT);
                         },
                         child: Text(
                           'Start a chat',

@@ -6,6 +6,10 @@ import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+const appId = '509316ca45954759bbbc95c5a7186933';
+const token =
+    '007eJxTYMi4ud077oTex4U9S513VFZP3LTjWsu2BfUbjDvTfzaIS0UqMJgaWBobmiUnmphampqYm1omJSUlW5ommyaaG1qYWRobn6wNT2kIZGRo6ZFnYmSAQBCfhaEktbiEgQEAvmMgOQ==';
+
 Future<void> launchURL(BuildContext context, String url) async {
   try {
     await launchUrl(

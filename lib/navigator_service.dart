@@ -22,18 +22,16 @@ class NavigationService {
   ///
   /// `routeName` is page's route name defined in [AppRoute]
   /// `args` is optional data to be sent to new page
-  Future<T?> pushNamed<T extends Object>(String routeName,
-      {Object? args}) async {
+  Future pushNamed(String routeName, {Object? args}) async {
     print(navigationKey);
     print(navigationKey.currentState);
-    return navigationKey.currentState?.pushNamed<T>(
+    return navigationKey.currentState?.pushNamed(
       routeName,
       arguments: args,
     );
   }
 
-  Future<T?> pushNamedIfNotCurrent<T extends Object>(String routeName,
-      {Object? args}) async {
+  Future pushNamedIfNotCurrent(String routeName, {Object? args}) async {
     if (!isCurrent(routeName)) {
       return pushNamed(routeName, args: args);
     }

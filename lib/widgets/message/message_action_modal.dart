@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:octopus/core/data/models/enums/message_status.dart';
 import 'package:octopus/core/data/models/message.dart';
 import 'package:octopus/core/extensions/extension_iterable.dart';
@@ -342,7 +341,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
 
     if (answer == true) {
       try {
-        context.pop();
+        Navigator.pop(context);
         await OctopusChannel.of(context)
             .channel
             .deleteMessage(widget.message, hard: true);

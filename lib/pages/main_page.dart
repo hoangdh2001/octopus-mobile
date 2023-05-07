@@ -1,22 +1,38 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide MenuItem;
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
+import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
+import 'package:octopus/octopus.dart';
+import 'package:octopus/pages/channelList/channel_list_page.dart';
+import 'package:octopus/pages/notification_list_screen.dart';
+import 'package:octopus/pages/recent_page.dart';
 import 'package:octopus/widgets/left_drawer.dart';
 import 'package:octopus/widgets/menu_item.dart';
 import 'package:octopus/widgets/screen_header.dart';
 
-class OctopusScaffold extends StatefulWidget {
-  const OctopusScaffold({super.key, required this.body});
+class MainPageArgs {
+  final int initialIndex;
 
-  final Widget? body;
-
-  @override
-  State<OctopusScaffold> createState() => _OctopusScaffoldState();
+  MainPageArgs({
+    this.initialIndex = 0,
+  });
 }
 
-class _OctopusScaffoldState extends State<OctopusScaffold> {
-  int _currentIndex = 0;
+class MainPage extends StatefulWidget {
+  const MainPage({Key? key, required this.initialIndex}) : super(key: key);
+
+  final int initialIndex;
+
+  @override
+  _MainPageState createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  late int _currentIndex = widget.initialIndex;
 
   bool _isSelected(int index) => _currentIndex == index;
 
@@ -64,7 +80,7 @@ class _OctopusScaffoldState extends State<OctopusScaffold> {
           IconButton(
             splashColor: Colors.transparent,
             onPressed: () {
-              context.push('/messages/newMessage');
+              Navigator.pushNamed(context, Routes.NEW_CHAT);
             },
             icon: SvgPicture.asset(
               'assets/icons/edit.svg',
@@ -77,21 +93,12 @@ class _OctopusScaffoldState extends State<OctopusScaffold> {
     }
   }
 
-  String _navigate(int index) {
-    switch (index) {
-      case 0:
-        return '/home';
-      case 1:
-        return '/notifications';
-      case 2:
-        return '/messages';
-      default:
-        return '';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final user = Octopus.of(context).currentUser;
+    if (user == null) {
+      return Offstage();
+    }
     return Scaffold(
       backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
       appBar: ScreenHeader(
@@ -115,11 +122,44 @@ class _OctopusScaffoldState extends State<OctopusScaffold> {
         items: _menuItems,
         onTap: (index) {
           setState(() => _currentIndex = index);
-          context.go(_navigate(index));
           Navigator.pop(context);
         },
       ),
-      body: widget.body,
+      drawerEdgeDragWidth: 50,
+      body: IndexedStack(
+        index: _currentIndex,
+        children: const [
+          RecentPage(),
+          NotificationListScreen(),
+          ChannelListPage(),
+        ],
+      ),
     );
+  }
+
+  StreamSubscription<int>? badgeListener;
+
+  @override
+  void initState() {
+    if (!kIsWeb) {
+      badgeListener = Octopus.of(context)
+          .client
+          .state
+          .totalUnreadCountStream
+          .listen((count) {
+        if (count > 0) {
+          FlutterAppBadger.updateBadgeCount(count);
+        } else {
+          FlutterAppBadger.removeBadge();
+        }
+      });
+    }
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    badgeListener?.cancel();
+    super.dispose();
   }
 }

@@ -105,20 +105,19 @@ class OctopusChannelState extends State<OctopusChannel> {
 
     final oldestMessage = channel.state!.messages.first.id;
 
-    final rs = await getIt<MessageListCubit>().queryChannel(channel.id!,
-        messagesPagination:
-            PaginationParams(limit: limit, lessThan: oldestMessage));
-
-    rs.fold((channelState) {
-      channel.updateChannelState(channelState);
-      if (channelState.messages!.isEmpty ||
-          channelState.messages!.length < limit) {
+    try {
+      final state = await getIt<MessageListCubit>().queryChannel(channel.id!,
+          messagesPagination:
+              PaginationParams(limit: limit, lessThan: oldestMessage));
+      if (state.messages == null ||
+          state.messages!.isEmpty ||
+          state.messages!.length < limit) {
         _topPaginationEnded = true;
       }
       _queryTopMessagesController.safeAdd(false);
-    }, (error) {
-      _queryTopMessagesController.safeAddError(error);
-    });
+    } catch (e, stk) {
+      _queryTopMessagesController.safeAddError(e, stk);
+    }
   }
 
   Future<void> _queryBottomMessages({int limit = 20}) async {
@@ -134,22 +133,19 @@ class OctopusChannelState extends State<OctopusChannel> {
 
     final recentMessage = channel.state!.messages.last;
 
-    final rs = await getIt<MessageListCubit>().queryChannel(channel.id!,
-        messagesPagination: PaginationParams(
-            limit: limit, greaterThanOrEqual: recentMessage.id));
-
-    rs.fold((channelState) {
-      channel.updateChannelState(channelState);
-      if (channelState.messages!.isEmpty ||
-          channelState.messages!.length < limit) {
+    try {
+      final state = await getIt<MessageListCubit>().queryChannel(channel.id!,
+          messagesPagination: PaginationParams(
+              limit: limit, greaterThanOrEqual: recentMessage.id));
+      if (state.messages == null ||
+          state.messages!.isEmpty ||
+          state.messages!.length < limit) {
         _bottomPaginationEnded = true;
       }
       _queryBottomMessagesController.safeAdd(false);
-    }, (error) {
-      _queryBottomMessagesController.safeAddError(
-        error,
-      );
-    });
+    } catch (e, stk) {
+      _queryBottomMessagesController.safeAddError(e, stk);
+    }
   }
 
   Future<void> queryMessages({
@@ -173,25 +169,18 @@ class OctopusChannelState extends State<OctopusChannel> {
     channel.state!.truncate();
 
     if (messageId == null) {
-      final rs = await getIt<MessageListCubit>().queryChannel(channel.id!,
+      await channel.query(
           messagesPagination: PaginationParams(
-            limit: limit,
-          ));
-      rs.fold((channelState) {
-        channel.updateChannelState(channelState);
-      }, (error) {});
+        limit: limit,
+      ));
       channel.state!.isUpToDate = true;
       return null;
     }
 
-    final rs = await queryAroundMessage(messageId);
-    return rs.fold((channelState) {
-      channel.updateChannelState(channelState);
-      return channelState;
-    }, (error) => null);
+    return queryAroundMessage(messageId);
   }
 
-  Future<Either<ChannelState, Error>> queryAroundMessage(
+  Future<ChannelState> queryAroundMessage(
     String messageId, {
     int limit = 20,
   }) =>

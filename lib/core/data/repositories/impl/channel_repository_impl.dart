@@ -44,21 +44,11 @@ class ChannelRepositoryImpl implements ChannelRepository {
   }
 
   @override
-  Future<Either<ChannelState, Error>> queryChannel(String channelID,
+  Future<ChannelState> queryChannel(String channelID,
       {PaginationParams? messagesPagination}) async {
-    try {
-      final channel = await _channelService.queryChannel(
-          channelID, ChannelQuery(messages: messagesPagination));
-      return left(channel);
-    } on DioError catch (e) {
-      if (e.response != null) {
-        final Map<String, dynamic> error = e.response!.data;
-        return right(Error.fromJson(error));
-      }
-      rethrow;
-    } catch (e) {
-      rethrow;
-    }
+    final channel = await _channelService.queryChannel(
+        channelID, ChannelQuery(messages: messagesPagination));
+    return channel;
   }
 
   @override
@@ -122,7 +112,7 @@ class ChannelRepositoryImpl implements ChannelRepository {
   }
 
   @override
-  Future<String> call(String channelID) async {
-    return await _channelService.call(channelID);
+  Future<String> call(String channelID, {String callType = 'pushCall'}) async {
+    return await _channelService.call(channelID, callType);
   }
 }

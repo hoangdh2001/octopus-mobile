@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
+import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/data/models/user.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/core/ui/paged_value_scroll_view/bloc/paged_value_bloc.dart';
@@ -80,7 +80,7 @@ class _NewMessagePageState extends State<NewMessagePage> {
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
           onPressed: () {
-            context.pop();
+            Navigator.pop(context);
           },
           icon: SvgPicture.asset(
             'assets/icons/arrow-left.svg',
@@ -159,7 +159,7 @@ class _NewMessagePageState extends State<NewMessagePage> {
             SizedBox(
               child: InkWell(
                 onTap: () {
-                  context.push('/messages/newGroup');
+                  Navigator.pushNamed(context, Routes.NEW_GROUP_CHAT);
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),

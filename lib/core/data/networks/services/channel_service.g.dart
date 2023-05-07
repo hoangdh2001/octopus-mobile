@@ -343,7 +343,10 @@ class _ChannelService implements ChannelService {
   }
 
   @override
-  Future<String> call(String channelID) async {
+  Future<String> call(
+    String channelID,
+    String callType,
+  ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -355,7 +358,7 @@ class _ChannelService implements ChannelService {
     )
         .compose(
           _dio.options,
-          '/channels/${channelID}/call',
+          '/channels/${channelID}/call/${callType}',
           queryParameters: queryParameters,
           data: _data,
         )

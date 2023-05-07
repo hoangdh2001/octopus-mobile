@@ -3,16 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart';
+import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/data/client/client.dart';
 import 'package:octopus/core/data/models/token.dart';
 import 'package:octopus/core/data/repositories/channel_repository.dart';
 import 'package:octopus/core/data/repositories/user_repository.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/di/service_locator.dart';
+import 'package:octopus/pages/home_page.dart';
 import 'package:octopus/pages/sign_up/bloc/sign_up_bloc.dart';
 import 'package:octopus/widgets/screen_header.dart';
+
+class SignUpPageArgs {
+  const SignUpPageArgs({required this.token});
+
+  final Token token;
+}
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key, required this.token});
@@ -295,7 +302,12 @@ class _SignUpPageState extends State<SignUpPage> {
                     state.successOrFail.fold(() => null, (result) {
                       result.fold((user) {
                         _connectUser(widget.token).then((value) {
-                          context.go('/home');
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            Routes.HOME,
+                            ModalRoute.withName(Routes.HOME),
+                            arguments: HomePageArgs(value),
+                          );
                         }).catchError((e) {
                           debugPrint(e);
                         });
@@ -320,17 +332,7 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Future<Client> _connectUser(Token token) async {
-    final channelRepository = getIt<ChannelRepository>();
-    final userRepository = getIt<UserRepository>();
-    final baseUrl = getIt<String>(instanceName: 'BaseUrl');
-    final logger = getIt<Logger>(instanceName: 'app-logger');
-    final socketLogger = getIt<Logger>(instanceName: 'socket-logger');
-    final client = Client(
-        channelRepository: channelRepository,
-        userRepository: userRepository,
-        baseUrl: baseUrl,
-        logger: logger,
-        socketLogger: socketLogger);
+    final client = getIt<Client>();
 
     await client.connectUser(token);
     await getIt<SignUpBloc>().handleStorageToken(token);

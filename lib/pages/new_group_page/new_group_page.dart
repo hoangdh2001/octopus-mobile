@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/di/service_locator.dart';
 import 'package:octopus/pages/new_group_page/bloc/new_group_bloc.dart';
@@ -26,17 +25,6 @@ class _NewGroupPageState extends State<NewGroupPage> {
       backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
       appBar: ScreenHeader(
         title: "New group",
-        leading: IconButton(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          onPressed: () {
-            context.pop();
-          },
-          icon: SvgPicture.asset(
-            'assets/icons/arrow-left.svg',
-            color: OctopusTheme.of(context).colorTheme.icon,
-          ),
-        ),
         actions: [
           TextButton(
             style: OctopusTheme.of(context).buttonTheme.buttonBrandPrimary,

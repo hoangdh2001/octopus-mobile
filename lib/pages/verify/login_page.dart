@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:logging/logging.dart';
+import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/data/client/client.dart';
 import 'package:octopus/core/data/models/enums/verification_type.dart';
 import 'package:octopus/core/data/models/token.dart';
@@ -11,14 +12,22 @@ import 'package:octopus/core/data/repositories/channel_repository.dart';
 import 'package:octopus/core/data/repositories/user_repository.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/di/service_locator.dart';
+import 'package:octopus/pages/home_page.dart';
 import 'package:octopus/pages/options_signin_screen.dart';
 import 'package:octopus/pages/verify/bloc/login_bloc.dart';
 import 'package:octopus/widgets/screen_header.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:octopus/widgets/separator_text.dart';
 import 'package:open_mail_app/open_mail_app.dart';
-import 'package:go_router/go_router.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+
+class LoginPageArgs {
+  const LoginPageArgs({required this.email, required this.verificationType});
+
+  final String email;
+
+  final VerificationType verificationType;
+}
 
 class LoginPage extends StatefulWidget {
   const LoginPage(
@@ -73,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               child: TextButton(
                 onPressed: () {
-                  context.push('/login/options');
+                  Navigator.pushNamed(context, Routes.LOGIN_OPTION);
                 },
                 style: OctopusTheme.of(context).buttonTheme.buttonBrandPrimary,
                 child: const Text("Other sign in options"),
@@ -162,12 +171,21 @@ class _LoginPageState extends State<LoginPage> {
                       result.fold((token) {
                         if (widget.verificationType == VerificationType.login) {
                           _connectUser(token).then((client) {
-                            context.go("/home", extra: client);
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, Routes.HOME, (route) => false,
+                                arguments: HomePageArgs(client));
                           }).catchError((error) {
                             print(error.toString());
                           });
                         } else {
-                          context.push("/sign_up", extra: token);
+                          Navigator.pushNamed(
+                            context,
+                            Routes.SIGNUP,
+                            arguments: LoginPageArgs(
+                              email: widget.email,
+                              verificationType: widget.verificationType,
+                            ),
+                          );
                         }
                       }, (r) => null);
                     });
@@ -236,17 +254,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<Client> _connectUser(Token token) async {
-    final channelRepository = getIt<ChannelRepository>();
-    final userRepository = getIt<UserRepository>();
-    final baseUrl = getIt<String>(instanceName: 'BaseUrl');
-    final logger = getIt<Logger>(instanceName: 'app-logger');
-    final socketLogger = getIt<Logger>(instanceName: 'socket-logger');
-    final client = Client(
-        channelRepository: channelRepository,
-        userRepository: userRepository,
-        baseUrl: baseUrl,
-        logger: logger,
-        socketLogger: socketLogger);
+    final client = getIt<Client>();
 
     await client.connectUser(token);
     await getIt<LoginBloc>().handleStorageToken(token);

@@ -7,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:octopus/core/data/models/attachment.dart';
 import 'package:octopus/core/data/models/attachment_file.dart';
@@ -673,12 +672,12 @@ class _MessageInputState extends State<MessageInput>
             TextButton(
                 onPressed: () {
                   _effectiveController.clearAttachments();
-                  context.pop();
+                  Navigator.pop(context);
                 },
                 child: const Text("Cancel")),
             TextButton(
                 onPressed: () {
-                  context.pop();
+                  Navigator.pop(context);
                   sendMessage();
                 },
                 child: const Text("Send"))
@@ -696,14 +695,14 @@ class _MessageInputState extends State<MessageInput>
               isDestructiveAction: true,
               onPressed: () {
                 _effectiveController.clearAttachments();
-                context.pop();
+                Navigator.pop(context);
               },
               child: const Text("Cancel"),
             ),
             CupertinoDialogAction(
               isDefaultAction: true,
               onPressed: () {
-                context.pop();
+                Navigator.pop(context);
                 sendMessage();
               },
               child: const Text("Send"),

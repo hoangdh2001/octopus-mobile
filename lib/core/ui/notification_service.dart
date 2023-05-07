@@ -1,17 +1,11 @@
-import 'dart:io';
-
-import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     hide Message;
-import 'package:go_router/go_router.dart';
+import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/data/models/event.dart';
 import 'package:octopus/core/data/models/member.dart';
 import 'package:octopus/core/data/socketio/event_type.dart';
-import 'package:octopus/di/service_locator.dart';
 import 'package:octopus/octopus.dart';
-import 'package:path_provider/path_provider.dart';
 
 /// Defines a iOS/MacOS notification category for text input actions.
 const String darwinNotificationCategoryText = 'textCategory';
@@ -53,10 +47,6 @@ void showLocalNotification(
   if (event.message == null) return;
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
-  final NotificationAppLaunchDetails? notificationAppLaunchDetails = !kIsWeb &&
-          Platform.isLinux
-      ? null
-      : await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
   const initializationSettingsAndroid =
       AndroidInitializationSettings('ic_launcher_foreground');
   final DarwinInitializationSettings initializationSettingsDarwin =
@@ -86,11 +76,8 @@ void showLocalNotification(
           );
           await channel.watch();
         }
-        context.push('/messages/channel?channelID=${channel.id}',
-            extra: channel);
-        return;
+        Navigator.pushNamed(context, Routes.CHANNEL_PAGE, arguments: channel);
       }
-      context.push('/home');
     },
   );
   final attachmentsLength = event.message?.attachments
@@ -129,13 +116,13 @@ void showLocalNotification(
         const maxChars = maxWidth / 11;
         var currentChars = 0;
         final currentMembers = <Member>[];
-        otherMembers.forEach((element) {
+        for (var element in otherMembers) {
           final newLength = currentChars + (element.user?.name.length ?? 0);
           if (newLength < maxChars) {
             currentChars = newLength;
             currentMembers.add(element);
           }
-        });
+        }
 
         final exceedingMembers = otherMembers.length - currentMembers.length;
         channelName = '${currentMembers.map((e) => e.user?.name).join(', ')} '

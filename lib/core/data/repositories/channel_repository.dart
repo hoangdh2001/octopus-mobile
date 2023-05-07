@@ -15,7 +15,7 @@ abstract class ChannelRepository {
   Future<Page<ChannelState>> getChannels({int? skip, int? limit});
   Future<Either<ChannelState, Error>> createChannel(
       {required List<String> newMembers, String? name, String? userID});
-  Future<Either<ChannelState, Error>> queryChannel(String channelID,
+  Future<ChannelState> queryChannel(String channelID,
       {PaginationParams? messagesPagination});
   Future<Message> sendMessage(String channelID, {required Message message});
   Future<EmptyResponse> deleteMessage(String channelID, String messageID,
@@ -40,5 +40,5 @@ abstract class ChannelRepository {
   Future<EmptyResponse> deleteReaction(
       String channelID, String messageID, String reactionType);
 
-  Future<String> call(String channelID);
+  Future<String> call(String channelID, { String callType = 'pushCall'});
 }

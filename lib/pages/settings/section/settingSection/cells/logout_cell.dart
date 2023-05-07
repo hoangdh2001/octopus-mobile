@@ -2,7 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
+import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/data/client/client.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/di/service_locator.dart';
@@ -18,8 +18,9 @@ class LogoutCell extends StatelessWidget {
       onTap: () {
         final client = SettingsPage.of(context).client;
         _logout(client).then((value) {
-          context.pop();
-          context.go('/welcome');
+          Navigator.pop(context);
+          Navigator.pushNamedAndRemoveUntil(
+              context, Routes.WELCOME, (route) => false);
         });
       },
       child: Container(

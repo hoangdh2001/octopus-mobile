@@ -41,7 +41,7 @@ class BackButton extends StatelessWidget {
             },
             padding: const EdgeInsets.all(14),
             child: SvgPicture.asset(
-              'assets/icons/chevron-left.svg',
+              'assets/icons/arrow-left.svg',
               width: 24,
               height: 24,
               color: iconColor ?? OctopusTheme.of(context).colorTheme.icon,

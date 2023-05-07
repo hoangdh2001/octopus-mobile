@@ -80,6 +80,7 @@ abstract class ChannelService {
     @Path('reactionType') String reactionType,
   );
 
-  @POST('/channels/{channelID}/call')
-  Future<String> call(@Path('channelID') String channelID);
+  @POST('/channels/{channelID}/call/{callType}')
+  Future<String> call(
+      @Path('channelID') String channelID, @Path('callType') String callType);
 }

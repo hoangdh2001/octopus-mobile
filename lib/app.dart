@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -14,37 +13,21 @@ import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logging/logging.dart';
-import 'package:octopus/core/data/client/channel.dart';
+import 'package:octopus/core/config/app_routes.dart';
+import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/data/client/client.dart';
-import 'package:octopus/core/data/models/enums/verification_type.dart';
 import 'package:octopus/core/data/models/token.dart';
 import 'package:octopus/core/data/repositories/channel_repository.dart';
 import 'package:octopus/core/data/repositories/user_repository.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
-import 'package:go_router/go_router.dart';
 import 'package:octopus/di/service_locator.dart';
 import 'package:octopus/navigator_service.dart';
-import 'package:octopus/octopus.dart';
-import 'package:octopus/octopus_channel.dart';
 import 'package:octopus/pages/calls/video_call_page.dart';
-import 'package:octopus/pages/channelList/channel_list_page.dart';
-import 'package:octopus/pages/channel/channel_page.dart';
-import 'package:octopus/pages/email/email_page.dart';
 import 'package:octopus/pages/home_page.dart';
-import 'package:octopus/pages/new_group_page/new_group_page.dart';
-import 'package:octopus/pages/new_message_page/new_message_page.dart';
-import 'package:octopus/pages/notification_list_screen.dart';
-import 'package:octopus/pages/options_signin_screen.dart';
-import 'package:octopus/pages/sign_up/sign_up_page.dart';
 import 'package:octopus/pages/splash_page.dart';
-import 'package:octopus/pages/verify/login_page.dart';
-import 'package:octopus/pages/verify/login_with_pass_screen.dart';
-import 'package:octopus/pages/welcome_page.dart';
 import 'package:octopus/utils/constants.dart';
-import 'package:octopus/widgets/octopus_scaffold.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
-final _shellNavigatorKey = GlobalKey<NavigatorState>();
 late StreamSubscription<CallEvent?>? _callKitSubcription;
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -118,7 +101,8 @@ Future<void> _listenerEvent(RemoteMessage message) async {
           // TODO: show screen calling in Flutter
           break;
         case Event.ACTION_CALL_ACCEPT:
-          print("Accept");
+          NavigationService.instance.pushNamed(Routes.CALL_PAGE,
+              args: VideoCallArgs(channelID: uuid, isJoin: true));
           break;
         case Event.ACTION_CALL_DECLINE:
           // TODO: declined an incoming call
@@ -199,17 +183,7 @@ class _MyAppState extends State<MyApp>
     await requestPermission();
     final secureStorage = getIt<FlutterSecureStorage>();
     final rs = await secureStorage.read(key: octopusToken);
-    final channelRepository = getIt<ChannelRepository>();
-    final userRepository = getIt<UserRepository>();
-    final baseUrl = getIt<String>(instanceName: 'BaseUrl');
-    final logger = getIt<Logger>(instanceName: 'app-logger');
-    final socketLogger = getIt<Logger>(instanceName: 'socket-logger');
-    final client = Client(
-        channelRepository: channelRepository,
-        userRepository: userRepository,
-        baseUrl: baseUrl,
-        logger: logger,
-        socketLogger: socketLogger);
+    final client = getIt<Client>();
 
     if (rs != null) {
       final token = Token.fromJson(jsonDecode(rs));
@@ -262,9 +236,7 @@ class _MyAppState extends State<MyApp>
                   defaultValue: 0,
                 ),
                 builder: (context, snap) {
-                  return MaterialApp.router(
-                    routerConfig:
-                        _router(_initData!.client.state.currentUser != null),
+                  return MaterialApp(
                     builder: (context, widget) {
                       //add this line
                       ScreenUtil.init(context);
@@ -291,6 +263,33 @@ class _MyAppState extends State<MyApp>
                     localizationsDelegates: context.localizationDelegates,
                     locale: context.locale,
                     debugShowCheckedModeBanner: false,
+                    onGenerateRoute: AppRoutes.generateRoute,
+                    navigatorKey: NavigationService.instance.navigationKey,
+                    navigatorObservers: [
+                      NavigationService.instance.routeObserver
+                    ],
+                    onGenerateInitialRoutes: (initialRouteName) {
+                      if (initialRouteName == Routes.HOME) {
+                        return [
+                          AppRoutes.generateRoute(
+                            RouteSettings(
+                              name: Routes.HOME,
+                              arguments: HomePageArgs(_initData!.client),
+                            ),
+                          )!
+                        ];
+                      }
+                      return [
+                        AppRoutes.generateRoute(
+                          const RouteSettings(
+                            name: Routes.WELCOME,
+                          ),
+                        )!
+                      ];
+                    },
+                    initialRoute: _initData!.client.state.currentUser == null
+                        ? Routes.WELCOME
+                        : Routes.HOME,
                   );
                 },
               ),
@@ -299,147 +298,6 @@ class _MyAppState extends State<MyApp>
         );
       },
     );
-  }
-
-  GoRouter _router(bool isHomeInit) {
-    final rootNavigatorKey = NavigationService.instance.navigationKey;
-    return GoRouter(
-        initialLocation: isHomeInit ? '/home' : '/welcome',
-        navigatorKey: rootNavigatorKey,
-        routes: [
-          ShellRoute(
-            navigatorKey: _shellNavigatorKey,
-            pageBuilder: (context, state, child) {
-              var client = state.extra as Client?;
-              if (client == null) {
-                client = _initData?.client;
-              }
-              return NoTransitionPage(
-                name: state.fullpath,
-                child: Octopus(
-                  client: client!,
-                  firebaseMessaging: getIt<FirebaseMessaging>(),
-                  child: OctopusScaffold(body: child),
-                ),
-              );
-            },
-            routes: [
-              GoRoute(
-                parentNavigatorKey: _shellNavigatorKey,
-                path: '/home',
-                pageBuilder: (context, state) => NoTransitionPage(
-                    child: const HomeScreen(), name: state.fullpath),
-              ),
-              GoRoute(
-                parentNavigatorKey: _shellNavigatorKey,
-                path: '/notifications',
-                pageBuilder: (context, state) => NoTransitionPage(
-                    child: const NotificationListScreen(),
-                    name: state.fullpath),
-              ),
-              GoRoute(
-                parentNavigatorKey: _shellNavigatorKey,
-                path: '/messages',
-                pageBuilder: (context, state) => NoTransitionPage(
-                    child: const ChannelListPage(), name: state.fullpath),
-                routes: [
-                  GoRoute(
-                    path: 'newMessage',
-                    parentNavigatorKey: rootNavigatorKey,
-                    pageBuilder: (context, state) => MaterialPage(
-                        child: const NewMessagePage(), name: state.fullpath),
-                  ),
-                  GoRoute(
-                    path: 'newGroup',
-                    parentNavigatorKey: rootNavigatorKey,
-                    pageBuilder: (context, state) => MaterialPage(
-                        child: const NewGroupPage(), name: state.fullpath),
-                  ),
-                  GoRoute(
-                      path: 'channel',
-                      parentNavigatorKey: rootNavigatorKey,
-                      pageBuilder: (context, state) {
-                        var channel = state.extra as Channel?;
-                        var channelID = state.queryParams['channelID'];
-                        if (channel == null) {
-                          final client = Octopus.of(context).client;
-                          if (client == null) debugPrint('error client');
-                        }
-                        return MaterialPage(
-                          arguments: channel,
-                          child: OctopusChannel(
-                            channel: channel!,
-                            child: ChannelPage(
-                              channel: channel,
-                            ),
-                          ),
-                          name: state.fullpath,
-                        );
-                      },
-                      routes: [
-                        GoRoute(
-                          path: 'videoCall',
-                          parentNavigatorKey: rootNavigatorKey,
-                          pageBuilder: (context, state) {
-                            var channel = state.extra as Channel?;
-                            var channelID = state.queryParams['channelID'];
-                            return MaterialPage(
-                              child: VideoCallPage(
-                                channel: channel,
-                                channelID: channelID,
-                              ),
-                              name: state.fullpath,
-                            );
-                          },
-                        ),
-                      ]),
-                ],
-              ),
-            ],
-          ),
-          GoRoute(
-            path: '/login',
-            builder: (context, state) => const EmailPage(),
-            routes: [
-              GoRoute(
-                path: 'verify',
-                builder: (context, state) {
-                  final email = state.queryParams['email'];
-                  final type =
-                      VerificationType.rawValue(state.queryParams['type']);
-                  return LoginPage(email: email!, verificationType: type!);
-                },
-              ),
-              GoRoute(
-                path: 'options',
-                builder: (context, state) => const OptionsSignInScreen(),
-                routes: [
-                  GoRoute(
-                    path: 'pass',
-                    builder: (context, state) => const LoginWithPassScreen(),
-                  ),
-                ],
-              )
-            ],
-          ),
-          GoRoute(
-            path: '/sign_up',
-            builder: (context, state) {
-              final token = state.extra as Token;
-              return SignUpPage(
-                token: token,
-              );
-            },
-          ),
-          GoRoute(
-            path: '/welcome',
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: WelcomePage()),
-          ),
-        ],
-        observers: [
-          NavigationService.instance.routeObserver
-        ]);
   }
 }
 

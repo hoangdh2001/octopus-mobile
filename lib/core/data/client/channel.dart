@@ -449,16 +449,8 @@ class Channel {
     ChannelState? response;
 
     try {
-      final rs = await _channelRepository.queryChannel(id!,
-          messagesPagination: const PaginationParams(skip: 0));
-      rs.fold((channelState) {
-        response = channelState;
-      }, (error) {
-        if (!_initializedCompleter.isCompleted) {
-          _initializedCompleter.completeError(error);
-        }
-        throw error;
-      });
+      response =
+          await query(messagesPagination: const PaginationParams(skip: 0));
     } catch (error, stackTrace) {
       if (!_initializedCompleter.isCompleted) {
         _initializedCompleter.completeError(error, stackTrace);
@@ -467,10 +459,31 @@ class Channel {
     }
 
     if (state == null) {
-      _initState(response!);
+      _initState(response);
     }
 
-    return response!;
+    return response;
+  }
+
+  Future<ChannelState> query({
+    bool state = true,
+    bool watch = false,
+    bool presence = false,
+    PaginationParams? messagesPagination,
+    PaginationParams? membersPagination,
+    PaginationParams? watchersPagination,
+  }) async {
+    try {
+      final updatedState = await _channelRepository.queryChannel(id!,
+          messagesPagination: const PaginationParams(skip: 0));
+
+      _id ??= updatedState.channel!.id;
+
+      this.state?.updateChannelState(updatedState);
+      return updatedState;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<Attachment> sendFile(

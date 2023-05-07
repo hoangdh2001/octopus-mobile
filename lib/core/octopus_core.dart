@@ -2,13 +2,15 @@ import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/data/client/client.dart';
 import 'package:octopus/core/data/models/user.dart';
 import 'package:octopus/core/data/socketio/connection_status.dart';
 import 'package:octopus/core/data/socketio/event_type.dart';
 import 'package:octopus/core/ui/notification_service.dart';
 import 'package:octopus/core/ui/typedef.dart';
+import 'package:octopus/navigator_service.dart';
+import 'package:octopus/pages/channel/channel_page.dart';
 
 class OctopusCore extends StatefulWidget {
   const OctopusCore({
@@ -99,11 +101,10 @@ class OctopusCoreState extends State<OctopusCore> with WidgetsBindingObserver {
         return;
       }
       final channelId = event.channelID;
-      final location = GoRouter.of(context).location;
-      if (location.startsWith('/messages/channel')) {
-        final uri = Uri.parse(location);
-        final channelID = uri.queryParameters['channelID'];
-        if (channelID == channelId) {
+      final settings = ModalRoute.of(context)?.settings;
+      if (settings?.name == Routes.CHANNEL_PAGE) {
+        final args = settings?.arguments as ChannelPageArgs?;
+        if (args?.channel?.id == channelId) {
           return;
         }
       }
