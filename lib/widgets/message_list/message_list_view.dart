@@ -5,10 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:octopus/core/data/models/enums/message_status.dart';
 import 'package:octopus/core/data/models/enums/message_type.dart';
 import 'package:octopus/core/data/models/message.dart';
 import 'package:octopus/core/data/socketio/event_type.dart';
+import 'package:octopus/core/extensions/extension_string.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/core/ui/better_stream_builder.dart';
 import 'package:octopus/core/ui/loading_indicator.dart';
@@ -83,28 +83,31 @@ typedef OnMessageTap = void Function(Message);
 typedef OnMessageSwiped = void Function(Message);
 
 class MessageListView extends StatefulWidget {
-  const MessageListView(
-      {super.key,
-      this.emptyBuilder,
-      this.messageListBuilder,
-      this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.onDrag,
-      this.scrollPhysics = const ClampingScrollPhysics(),
-      this.reverse = true,
-      this.headerBuilder,
-      this.footerBuilder,
-      this.dateDividerBuilder,
-      this.spacingWidgetBuilder = _defaultSpacingWidgetBuilder,
-      this.unreadMessagesSeparatorBuilder,
-      this.paginationLoadingIndicatorBuilder,
-      this.systemMessageBuilder,
-      this.onSystemMessageTap,
-      this.messageBuilder,
-      this.onMessageTap,
-      this.onMessageSwiped,
-      this.messageListController,
-      this.scrollController,
-      this.itemPositionListener,
-      this.messageFilter});
+  const MessageListView({
+    super.key,
+    this.emptyBuilder,
+    this.messageListBuilder,
+    this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.onDrag,
+    this.scrollPhysics = const ClampingScrollPhysics(),
+    this.reverse = true,
+    this.headerBuilder,
+    this.footerBuilder,
+    this.dateDividerBuilder,
+    this.spacingWidgetBuilder = _defaultSpacingWidgetBuilder,
+    this.unreadMessagesSeparatorBuilder,
+    this.paginationLoadingIndicatorBuilder,
+    this.systemMessageBuilder,
+    this.onSystemMessageTap,
+    this.messageBuilder,
+    this.onMessageTap,
+    this.onMessageSwiped,
+    this.messageListController,
+    this.scrollController,
+    this.itemPositionListener,
+    this.messageFilter,
+    this.initialScrollIndex,
+    this.initialAlignment,
+  });
 
   final WidgetBuilder? emptyBuilder;
 
@@ -147,6 +150,10 @@ class MessageListView extends StatefulWidget {
 
   final bool Function(Message)? messageFilter;
 
+  final int? initialScrollIndex;
+
+  final double? initialAlignment;
+
   static Widget _defaultSpacingWidgetBuilder(
     BuildContext context,
     List<SpacingType> spacingTypes,
@@ -178,17 +185,41 @@ class _MessageListViewState extends State<MessageListView> {
 
   bool _inBetweenList = false;
 
-  double get _initialAlignment {
-    // final initialAlignment = widget.initialAlignment;
-    // if (initialAlignment != null) return initialAlignment;
-    return initialIndex == 0 ? 0 : 0.1;
+  int get _initialIndex {
+    final initialScrollIndex = widget.initialScrollIndex;
+    if (initialScrollIndex != null) return initialScrollIndex;
+    if (octopusChannelState!.initialMessageId != null) {
+      final messages = octopusChannelState!.channel.state!.messages
+          .where(widget.messageFilter ??
+              defaultMessageFilter(
+                octopusChannelState!.channel.client.state.currentUser!.id,
+              ))
+          .toList(growable: false);
+      final totalMessages = messages.length;
+      final messageIndex = messages
+          .indexWhere((e) => e.id == octopusChannelState!.initialMessageId);
+      final index = totalMessages - messageIndex;
+      if (index != 0) return index + 1;
+      return index;
+    }
+
+    if (unreadCount > 0) {
+      return unreadCount + 1;
+    }
+
+    return 0;
   }
 
-  int initialIndex = 0;
+  double get _initialAlignment {
+    final initialAlignment = widget.initialAlignment;
+    if (initialAlignment != null) return initialAlignment;
+    return octopusChannelState!.initialMessageId == null ? 0 : 0.1;
+  }
+
+  bool _isInitialMessage(String id) =>
+      octopusChannelState!.initialMessageId == id;
 
   double initialAlignment = 0;
-
-  // late int unreadCount;
 
   late final ItemPositionsListener _itemPositionListener;
 
@@ -204,6 +235,8 @@ class _MessageListViewState extends State<MessageListView> {
   StreamSubscription? _messageNewListener;
 
   late int unreadCount;
+
+  int initialIndex = 0;
 
   @override
   void initState() {
@@ -226,19 +259,8 @@ class _MessageListViewState extends State<MessageListView> {
       octopusChannelState = newStreamChannel;
       _messageNewListener?.cancel();
 
-      //   _userRead = streamChannel?.channel.state!.read.firstWhereOrNull(
-      //     (it) =>
-      //         it.user.id == streamChannel?.channel.client.state.currentUser?.id,
-      //   );
-      //   _messageNewListener?.cancel();
-      //   unreadCount = streamChannel?.channel.state?.unreadCount ?? 0;
-      //   initialIndex = getInitialIndex(
-      //     widget.initialScrollIndex,
-      //     streamChannel!,
-      //     widget.messageFilter,
-      //     _userRead,
-      //   );
-
+      unreadCount = octopusChannelState?.channel.state?.unreadCount ?? 0;
+      initialIndex = _initialIndex;
       initialAlignment = _initialAlignment;
 
       if (_scrollController?.isAttached == true) {
@@ -248,30 +270,23 @@ class _MessageListViewState extends State<MessageListView> {
         );
       }
 
-      _messageNewListener =
-          octopusChannelState!.channel.on(EventType.messageNew).listen((event) {
+      _messageNewListener = octopusChannelState!.channel
+          .on(EventType.messageNew)
+          .skip(1)
+          //skipping the first event because
+          //the StreamController is a BehaviorSubject
+          .listen((event) {
         if (_upToDate) {
           _bottomPaginationActive = false;
         }
-        if (
-            // event.message?.parentId == widget.parentMessage?.id &&
-            event.message!.sender!.id ==
-                octopusChannelState!.channel.client.state.currentUser!.id) {
-          // setState(() => unreadCount = 0);
-
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            _scrollController?.jumpTo(
-              index: 0,
-            );
+        if (octopusChannelState?.channel.state?.unreadCount != 0) {
+          setState(() {
+            unreadCount = unreadCount + 1;
           });
         }
       });
 
-      //   if (_isThreadConversation) {
-      //     streamChannel!.getReplies(widget.parentMessage!.id);
-      //   }
-
-      //   unreadCount = streamChannel?.channel.state?.unreadCount ?? 0;
+      unreadCount = octopusChannelState?.channel.state?.unreadCount ?? 0;
     }
   }
 
@@ -301,7 +316,7 @@ class _MessageListViewState extends State<MessageListView> {
         messageListController: _messageListController,
         messageListBuilder: widget.messageListBuilder ??
             (context, list) => _buildListView(list),
-        errorBuilder: (BuildContext context, Object error) => Center(
+        errorBuilder: (BuildContext context, Object error) => const Center(
           child: Text(
             'Error',
           ),
@@ -445,8 +460,6 @@ class _MessageListViewState extends State<MessageListView> {
 
               Widget separator;
 
-              // final isThread = message.replyCount! > 0;
-
               if (!Jiffy(message.createdAt.toLocal()).isSame(
                 nextMessage.createdAt.toLocal(),
                 Units.DAY,
@@ -479,18 +492,18 @@ class _MessageListViewState extends State<MessageListView> {
                 );
               }
 
-              // if (unreadCount > 0 && unreadCount == i - 1) {
-              //   final unreadMessagesSeparator =
-              //       _buildUnreadMessagesSeparator(unreadCount);
+              if (unreadCount > 0 && unreadCount == i - 1) {
+                final unreadMessagesSeparator =
+                    _buildUnreadMessagesSeparator(unreadCount);
 
-              //   return Column(
-              //     crossAxisAlignment: CrossAxisAlignment.stretch,
-              //     children: [
-              //       separator,
-              //       unreadMessagesSeparator,
-              //     ],
-              //   );
-              // }
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    separator,
+                    unreadMessagesSeparator,
+                  ],
+                );
+              }
 
               return separator;
             },
@@ -588,21 +601,22 @@ class _MessageListViewState extends State<MessageListView> {
       ],
     );
 
-    final backgroundColor = OctopusTheme.of(context).colorTheme.contentView;
-    // final backgroundImage =
-    //     StreamMessageListViewTheme.of(context).backgroundImage;
+    final backgroundColor =
+        OctopusTheme.of(context).messageListViewTheme.backgroundColor;
+    final backgroundImage =
+        OctopusTheme.of(context).messageListViewTheme.backgroundImage;
 
-    // if (backgroundColor != null) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        // image: backgroundImage,
-      ),
-      child: child,
-    );
-    // }
+    if (backgroundColor != null) {
+      return DecoratedBox(
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          image: backgroundImage,
+        ),
+        child: child,
+      );
+    }
 
-    // return child;
+    return child;
   }
 
   Future<void> _paginateData(
@@ -630,7 +644,7 @@ class _MessageListViewState extends State<MessageListView> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
               child: DecoratedBox(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     // gradient: _streamTheme.colorTheme.bgGradient,
                     ),
                 child: Padding(
@@ -638,7 +652,9 @@ class _MessageListViewState extends State<MessageListView> {
                   child: Text(
                     'Last read $unreadCount',
                     textAlign: TextAlign.center,
-                    // style: StreamChannelHeaderTheme.of(context).subtitleStyle,
+                    style: OctopusTheme.of(context)
+                        .channelHeaderTheme
+                        .subtitleStyle,
                   ),
                 ),
               ),
@@ -657,8 +673,7 @@ class _MessageListViewState extends State<MessageListView> {
   }
 
   Widget buildMessage(Message message, List<Message> messages, int index) {
-    if ((message.type == MessageType.systemNotification) &&
-        message.text?.isNotEmpty == true) {
+    if ((message.isSystem) && message.text?.isNotEmpty == true) {
       return widget.systemMessageBuilder?.call(context, message) ??
           SystemMessage(
             message: message,
@@ -687,19 +702,11 @@ class _MessageListViewState extends State<MessageListView> {
     final hasFileAttachment =
         message.attachments.any((it) => it.type == 'file');
 
-    // final isThreadMessage =
-    //     message.parentId != null && message.showInChannel == true;
-
-    // final hasReplies = message.replyCount! > 0;
-
     final attachmentBorderRadius = hasFileAttachment ? 12.0 : 14.0;
 
     final showTimeStamp = timeDiff >= 1 || !isNextUserSame;
 
-    final showUsername = !isMyMessage &&
-        // (!isThreadMessage || _isThreadConversation) &&
-        // !hasReplies &&
-        (timeDiff >= 1 || !isNextUserSame);
+    final showUsername = !isMyMessage && (timeDiff >= 1 || !isNextUserSame);
 
     final showUserAvatar = isMyMessage
         ? DisplayWidget.gone
@@ -710,15 +717,12 @@ class _MessageListViewState extends State<MessageListView> {
     final showSendingIndicator =
         isMyMessage && (index == 0 || timeDiff >= 1 || !isNextUserSame);
 
-    // final showInChannelIndicator = !_isThreadConversation && isThreadMessage;
-    // final showThreadReplyIndicator = !_isThreadConversation && hasReplies;
-    // final isOnlyEmoji = message.text?.isOnlyEmoji ?? false;
+    final isOnlyEmoji = message.text?.isOnlyEmoji ?? false;
 
     // final hasUrlAttachment =
     //     message.attachments.any((it) => it.ogScrapeUrl != null);
 
-    final borderSide = isMyMessage ? BorderSide.none : null;
-
+    final borderSide = isOnlyEmoji || isMyMessage ? BorderSide.none : null;
     final currentUser =
         OctopusChannel.of(context).channel.client.state.currentUser;
     final members = OctopusChannel.of(context).channel.state?.members ?? [];
@@ -730,7 +734,6 @@ class _MessageListViewState extends State<MessageListView> {
       reverse: isMyMessage,
       showReactions: !message.isDeleted,
       padding: const EdgeInsets.symmetric(horizontal: 8),
-      // showThreadReplyIndicator: showThreadReplyIndicator,
       showUsername: showUsername,
       showTimestamp: showTimeStamp,
       showSendingIndicator: showSendingIndicator,
@@ -745,7 +748,7 @@ class _MessageListViewState extends State<MessageListView> {
             alignment: 0.1,
           );
         } else {
-          // await streamChannel!
+          // await octopusChannelState!
           //     .loadChannelAtMessage(quotedMessageId)
           //     .then((_) async {
           //   initialIndex = 21; // 19 + 2 | 19 is the index of the message
@@ -755,13 +758,8 @@ class _MessageListViewState extends State<MessageListView> {
       },
       showEditMessage: isMyMessage,
       showDeleteMessage: isMyMessage,
-      // showThreadReplyMessage: !isThreadMessage &&
-      //     streamChannel?.channel.ownCapabilities
-      //             .contains(PermissionType.sendReply) ==
-      //         true,
       showFlagButton: !isMyMessage,
       borderSide: borderSide,
-      // onThreadTap: _onThreadTap,
       attachmentBorderRadiusGeometry: BorderRadius.only(
         topLeft: Radius.circular(attachmentBorderRadius),
         bottomLeft: isMyMessage
@@ -803,9 +801,7 @@ class _MessageListViewState extends State<MessageListView> {
       ),
       textPadding: EdgeInsets.symmetric(
         vertical: 8,
-        horizontal:
-            // isOnlyEmoji ? 0 :
-            16.0,
+        horizontal: isOnlyEmoji ? 0 : 16.0,
       ),
       messageTheme: isMyMessage
           ? _streamTheme.ownMessageTheme
@@ -1006,13 +1002,13 @@ class _MessageListViewState extends State<MessageListView> {
     if (_isFirstItemVisible) {
       // most recent message is visible
       final channel = octopusChannelState?.channel;
-      // if (channel != null) {
-      //   if (_upToDate &&
-      //       channel.config?.readEvents == true &&
-      //       channel.state!.unreadCount > 0) {
-      //     streamChannel!.channel.markRead();
-      //   }
-      // }
+      if (channel != null) {
+        if (_upToDate &&
+            // channel.config?.readEvents == true &&
+            channel.state!.unreadCount > 0) {
+          octopusChannelState!.channel.markRead();
+        }
+      }
     }
     if (mounted) {
       if (_showScrollToBottom.value == _isFirstItemVisible) {

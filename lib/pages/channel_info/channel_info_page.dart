@@ -8,6 +8,9 @@ import 'package:octopus/core/theme/oc_message_theme_data.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/octopus.dart';
 import 'package:octopus/octopus_channel.dart';
+import 'package:octopus/pages/channel_file_display_screen.dart';
+import 'package:octopus/pages/channel_media_display_screen.dart';
+import 'package:octopus/pages/pinned_messages_page.dart';
 import 'package:octopus/widgets/avatars/user_avatar.dart';
 import 'package:octopus/widgets/options/options_list.dart';
 
@@ -146,7 +149,7 @@ class _ChannelInfoPageState extends State<ChannelInfoPage> {
 
               return OptionListTile(
                 tileColor: OctopusTheme.of(context).colorTheme.contentView,
-                title: 'test',
+                title: 'Mute user',
                 titleTextStyle:
                     OctopusTheme.of(context).textTheme.primaryGreyBody,
                 leading: Padding(
@@ -167,15 +170,15 @@ class _ChannelInfoPageState extends State<ChannelInfoPage> {
                         valueListenable: mutedBool,
                         builder: (context, value, _) {
                           return CupertinoSwitch(
-                            value: value!,
+                            value: !value!,
                             onChanged: (val) {
-                              mutedBool.value = val;
+                              mutedBool.value = !val;
 
-                              // if (snapshot.data!) {
-                              //   channel.channel.unmute();
-                              // } else {
-                              //   channel.channel.mute();
-                              // }
+                              if (snapshot.data!) {
+                                channel.channel.unmute();
+                              } else {
+                                channel.channel.mute();
+                              }
                             },
                           );
                         }),
@@ -228,7 +231,7 @@ class _ChannelInfoPageState extends State<ChannelInfoPage> {
               MaterialPageRoute(
                 builder: (context) => OctopusChannel(
                   channel: channel,
-                  child: Container(),
+                  child: const PinnedMessagesScreen(),
                 ),
               ),
             );
@@ -241,7 +244,7 @@ class _ChannelInfoPageState extends State<ChannelInfoPage> {
           leading: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: SvgPicture.asset(
-              'assets/icons/photo_video.svg',
+              'assets/icons/pictures.svg',
               width: 36.0,
               height: 36.0,
               color: OctopusTheme.of(context)
@@ -259,41 +262,15 @@ class _ChannelInfoPageState extends State<ChannelInfoPage> {
 
             Navigator.push(
               context,
-              PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) =>
-                    OctopusChannel(
-                  child: Container(),
+              MaterialPageRoute(
+                builder: (context) => OctopusChannel(
                   channel: channel,
+                  child: ChannelMediaDisplayScreen(
+                    messageTheme: widget.messageTheme,
+                  ),
                 ),
-                transitionsBuilder:
-                    (context, animation, secondaryAnimation, child) {
-                  const begin = Offset(0.0, 1.0);
-                  const end = Offset.zero;
-                  const curve = Curves.easeInOut;
-                  final tween = Tween(begin: begin, end: end)
-                      .chain(CurveTween(curve: curve));
-                  // final offsetAnimation = animation.drive(tween);
-                  final curvedAnimation =
-                      CurvedAnimation(parent: animation, curve: curve);
-                  return SlideTransition(
-                    position: tween.animate(curvedAnimation),
-                    child: child,
-                  );
-                },
               ),
             );
-
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => StreamChannel(
-            //       channel: channel,
-            //       child: ChannelMediaDisplayScreen(
-            //         messageTheme: widget.messageTheme,
-            //       ),
-            //     ),
-            //   ),
-            // );
           },
         ),
         OptionListTile(
@@ -324,7 +301,9 @@ class _ChannelInfoPageState extends State<ChannelInfoPage> {
               MaterialPageRoute(
                 builder: (context) => OctopusChannel(
                   channel: channel,
-                  child: Container(),
+                  child: ChannelFileDisplayScreen(
+                    messageTheme: widget.messageTheme,
+                  ),
                 ),
               ),
             );
@@ -347,7 +326,7 @@ class _ChannelInfoPageState extends State<ChannelInfoPage> {
             ),
           ),
           trailing: SvgPicture.asset(
-            'assets/icons/right.svg',
+            'assets/icons/arrow_right.svg',
             color: OctopusTheme.of(context).colorTheme.primaryGrey,
           ),
           onTap: () {

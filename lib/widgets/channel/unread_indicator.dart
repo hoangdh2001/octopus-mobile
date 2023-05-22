@@ -23,9 +23,9 @@ class UnreadIndicator extends StatelessWidget {
             ? client.state.channels[id]?.state?.unreadCount
             : client.state.totalUnreadCount,
         builder: (context, data) {
-          // if (data == 0) {
-          //   return const Offstage();
-          // }
+          if (data == 0) {
+            return const Offstage();
+          }
           return Material(
             borderRadius: BorderRadius.circular(8),
             color: OctopusTheme.of(context)
@@ -40,7 +40,7 @@ class UnreadIndicator extends StatelessWidget {
               ),
               child: Center(
                 child: Text(
-                  '${data > 99 ? '99+' : 2}',
+                  '${data > 99 ? '99+' : data}',
                   style: const TextStyle(
                     fontSize: 11,
                     color: Colors.white,

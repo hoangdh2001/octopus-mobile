@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:octopus/core/config/routes.dart';
+import 'package:octopus/core/data/models/filter.dart';
+import 'package:octopus/core/data/models/sort_option.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:octopus/core/ui/paged_value_scroll_view/bloc/paged_value_bloc.dart';
@@ -22,8 +24,17 @@ class ChannelListPage extends StatefulWidget {
 class _ChannelListPageState extends State<ChannelListPage> {
   final ScrollController _scrollController = ScrollController();
   TextEditingController? _controller;
-  late final ChannelListBloc _channelListBloc =
-      ChannelListBloc(client: Octopus.of(context).client, limit: 30);
+  late final ChannelListBloc _channelListBloc = ChannelListBloc(
+    client: Octopus.of(context).client,
+    filter: Filter.in_(
+      'members.userID',
+      [Octopus.of(context).currentUser!.id],
+    ),
+    sort: [
+      const SortOption('lastMessageAt', direction: -1),
+    ],
+    limit: 30,
+  );
 
   @override
   void initState() {
@@ -76,6 +87,7 @@ class _ChannelListPageState extends State<ChannelListPage> {
         body: SlidableAutoCloseBehavior(
           closeWhenOpened: true,
           child: RefreshIndicator(
+            color: OctopusTheme.of(context).colorTheme.brandPrimary,
             onRefresh: () async {
               _channelListBloc.add(const Refresh());
             },
@@ -109,6 +121,9 @@ class _ChannelListPageState extends State<ChannelListPage> {
               onChannelTap: (channel) {
                 Navigator.pushNamed(context, Routes.CHANNEL_PAGE,
                     arguments: ChannelPageArgs(channel: channel));
+              },
+              errorBuilder: (context, error) {
+                return Center(child: Text(error.message));
               },
               emptyBuilder: (context) {
                 return Center(

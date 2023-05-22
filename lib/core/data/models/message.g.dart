@@ -47,6 +47,10 @@ Message _$MessageFromJson(Map<String, dynamic> json) => Message(
       ignoreUser: (json['ignoreUser'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
+      pinned: json['pinned'] as bool?,
+      pinnedBy: json['pinnedBy'] == null
+          ? null
+          : User.fromJson(json['pinnedBy'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$MessageToJson(Message instance) {
@@ -76,6 +80,8 @@ Map<String, dynamic> _$MessageToJson(Message instance) {
   val['reactionCounts'] = instance.reactionCounts;
   val['deletedAt'] = instance.deletedAt?.toIso8601String();
   val['ignoreUser'] = instance.ignoreUser;
+  val['pinned'] = instance.pinned;
+  val['pinnedBy'] = instance.pinnedBy;
   return val;
 }
 
@@ -89,6 +95,12 @@ const _$MessageStatusEnumMap = {
 
 const _$MessageTypeEnumMap = {
   MessageType.systemNotification: 'SYSTEM_NOTIFICATION',
+  MessageType.systemAddMember: 'SYSTEM_ADDED_MEMBER',
+  MessageType.systemMemberLeft: 'SYSTEM_MEMBER_LEFT',
+  MessageType.systemRemovedMember: 'SYSTEM_REMOVED_MEMBER',
+  MessageType.systemCreatedChannel: 'SYSTEM_CREATED_CHANNEL',
+  MessageType.systemChangedName: 'SYSTEM_CHANGED_NAME',
+  MessageType.systemChangedAvatar: 'SYSTEM_CHANGED_AVATAR',
   MessageType.normal: 'NORMAL',
   MessageType.deleted: 'DELETED',
 };

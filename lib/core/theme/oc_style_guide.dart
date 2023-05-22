@@ -16,6 +16,7 @@ abstract class OCStyleGuide {
   OCFont get input;
   OCFont get footnote;
   OCFont get footnoteBold;
+  OCFont get hintLarge;
 
   // MARK: Generic colors
   OCColor get brandPrimary;
@@ -30,6 +31,7 @@ abstract class OCStyleGuide {
   OCColor get hintColor;
   OCColor get contentView;
   OCColor get icon;
+  OCColor get iconBrandPrimary;
   OCColor get navigationTitle;
   OCColor get border;
   OCColor get cardBackgroundSecondary;
@@ -40,4 +42,6 @@ abstract class OCStyleGuide {
   OCColor get overlay;
   OCColor get overlayDark;
   OCColor get disabled;
+  OCColor get highlight;
+  OCColor get bgGray;
 }

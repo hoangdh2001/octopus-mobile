@@ -29,7 +29,7 @@ class ChannelModel extends Equatable {
 
   final bool activeNotify;
 
-  // final User? createdBy;
+  final User? createdBy;
 
   ChannelModel({
     required this.id,
@@ -41,7 +41,7 @@ class ChannelModel extends Equatable {
     this.deletedAt,
     required this.hidden,
     required this.activeNotify,
-    // this.createdBy,
+    this.createdBy,
   })  : createdAt = createdAt ?? DateTime.now(),
         updatedAt = updatedAt ?? DateTime.now();
 
@@ -60,7 +60,7 @@ class ChannelModel extends Equatable {
     DateTime? deletedAt,
     bool? hidden,
     bool? activeNotify,
-    // User? createdBy,
+    User? createdBy,
   }) =>
       ChannelModel(
         id: id ?? this.id,
@@ -72,7 +72,7 @@ class ChannelModel extends Equatable {
         deletedAt: deletedAt ?? this.deletedAt,
         hidden: hidden ?? this.hidden,
         activeNotify: activeNotify ?? this.activeNotify,
-        // createdBy: createdBy ?? this.createdBy,
+        createdBy: createdBy ?? this.createdBy,
       );
 
   ChannelModel merge(
@@ -89,7 +89,7 @@ class ChannelModel extends Equatable {
       activeNotify: other.activeNotify,
       avatar: other.avatar,
       name: other.name,
-      // createdBy: other.createdBy,
+      createdBy: other.createdBy,
     );
   }
 
@@ -104,7 +104,7 @@ class ChannelModel extends Equatable {
         deletedAt,
         hidden,
         activeNotify,
-        // createdBy
+        createdBy
       ];
 }
 
@@ -118,7 +118,14 @@ class ChannelState extends Equatable {
 
   final List<Read>? read;
 
-  const ChannelState({this.channel, this.messages, this.members, this.read});
+  final List<Message>? pinnedMessages;
+
+  const ChannelState(
+      {this.channel,
+      this.messages,
+      this.members,
+      this.read,
+      this.pinnedMessages});
 
   factory ChannelState.fromJson(Map<String, dynamic> json) =>
       _$ChannelStateFromJson(json);
@@ -130,12 +137,14 @@ class ChannelState extends Equatable {
         channel,
         messages,
         read,
+        pinnedMessages,
       ];
 
   ChannelState copyWith({
     ChannelModel? channel,
     List<Message>? messages,
     List<Member>? members,
+    List<Message>? pinnedMessages,
     List<Read>? read,
   }) =>
       ChannelState(
@@ -143,5 +152,6 @@ class ChannelState extends Equatable {
         messages: messages ?? this.messages,
         members: members ?? this.members,
         read: read ?? this.read,
+        pinnedMessages: pinnedMessages ?? this.pinnedMessages,
       );
 }

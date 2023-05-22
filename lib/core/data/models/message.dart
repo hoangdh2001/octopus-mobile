@@ -36,10 +36,13 @@ class Message extends Equatable {
     this.reactionCounts,
     this.deletedAt,
     this.ignoreUser,
+    bool? pinned,
+    this.pinnedBy,
   })  : id = id ?? const Uuid().v4(),
         _createdAt = createdAt,
         _updatedAt = updatedAt,
-        _quotedMessageID = quotedMessageID;
+        _quotedMessageID = quotedMessageID,
+        pinned = pinned ?? false;
 
   @JsonKey(name: "_id")
   final String id;
@@ -104,7 +107,18 @@ class Message extends Equatable {
 
   final List<String>? ignoreUser;
 
-  bool get isSystem => type == MessageType.systemNotification;
+  final bool pinned;
+
+  final User? pinnedBy;
+
+  bool get isSystem =>
+      type == MessageType.systemNotification ||
+      type == MessageType.systemAddMember ||
+      type == MessageType.systemMemberLeft ||
+      type == MessageType.systemRemovedMember ||
+      type == MessageType.systemCreatedChannel ||
+      type == MessageType.systemChangedName ||
+      type == MessageType.systemChangedAvatar;
 
   factory Message.fromJson(Map<String, Object?> json) =>
       _$MessageFromJson(json);
@@ -130,6 +144,8 @@ class Message extends Equatable {
     Map<String, int>? reactionCounts,
     DateTime? deletedAt,
     List<String>? ignoreUser,
+    bool? pinned,
+    User? pinnedBy,
   }) {
     assert(() {
       if (quotedMessage is! Message &&
@@ -175,6 +191,8 @@ class Message extends Equatable {
       reactionCounts: reactionCounts ?? this.reactionCounts,
       deletedAt: deletedAt ?? this.deletedAt,
       ignoreUser: ignoreUser ?? this.ignoreUser,
+      pinned: pinned ?? this.pinned,
+      pinnedBy: pinnedBy ?? this.pinnedBy,
     );
   }
 
@@ -198,6 +216,7 @@ class Message extends Equatable {
       reactionCounts: other.reactionCounts,
       deletedAt: other.deletedAt,
       ignoreUser: other.ignoreUser,
+      pinned: other.pinned,
     );
   }
 
@@ -219,5 +238,6 @@ class Message extends Equatable {
         reactionCounts,
         deletedAt,
         ignoreUser,
+        pinned,
       ];
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
@@ -28,13 +29,8 @@ import 'package:uuid/uuid.dart';
 const incomingTypingStartEventTimeout = 7;
 
 class Channel {
-  Channel(
-    this._client,
-    this._channelRepository,
-    this._id, {
-    String? name,
-    String? image,
-  }) {
+  Channel(this._client, this._channelRepository, this._id,
+      {String? name, String? image, List<String>? members}) {
     _client.logger.info('New Channel instance created, not yet initialized');
   }
 
@@ -57,15 +53,15 @@ class Channel {
 
   String? _id;
 
-  // User? get createdBy {
-  //   _checkInitialized();
-  //   return state!._channelState.channel?.createdBy;
-  // }
+  User? get createdBy {
+    _checkInitialized();
+    return state!._channelState.channel?.createdBy;
+  }
 
-  // Stream<User?> get createdByStream {
-  //   _checkInitialized();
-  //   return state!.channelStateStream.map((cs) => cs.channel?.createdBy);
-  // }
+  Stream<User?> get createdByStream {
+    _checkInitialized();
+    return state!.channelStateStream.map((cs) => cs.channel?.createdBy);
+  }
 
   bool get hidden {
     _checkInitialized();
@@ -165,10 +161,15 @@ class Channel {
 
   bool get isGroup => memberCount != 2;
 
-  // User? get createdBy => state!.channelState.channel?.createdBy;
+  String? get avatar {
+    _checkInitialized();
+    return state!._channelState.channel?.avatar;
+  }
 
-  // Stream<User?> get createdByStream =>
-  //     state!.channelStateStream.map((cs) => cs.channel?.createdBy);
+  Stream<String?> get avatarStream {
+    _checkInitialized();
+    return state!.channelStateStream.map((cs) => cs.channel?.avatar);
+  }
 
   void updateChannelState(ChannelState channelState) {
     state!.updateChannelState(channelState);
@@ -397,7 +398,7 @@ class Channel {
       if (isImage) {
         future = sendImage(
           it.file!,
-          it.id,
+          attachmentID: it.id,
           onSendProgress: onSendProgress,
           cancelToken: cancelToken,
         ).then((it) => it);
@@ -455,7 +456,7 @@ class Channel {
 
     try {
       response =
-          await query(messagesPagination: const PaginationParams(skip: 0));
+          await query(messagesPagination: const PaginationParams(limit: 30));
     } catch (error, stackTrace) {
       if (!_initializedCompleter.isCompleted) {
         _initializedCompleter.completeError(error, stackTrace);
@@ -471,20 +472,19 @@ class Channel {
   }
 
   Future<ChannelState> query({
-    bool state = true,
-    bool watch = false,
-    bool presence = false,
     PaginationParams? messagesPagination,
     PaginationParams? membersPagination,
     PaginationParams? watchersPagination,
   }) async {
     try {
-      final updatedState = await _channelRepository.queryChannel(id!,
-          messagesPagination: const PaginationParams(skip: 0));
+      final updatedState = await _channelRepository.queryChannel(
+        id!,
+        messagesPagination: messagesPagination,
+      );
 
       _id ??= updatedState.channel!.id;
 
-      this.state?.updateChannelState(updatedState);
+      state?.updateChannelState(updatedState);
       return updatedState;
     } catch (e) {
       rethrow;
@@ -509,16 +509,16 @@ class Channel {
 
   /// Send an image to this channel.
   Future<Attachment> sendImage(
-    AttachmentFile image,
-    String attachmentID, {
+    AttachmentFile image, {
+    String? attachmentID,
     ProgressCallback? onSendProgress,
     CancelToken? cancelToken,
   }) {
     _checkInitialized();
     return _channelRepository.sendImage(
       id!,
-      attachmentID,
       image,
+      attachmentID: attachmentID,
       onSendProgress: onSendProgress,
       cancelToken: cancelToken,
     );
@@ -542,8 +542,8 @@ class Channel {
 
   Future<EmptyResponse> markRead({String? messageID}) async {
     _checkInitialized();
-    // client.state.totalUnreadCount =
-    //     max(0, (client.state.totalUnreadCount) - (state!.unreadCount));
+    client.state.totalUnreadCount =
+        max(0, (client.state.totalUnreadCount) - (state!.unreadCount));
     state!.unreadCount = 0;
     return _markChannelRead(id!, messageID: messageID);
   }
@@ -695,6 +695,49 @@ class Channel {
     }
   }
 
+  Future<Message> pinMessage(Message message) {
+    return paritalUpdateMessage(message, {
+      'pinned': true,
+    });
+  }
+
+  Future<Message> unpinMessage(Message message) {
+    return paritalUpdateMessage(message, {
+      'pinned': false,
+    });
+  }
+
+  Future<Message> paritalUpdateMessage(
+      Message message, Map<String, Object?> set) async {
+    try {
+      final res = await _channelRepository.updateMessage(id!, message.id, set);
+
+      final updatedMessage = res.copyWith(
+        ownReactions: message.ownReactions,
+      );
+
+      state?.updateMessage(updatedMessage);
+
+      return res;
+    } catch (e) {
+      // if (e is OCError && e.isRetriable) {
+      //   state!._retryQueue.add([message]);
+      // }
+      rethrow;
+    }
+  }
+
+  Future<EmptyResponse> mute({Duration? expiration}) {
+    _checkInitialized();
+    return _client.muteChannel(id!, expiration: expiration);
+  }
+
+  /// Unmute the channel.
+  Future<EmptyResponse> unmute() {
+    _checkInitialized();
+    return _client.unmuteChannel(id!);
+  }
+
   Future<String> call() async {
     final uuid = await _channelRepository.call(id!);
     return uuid;
@@ -705,6 +748,23 @@ class Channel {
     _checkInitialized();
     final channel = _client.updateChannel(id!, channelData);
     return channel;
+  }
+
+  Future<EmptyResponse> addMembers(List<String> memberIds) async {
+    _checkInitialized();
+    return _channelRepository.addMembers(
+      id!,
+      memberIds,
+    );
+  }
+
+  Future<void> changeAvatar(AttachmentFile file) async {
+    _checkInitialized();
+    final attachment = await sendImage(file);
+
+    await update({
+      'avatar': attachment.url,
+    });
   }
 
   void dispose() {
@@ -753,9 +813,21 @@ class ChannelClientState {
 
     _listenMessageNew();
 
+    _listenMessageUpdated();
+
     _listenMessageDeleted();
 
+    _listenChannelUpdated();
+
+    _listenMemberAdded();
+
+    _listenMemberRemoved();
+
+    _listenMemberUpdated();
+
     _listenReactions();
+
+    _listenReadEvents();
 
     _startCleaningStaleTypingEvents();
 
@@ -766,6 +838,32 @@ class ChannelClientState {
     _subscriptions.add(_channel.on(EventType.messageDeleted).listen((event) {
       final message = event.message!;
       updateMessage(message);
+    }));
+  }
+
+  void _listenMessageUpdated() {
+    _subscriptions.add(_channel
+        .on(
+      EventType.messageUpdated,
+      EventType.reactionUpdated,
+    )
+        .listen((event) {
+      final oldMessage =
+          messages.firstWhereOrNull((it) => it.id == event.message?.id);
+      final message = event.message!.copyWith(
+        ownReactions: oldMessage?.ownReactions,
+      );
+      updateMessage(message);
+
+      if (message.pinned) {
+        final _existingPinnedMessages = _channelState.pinnedMessages ?? [];
+        _channelState = _channelState.copyWith(
+          pinnedMessages: [
+            ..._existingPinnedMessages,
+            message,
+          ],
+        );
+      }
     }));
   }
 
@@ -783,10 +881,16 @@ class ChannelClientState {
         updateMessage(message);
       }
 
-      // if (_countMessageAsUnread(message)) {
-      //   unreadCount += 1;
-      // }
+      if (_countMessageAsUnread(message)) {
+        unreadCount += 1;
+      }
     }));
+  }
+
+  bool _countMessageAsUnread(Message message) {
+    final userId = _channel.client.state.currentUser?.id;
+
+    return message.sender?.id != userId;
   }
 
   void _listenReactions() {
@@ -816,24 +920,24 @@ class ChannelClientState {
       newMessages.add(message);
     }
 
-    // final newPinnedMessages = [...pinnedMessages];
-    // final oldPinnedIndex =
-    //     newPinnedMessages.indexWhere((m) => m.id == message.id);
+    final newPinnedMessages = [...pinnedMessages];
+    final oldPinnedIndex =
+        newPinnedMessages.indexWhere((m) => m.id == message.id);
 
     // Handle pinned messages
-    // if (message.pinned) {
-    //   if (oldPinnedIndex != -1) {
-    //     newPinnedMessages[oldPinnedIndex] = message;
-    //   } else {
-    //     newPinnedMessages.add(message);
-    //   }
-    // } else {
-    //   newPinnedMessages.removeWhere((m) => m.id == message.id);
-    // }
+    if (message.pinned) {
+      if (oldPinnedIndex != -1) {
+        newPinnedMessages[oldPinnedIndex] = message;
+      } else {
+        newPinnedMessages.add(message);
+      }
+    } else {
+      newPinnedMessages.removeWhere((m) => m.id == message.id);
+    }
 
     _channelState = _channelState.copyWith(
       messages: newMessages..sort(_sortByCreatedAt),
-      // pinnedMessages: newPinnedMessages,
+      pinnedMessages: newPinnedMessages,
       channel: _channelState.channel?.copyWith(
         lastMessageAt: message.createdAt,
       ),
@@ -849,6 +953,81 @@ class ChannelClientState {
 
   void deleteMessage(Message message) {
     return updateMessage(message);
+  }
+
+  void _listenMemberAdded() {
+    _subscriptions.add(_channel.on(EventType.memberAdded).listen((Event e) {
+      final members = e.members;
+      final existingMembers = channelState.members ?? [];
+      updateChannelState(channelState.copyWith(
+        members: [
+          ...existingMembers,
+          ...members!,
+        ],
+      ));
+    }));
+  }
+
+  void _listenMemberRemoved() {
+    _subscriptions.add(_channel.on(EventType.memberRemoved).listen((Event e) {
+      final user = e.user;
+      final existingMembers = channelState.members ?? [];
+      final existingRead = channelState.read ?? [];
+      updateChannelState(channelState.copyWith(
+        members: existingMembers
+            .where((m) => m.userID != user!.id)
+            .toList(growable: false),
+        read: existingRead
+            .where((r) => r.user.id != user!.id)
+            .toList(growable: false),
+      ));
+    }));
+  }
+
+  void _listenMemberUpdated() {
+    _subscriptions.add(_channel.on(EventType.memberUpdated).listen((Event e) {
+      final updateMembers = e.members;
+      final existingMembers = channelState.members ?? [];
+      final members =
+          existingMembers.where((member) => !updateMembers!.contains(member));
+      updateChannelState(channelState.copyWith(members: [
+        ...members,
+        ...updateMembers!,
+      ]));
+    }));
+  }
+
+  void _listenChannelUpdated() {
+    _subscriptions.add(_channel.on(EventType.channelUpdated).listen((Event e) {
+      final channel = e.channelModel!;
+      updateChannelState(channelState.copyWith(
+        channel: channelState.channel?.merge(channel),
+      ));
+    }));
+  }
+
+  void _listenReadEvents() {
+    _subscriptions.add(
+      _channel.on(EventType.messageRead, EventType.notificationMarkRead).listen(
+        (event) {
+          final readList = List<Read>.from(_channelState.read ?? []);
+          final userReadIndex =
+              read.indexWhere((r) => r.user.id == event.user!.id);
+
+          if (userReadIndex != -1) {
+            final userRead = readList.removeAt(userReadIndex);
+            if (userRead.user.id == _channel._client.state.currentUser!.id) {
+              unreadCount = 0;
+            }
+            readList.add(Read(
+              user: event.user!,
+              lastRead: event.createdAt,
+            ));
+            _channelState = _channelState.copyWith(read: readList);
+          }
+        },
+      ),
+    );
   }
 
   int _sortByCreatedAt(Message a, Message b) =>
@@ -1002,6 +1181,14 @@ class ChannelClientState {
 
   Stream<List<Message>> get messagesStream => channelStateStream
       .map((cs) => cs.messages ?? <Message>[])
+      .distinct(const ListEquality().equals);
+
+  List<Message> get pinnedMessages =>
+      _channelState.pinnedMessages ?? <Message>[];
+
+  /// Channel pinned message list as a stream.
+  Stream<List<Message>> get pinnedMessagesStream => channelStateStream
+      .map((cs) => cs.pinnedMessages ?? <Message>[])
       .distinct(const ListEquality().equals);
 
   List<Member> get members => _channelState.members ?? <Member>[];

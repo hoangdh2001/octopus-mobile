@@ -1,18 +1,19 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart' hide MenuItem;
+import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/octopus.dart';
 import 'package:octopus/pages/channelList/channel_list_page.dart';
+import 'package:octopus/pages/new_task/new_task_page.dart';
 import 'package:octopus/pages/notification_list_screen.dart';
-import 'package:octopus/pages/recent_page.dart';
 import 'package:octopus/widgets/left_drawer.dart';
 import 'package:octopus/widgets/menu_item.dart';
 import 'package:octopus/widgets/screen_header.dart';
+import 'package:octopus/pages/recent/recent_page.dart';
 
 class MainPageArgs {
   final int initialIndex;
@@ -72,7 +73,26 @@ class _MainPageState extends State<MainPage> {
   List<Widget> _action(int index) {
     switch (index) {
       case 0:
-        return [];
+        return [
+          IconButton(
+            splashColor: Colors.transparent,
+            onPressed: () {},
+            icon: SvgPicture.asset(
+              'assets/icons/bell.svg',
+              color: OctopusTheme.of(context).colorTheme.icon,
+              width: 24,
+              height: 24,
+            ),
+          ),
+          IconButton(
+            splashColor: Colors.transparent,
+            onPressed: () {},
+            icon: SvgPicture.asset(
+              'assets/icons/settings.svg',
+              color: OctopusTheme.of(context).colorTheme.icon,
+            ),
+          ),
+        ];
       case 1:
         return [];
       case 2:
@@ -116,6 +136,50 @@ class _MainPageState extends State<MainPage> {
           ),
         ),
         actions: _action(_currentIndex),
+      ),
+      floatingActionButton: Wrap(
+        direction: Axis.vertical,
+        children: [
+          FloatingActionButton(
+            backgroundColor: OctopusTheme.of(context).colorTheme.brandPrimary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: SvgPicture.asset(
+              'assets/icons/plus.svg',
+              color: OctopusTheme.of(context).colorTheme.iconBrandPrimary,
+              width: 24,
+              height: 24,
+            ),
+            onPressed: () {
+              showModalBottomSheet(
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
+                useSafeArea: true,
+                isScrollControlled: true,
+                context: context,
+                builder: (context) => Padding(
+                  padding: MediaQuery.of(context).viewInsets,
+                  child: const NewTaskPage(),
+                ),
+              );
+            },
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          FloatingActionButton(
+            backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            onPressed: () {},
+          )
+        ],
       ),
       drawer: LeftDrawer(
         currentIndex: _currentIndex,

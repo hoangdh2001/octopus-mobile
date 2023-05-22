@@ -12,13 +12,11 @@ import 'package:flutter_callkit_incoming/entities/ios_params.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:logging/logging.dart';
 import 'package:octopus/core/config/app_routes.dart';
 import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/data/client/client.dart';
 import 'package:octopus/core/data/models/token.dart';
-import 'package:octopus/core/data/repositories/channel_repository.dart';
-import 'package:octopus/core/data/repositories/user_repository.dart';
+import 'package:octopus/core/data/models/workspace_state.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/di/service_locator.dart';
 import 'package:octopus/navigator_service.dart';
@@ -26,6 +24,8 @@ import 'package:octopus/pages/calls/video_call_page.dart';
 import 'package:octopus/pages/home_page.dart';
 import 'package:octopus/pages/splash_page.dart';
 import 'package:octopus/utils/constants.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 late StreamSubscription<CallEvent?>? _callKitSubcription;
@@ -179,9 +179,15 @@ class _MyAppState extends State<MyApp>
   }
 
   Future<InitData> _initConnection() async {
+    final prefs = getIt<StreamingSharedPreferences>();
+
     await FirebaseMessaging.instance.setAutoInitEnabled(true);
     await requestPermission();
     final secureStorage = getIt<FlutterSecureStorage>();
+    if (prefs.getBool('first_run', defaultValue: true).getValue()) {
+      await secureStorage.deleteAll();
+      prefs.setBool('first_run', false);
+    }
     final rs = await secureStorage.read(key: octopusToken);
     final client = getIt<Client>();
 
@@ -195,8 +201,18 @@ class _MyAppState extends State<MyApp>
         await secureStorage.delete(key: octopusToken);
       }
     }
-    final prefs = getIt<StreamingSharedPreferences>();
-    return InitData(client, prefs);
+
+    final sharedPreferences = getIt<SharedPreferences>();
+
+    final workspaceString = sharedPreferences.getString(workspaceLocal);
+
+    return InitData(
+      client,
+      prefs,
+      workspaceString != null
+          ? WorkspaceState.fromJson(jsonDecode(workspaceString))
+          : null,
+    );
   }
 
   @override
@@ -252,7 +268,8 @@ class _MyAppState extends State<MyApp>
                         ),
                       );
                     },
-                    theme: ThemeData.light(),
+                    theme: ThemeData.light()
+                        .copyWith(dividerColor: Colors.transparent),
                     darkTheme: ThemeData.dark(),
                     themeMode: {
                       -1: ThemeMode.dark,
@@ -274,7 +291,10 @@ class _MyAppState extends State<MyApp>
                           AppRoutes.generateRoute(
                             RouteSettings(
                               name: Routes.HOME,
-                              arguments: HomePageArgs(_initData!.client),
+                              arguments: HomePageArgs(
+                                _initData!.client,
+                                _initData!.workspaceState,
+                              ),
                             ),
                           )!
                         ];
@@ -304,6 +324,7 @@ class _MyAppState extends State<MyApp>
 class InitData {
   final Client client;
   final StreamingSharedPreferences preferences;
+  final WorkspaceState? workspaceState;
 
-  InitData(this.client, this.preferences);
+  InitData(this.client, this.preferences, this.workspaceState);
 }

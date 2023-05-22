@@ -118,8 +118,8 @@ SvgPicture getFileTypeImage(String? type) {
     case 'csv':
       return SvgPicture.asset('assets/icons/file_csv.svg');
     case 'doc':
-      return SvgPicture.asset('assets/icons/file_doc.svg');
     case 'docx':
+    case 'vnd.openxmlformats-officedocument.wordprocessingml.document':
       return SvgPicture.asset('assets/icons/file_doc.svg');
     case 'html':
       return SvgPicture.asset('assets/icons/file_html.svg');

@@ -1,5 +1,9 @@
+import 'package:characters/characters.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
+import 'package:octopus/core/data/models/emoji.dart';
+
+final _emojiChars = Emoji.chars();
 
 extension ExtensionString on String {
   bool get isValidEmail {
@@ -37,5 +41,11 @@ extension ExtensionString on String {
       if (mimeType == null) return null;
       return MediaType.parse(mimeType);
     }
+  }
+
+  bool get isOnlyEmoji {
+    if (isEmpty) return false;
+    final characters = trim().characters;
+    return characters.every(_emojiChars.contains);
   }
 }

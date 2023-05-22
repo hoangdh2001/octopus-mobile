@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart' hide BackButton;
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/octopus_channel.dart';
 import 'package:octopus/utils.dart';
@@ -94,23 +95,28 @@ class ChannelHeader extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  title ??
-                      ChannelName(
-                        channel: channel,
-                        textStyle: channelHeaderTheme.titleStyle,
-                      ),
-                  const SizedBox(height: 2),
-                  subtitle ??
-                      ChannelInfo(
-                        channel: channel,
-                        showTypingIndicator: showTypingIndicator,
-                        textStyle: channelHeaderTheme.subtitleStyle,
-                      ),
-                ],
+              Expanded(
+                child: SizedBox(
+                  height: preferredSize.height,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      title ??
+                          ChannelName(
+                            channel: channel,
+                            textStyle: channelHeaderTheme.titleStyle,
+                          ),
+                      const SizedBox(height: 2),
+                      subtitle ??
+                          ChannelInfo(
+                            channel: channel,
+                            showTypingIndicator: showTypingIndicator,
+                            textStyle: channelHeaderTheme.subtitleStyle,
+                          ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),

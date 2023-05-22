@@ -7,6 +7,7 @@ import 'package:octopus/core/data/networks/services/auth_service.dart';
 import 'package:logging/logging.dart';
 import 'package:octopus/core/data/networks/services/channel_service.dart';
 import 'package:octopus/core/data/networks/services/user_service.dart';
+import 'package:octopus/core/data/networks/services/workspace_service.dart';
 
 final _levelEmojiMapper = {
   Level.INFO: 'ℹ️',
@@ -18,7 +19,7 @@ final _levelEmojiMapper = {
 abstract class NetworkModule {
   @Named("BaseUrl")
   @singleton
-  String get baseUrl => "http://188.166.196.105";
+  String get baseUrl => "http://146.190.200.242";
   // "http://localhost:80";
 
   @singleton
@@ -96,8 +97,8 @@ abstract class NetworkModule {
     final dio = Dio();
     dio
       ..options.baseUrl = '$url/api/'
-      ..options.receiveTimeout = const Duration(seconds: 15)
-      ..options.connectTimeout = const Duration(seconds: 15)
+      ..options.receiveTimeout = const Duration(seconds: 30)
+      ..options.connectTimeout = const Duration(seconds: 30)
       ..options.headers = {
         'Content-Type': 'application/json',
       }
@@ -113,4 +114,7 @@ abstract class NetworkModule {
 
   @singleton
   UserService prepareUserService(Dio dio) => UserService(dio);
+
+  @singleton
+  WorkspaceService prepareWorkspaceService(Dio dio) => WorkspaceService(dio);
 }

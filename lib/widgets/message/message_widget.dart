@@ -10,8 +10,10 @@ import 'package:octopus/core/data/models/message.dart';
 import 'package:octopus/core/data/models/reaction.dart';
 import 'package:octopus/core/data/models/user.dart';
 import 'package:octopus/core/extensions/extension_iterable.dart';
+import 'package:octopus/core/extensions/extension_string.dart';
 import 'package:octopus/core/theme/oc_message_theme_data.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
+import 'package:octopus/octopus.dart';
 import 'package:octopus/octopus_channel.dart';
 import 'package:octopus/utils.dart';
 import 'package:octopus/widgets/attachment/file_attachment.dart';
@@ -348,7 +350,6 @@ class MessageWidget extends StatefulWidget {
   MessageWidget copyWith({
     Key? key,
     void Function(User)? onMentionTap,
-    void Function(Message)? onThreadTap,
     void Function(Message)? onReplyTap,
     Widget Function(BuildContext, Message)? editMessageInputBuilder,
     Widget Function(BuildContext, Message)? textBuilder,
@@ -450,7 +451,7 @@ class MessageWidget extends StatefulWidget {
         messageTheme: messageTheme ?? this.messageTheme,
         customAttachmentBuilders:
             customAttachmentBuilders ?? this.customAttachmentBuilders,
-        onReplyTap: onReplyTap,
+        onReplyTap: onReplyTap ?? this.onReplyTap,
       );
 
   @override
@@ -486,6 +487,8 @@ class _MessageWidgetState extends State<MessageWidget>
 
   bool get hasQuotedMessage => widget.message.quotedMessage != null;
 
+  bool get isOnlyEmoji => widget.message.text?.isOnlyEmoji == true;
+
   @override
   bool get wantKeepAlive => widget.message.attachments.isNotEmpty;
 
@@ -507,6 +510,9 @@ class _MessageWidgetState extends State<MessageWidget>
       type: MaterialType.transparency,
       child: AnimatedContainer(
         duration: const Duration(seconds: 1),
+        color: widget.message.pinned && widget.showPinHighlight
+            ? _chatTheme.colorTheme.highlight
+            : _chatTheme.colorTheme.contentView.withOpacity(0),
         child: Portal(
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
@@ -535,19 +541,20 @@ class _MessageWidgetState extends State<MessageWidget>
                           : AlignmentDirectional.bottomStart,
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(bottom: 0
-                              // isPinned && widget.showPinHighlight ? 8.0 : 0.0,
-                              ),
+                          padding: EdgeInsets.only(
+                            bottom:
+                                isPinned && widget.showPinHighlight ? 8.0 : 0.0,
+                          ),
                           child: Column(
                             crossAxisAlignment: widget.reverse
                                 ? CrossAxisAlignment.end
                                 : CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              // if (widget.message.pinned &&
-                              //     widget.message.pinnedBy != null &&
-                              //     widget.showPinHighlight)
-                              //   _buildPinnedMessage(widget.message),
+                              if (widget.message.pinned &&
+                                  widget.message.pinnedBy != null &&
+                                  widget.showPinHighlight)
+                                _buildPinnedMessage(widget.message),
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 mainAxisSize: MainAxisSize.min,
@@ -1259,23 +1266,21 @@ class _MessageWidgetState extends State<MessageWidget>
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: widget.textPadding,
+          padding: isOnlyEmoji ? EdgeInsets.zero : widget.textPadding,
           child: widget.textBuilder != null
               ? widget.textBuilder!(context, widget.message)
               : MessageText(
                   onLinkTap: widget.onLinkTap,
                   message: widget.message,
                   // onMentionTap: widget.onMentionTap,
-                  messageTheme:
-                      // isOnlyEmoji
-                      //     ? widget.messageTheme.copyWith(
-                      //         messageTextStyle:
-                      //             widget.messageTheme.messageTextStyle!.copyWith(
-                      //           fontSize: 42,
-                      //         ),
-                      //       )
-                      //     :
-                      widget.messageTheme,
+                  messageTheme: isOnlyEmoji
+                      ? widget.messageTheme.copyWith(
+                          messageTextStyle:
+                              widget.messageTheme.messageTextStyle!.copyWith(
+                            fontSize: 42,
+                          ),
+                        )
+                      : widget.messageTheme,
                 ),
         ),
         // if (hasUrlAttachments && !hasQuotedMessage) _buildUrlAttachment(),
@@ -1283,34 +1288,37 @@ class _MessageWidgetState extends State<MessageWidget>
     );
   }
 
-  // Widget _buildPinnedMessage(Message message) {
-  //   final pinnedBy = message.pinnedBy!;
-  //   final currentUser = _streamChat.currentUser!;
+  Widget _buildPinnedMessage(Message message) {
+    final pinnedBy = message.pinnedBy!;
+    final currentUser = Octopus.of(context).currentUser!;
 
-  //   return Padding(
-  //     padding: const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 8),
-  //     child: Row(
-  //       mainAxisSize: MainAxisSize.min,
-  //       children: [
-  //         StreamSvgIcon.pin(size: 16),
-  //         const SizedBox(width: 4),
-  //         Text(
-  //           context.translations.pinnedByUserText(
-  //             pinnedBy: pinnedBy,
-  //             currentUser: currentUser,
-  //           ),
-  //           style: TextStyle(
-  //             color: _streamChatTheme.colorTheme.textLowEmphasis,
-  //             fontSize: 13,
-  //             fontWeight: FontWeight.w400,
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+    final myPin = pinnedBy.id == currentUser.id;
 
-  // bool get isPinned => widget.message.pinned;
+    return Padding(
+      padding: const EdgeInsets.only(left: 8, right: 8, top: 4, bottom: 8),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+            'assets/icons/pin.svg',
+            width: 16,
+            height: 16,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            'Pinned by ${myPin ? 'you' : pinnedBy.name}',
+            style: TextStyle(
+              color: _chatTheme.colorTheme.primaryGrey,
+              fontSize: 13,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool get isPinned => widget.message.pinned;
 
   Color? get _backgroundColor {
     if (hasQuotedMessage) {
@@ -1321,9 +1329,9 @@ class _MessageWidgetState extends State<MessageWidget>
     //   return widget.messageTheme.linkBackgroundColor;
     // }
 
-    // if (isOnlyEmoji) {
-    //   return Colors.transparent;
-    // }
+    if (isOnlyEmoji) {
+      return Colors.transparent;
+    }
 
     // if (isGiphy) {
     //   return Colors.transparent;

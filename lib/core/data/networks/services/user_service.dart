@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:octopus/core/data/models/device.dart';
 import 'package:octopus/core/data/models/empty_response.dart';
+import 'package:octopus/core/data/models/payload.dart';
 import 'package:octopus/core/data/models/user.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -10,8 +11,8 @@ part 'user_service.g.dart';
 abstract class UserService {
   factory UserService(Dio dio, {String baseUrl}) = _UserService;
 
-  @GET("/users")
-  Future<List<User>> getUsers();
+  @GET("/users/search")
+  Future<List<User>> getUsers(@Query("payload") String payload);
 
   @GET("/users/{id}")
   Future<User> getUserByID(@Path("id") String id);

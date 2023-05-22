@@ -20,6 +20,7 @@ class UserListTile extends StatelessWidget {
     this.contentPadding = const EdgeInsets.symmetric(horizontal: 8),
     this.showSelectWidget = false,
     this.showSubtitle = false,
+    this.showOnlineStatus = false,
   });
 
   final User user;
@@ -47,6 +48,8 @@ class UserListTile extends StatelessWidget {
   final bool showSelectWidget;
 
   final bool showSubtitle;
+
+  final bool showOnlineStatus;
 
   UserListTile copyWith({
     Key? key,
@@ -90,6 +93,7 @@ class UserListTile extends StatelessWidget {
           user: user,
           constraints: const BoxConstraints.tightFor(width: 50, height: 50),
           borderRadius: BorderRadius.circular(25),
+          showOnlineStatus: showOnlineStatus,
         );
 
     final title = this.title ??

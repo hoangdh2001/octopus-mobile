@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart' hide TextTheme;
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:octopus/core/theme/gallery_footer_theme.dart';
+import 'package:octopus/core/theme/message_list_view_theme.dart';
 import 'package:octopus/core/theme/mutipleTheme/oc_base_style_guide.dart';
 import 'package:octopus/core/theme/oc_avatar_theme_data.dart';
 import 'package:octopus/core/theme/oc_button_theme.dart';
@@ -56,6 +58,8 @@ class OctopusThemeData {
   final List<ReactionIcon> reactionIcons;
   final ChannelHeaderTheme channelHeaderTheme;
   final ChannelPreviewThemeData channelPreviewThemeData;
+  final GalleryFooterThemeData galleryFooterTheme;
+  final MessageListViewThemeData messageListViewTheme;
 
   factory OctopusThemeData({
     Brightness? brightness,
@@ -101,6 +105,8 @@ class OctopusThemeData {
     required this.reactionIcons,
     required this.channelHeaderTheme,
     required this.channelPreviewThemeData,
+    required this.galleryFooterTheme,
+    required this.messageListViewTheme,
   });
 
   factory OctopusThemeData.fromTextTheme(
@@ -119,7 +125,7 @@ class OctopusThemeData {
         ),
       ),
       color: colorTheme.contentView,
-      titleStyle: textTheme.primaryGreyH1,
+      titleStyle: textTheme.primaryGreyH2,
       subtitleStyle: textTheme.primaryGreyFootnote.copyWith(
         color: const Color(0xff7A7A7A),
       ),
@@ -261,6 +267,19 @@ class OctopusThemeData {
       ],
       channelHeaderTheme: channelHeaderTheme,
       channelPreviewThemeData: channelPreviewTheme,
+      galleryFooterTheme: GalleryFooterThemeData(
+        backgroundColor: colorTheme.contentView,
+        shareIconColor: colorTheme.primaryGrey,
+        titleTextStyle: textTheme.primaryGreyH1,
+        gridIconButtonColor: colorTheme.primaryGrey,
+        bottomSheetBarrierColor: colorTheme.overlay,
+        bottomSheetBackgroundColor: colorTheme.contentView,
+        bottomSheetPhotosTextStyle: textTheme.primaryGreyH1,
+        bottomSheetCloseIconColor: colorTheme.primaryGrey,
+      ),
+      messageListViewTheme: MessageListViewThemeData(
+        backgroundColor: colorTheme.contentView,
+      ),
     );
   }
 
@@ -275,6 +294,8 @@ class OctopusThemeData {
     List<ReactionIcon>? reactionIcons,
     ChannelHeaderTheme? channelHeaderTheme,
     ChannelPreviewThemeData? channelPreviewThemeData,
+    GalleryFooterThemeData? galleryFooterTheme,
+    MessageListViewThemeData? messageListViewTheme,
   }) =>
       OctopusThemeData.raw(
         logo: logo ?? this.logo,
@@ -288,6 +309,8 @@ class OctopusThemeData {
         channelHeaderTheme: channelHeaderTheme ?? this.channelHeaderTheme,
         channelPreviewThemeData:
             channelPreviewThemeData ?? this.channelPreviewThemeData,
+        galleryFooterTheme: galleryFooterTheme ?? this.galleryFooterTheme,
+        messageListViewTheme: messageListViewTheme ?? this.messageListViewTheme,
       );
 
   OctopusThemeData merge(OctopusThemeData? other) {

@@ -6,14 +6,23 @@ import 'package:octopus/core/data/models/channel_state.dart';
 import 'package:octopus/core/data/models/empty_response.dart';
 import 'package:octopus/core/data/models/error.dart';
 import 'package:octopus/core/data/models/event.dart';
+import 'package:octopus/core/data/models/filter.dart';
 import 'package:octopus/core/data/models/message.dart';
 import 'package:octopus/core/data/models/page.dart';
 import 'package:octopus/core/data/models/pagination_params.dart';
+import 'package:octopus/core/data/models/search_message_response.dart';
 import 'package:octopus/core/data/models/send_reaction_response.dart';
+import 'package:octopus/core/data/models/sort_option.dart';
 
 abstract class ChannelRepository {
-  Future<Page<ChannelState>> getChannels({int? skip, int? limit});
-  Future<Either<ChannelState, Error>> createChannel(
+  Future<Page<ChannelState>> getChannels({
+    Filter? filter,
+    List<SortOption<ChannelModel>>? sort,
+    int? memberLimit,
+    int? messageLimit,
+    PaginationParams pagination = const PaginationParams(),
+  });
+  Future<ChannelState> createChannel(
       {required List<String> newMembers, String? name, String? userID});
   Future<ChannelState> queryChannel(String channelID,
       {PaginationParams? messagesPagination});
@@ -26,10 +35,13 @@ abstract class ChannelRepository {
       ProgressCallback? onReceiveProgress,
       CancelToken? cancelToken});
   Future<Attachment> sendImage(
-      String channelID, String attachmentID, AttachmentFile image,
-      {ProgressCallback? onSendProgress,
-      ProgressCallback? onReceiveProgress,
-      CancelToken? cancelToken});
+    String channelID,
+    AttachmentFile image, {
+    String? attachmentID,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+    CancelToken? cancelToken,
+  });
   Future<EmptyResponse> sendEvent(String channelID, Event event);
 
   Future<EmptyResponse> markChannelRead(String channelID, {String? messageID});
@@ -44,4 +56,22 @@ abstract class ChannelRepository {
 
   Future<ChannelState> udpateChannel(
       String channelID, Map<String, Object?> data);
+
+  Future<Message> updateMessage(
+      String channelID, String messageID, Map<String, Object?>? set);
+
+  Future<EmptyResponse> muteChannel(String channelID);
+
+  Future<EmptyResponse> unmuteChannel(String channelID);
+
+  Future<SearchMessagesResponse> search(
+    Filter filter, {
+    String? query,
+    List<SortOption>? sort,
+    PaginationParams? pagination,
+    Filter? messageFilters,
+    Filter? attachmentFilters,
+  });
+
+  Future<EmptyResponse> addMembers(String channelID, List<String> members);
 }

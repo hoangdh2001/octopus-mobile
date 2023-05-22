@@ -15,13 +15,11 @@ import 'package:octopus/widgets/message_input/message_input_controller.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_manager/photo_manager.dart';
 
-/// Callback for when a file has to be picked.
 typedef FilePickerCallback = void Function(
   DefaultAttachmentTypes fileType, {
   bool camera,
 });
 
-/// Callback for building an icon for a custom attachment type.
 typedef CustomAttachmentIconBuilder = Widget Function(
   BuildContext context,
   bool active,
@@ -29,10 +27,7 @@ typedef CustomAttachmentIconBuilder = Widget Function(
 
 typedef SendImageCallback = void Function();
 
-/// A widget that allows to pick an attachment.
 class AttachmentPicker extends StatefulWidget {
-  /// Default constructor for [AttachmentPicker] which creates the Stream
-  /// attachment picker widget.
   const AttachmentPicker({
     super.key,
     required this.messageInputController,
@@ -55,56 +50,34 @@ class AttachmentPicker extends StatefulWidget {
     this.sendImage,
   });
 
-  /// True if the picker is open.
   final bool isOpen;
 
-  /// The picker size in height.
   final double pickerSize;
 
-  /// The [StreamMessageInputController] linked to this picker.
   final MessageInputController messageInputController;
 
-  /// The limit of attachments that can be picked.
   final int attachmentLimit;
 
-  /// The callback for when the attachment limit is exceeded.
   final AttachmentLimitExceedListener? onAttachmentLimitExceeded;
 
-  /// Callback for when an error occurs in the attachment picker.
   final ValueChanged<String>? onError;
 
-  /// Callback for when file is picked.
   final FilePickerCallback onFilePicked;
 
-  /// The list of attachment types that can be picked.
   final List<DefaultAttachmentTypes> allowedAttachmentTypes;
 
-  /// The list of custom attachment types that can be picked.
   final List<CustomAttachmentType> customAttachmentTypes;
 
-  /// Size of the attachment thumbnails.
-  ///
-  /// Defaults to (400, 400).
   final ThumbnailSize attachmentThumbnailSize;
 
-  /// Format of the attachment thumbnails.
-  ///
-  /// Defaults to [ThumbnailFormat.jpeg].
   final ThumbnailFormat attachmentThumbnailFormat;
 
-  /// The quality value for the attachment thumbnails.
-  ///
-  /// Valid from 1 to 100.
-  /// Defaults to 100.
   final int attachmentThumbnailQuality;
 
-  /// The scale to apply on the [attachmentThumbnailSize].
   final double attachmentThumbnailScale;
 
   final SendImageCallback? sendImage;
 
-  /// Used to create a new copy of [StreamAttachmentPicker] with modified
-  /// properties.
   AttachmentPicker copyWith({
     Key? key,
     MessageInputController? messageInputController,
@@ -417,24 +390,28 @@ class _AttachmentPickerState extends State<AttachmentPicker> {
               ),
             ),
           ),
-          if (messageInputController.attachments.where((attachment) => attachment.type == 'image' || attachment.type == 'video').isNotEmpty)
-          AnimatedPositioned(
-            duration: const Duration(milliseconds: 100),
-            bottom: messageInputController.attachments.isNotEmpty ? 30 : -80,
-            child: Container(
-              width: 0.9.sw,
-              height: 40.h,
-              margin: const EdgeInsets.symmetric(vertical: 20),
-              child: TextButton(
-                style: OctopusTheme.of(context).buttonTheme.brandPrimaryButton,
-                onPressed: () {
-                  widget.sendImage?.call();
-                },
-                child: Text(
-                    'Send${messageInputController.attachments.isNotEmpty ? ' ${messageInputController.attachments.length}' : ''}'),
+          if (messageInputController.attachments
+              .where((attachment) =>
+                  attachment.type == 'image' || attachment.type == 'video')
+              .isNotEmpty)
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 100),
+              bottom: messageInputController.attachments.isNotEmpty ? 30 : -80,
+              child: Container(
+                width: 0.9.sw,
+                height: 40.h,
+                margin: const EdgeInsets.symmetric(vertical: 20),
+                child: TextButton(
+                  style:
+                      OctopusTheme.of(context).buttonTheme.brandPrimaryButton,
+                  onPressed: () {
+                    widget.sendImage?.call();
+                  },
+                  child: Text(
+                      'Send${messageInputController.attachments.isNotEmpty ? ' ${messageInputController.attachments.length}' : ''}'),
+                ),
               ),
-            ),
-          )
+            )
         ],
       ),
     );
@@ -446,8 +423,6 @@ class _AttachmentPickerState extends State<AttachmentPicker> {
 
     final tempDir = await getTemporaryDirectory();
 
-    // TODO: Confirm that this max resolution is final
-    // Taken from https://getstream.io/chat/docs/flutter-dart/file_uploads/?language=dart#image-resizing
     const maxCDNImageResolution = 16800000;
     final imageResolution = medium.width * medium.height;
     File? cachedFile;
@@ -459,7 +434,7 @@ class _AttachmentPickerState extends State<AttachmentPicker> {
           updatedSize.width.floor(),
           updatedSize.height.floor(),
         ),
-        quality: 70, // TODO: investigate compressing all images
+        quality: 70,
       );
       final file =
           await File('${tempDir.path}/${mediaFile.path.split('/').last}')
@@ -477,14 +452,6 @@ class _AttachmentPickerState extends State<AttachmentPicker> {
       bytes: cachedFile.readAsBytesSync(),
     );
 
-    // if (file.size! > widget.maxAttachmentSize) {
-    //   return widget.onError?.call(
-    //     context.translations.fileTooLargeError(
-    //       widget.maxAttachmentSize / (1024 * 1024),
-    //     ),
-    //   );
-    // }
-
     setState(() {
       final attachment = Attachment(
         id: medium.id,
@@ -492,27 +459,19 @@ class _AttachmentPickerState extends State<AttachmentPicker> {
         type: medium.type == AssetType.image ? 'image' : 'video',
         originalWidth: medium.width,
         originalHeight: medium.height,
+        mimeType: medium.mimeType,
       );
       _addAttachments([attachment]);
     });
   }
 
-  /// Adds an attachment to the [messageInputController.attachments] map
   void _addAttachments(Iterable<Attachment> attachments) {
     final limit = widget.attachmentLimit;
     final length =
         widget.messageInputController.attachments.length + attachments.length;
     if (length > limit) {
       final onAttachmentLimitExceed = widget.onAttachmentLimitExceeded;
-      if (onAttachmentLimitExceed != null) {
-        // return onAttachmentLimitExceed(
-        //   widget.attachmentLimit,
-        //   context.translations.attachmentLimitExceedError(limit),
-        // );
-      }
-      // return widget.onError?.call(
-      //   context.translations.attachmentLimitExceedError(limit),
-      // );
+      if (onAttachmentLimitExceed != null) {}
     }
     for (final attachment in attachments) {
       widget.messageInputController.addAttachment(attachment);
@@ -588,15 +547,7 @@ class _PickerWidgetState extends State<_PickerWidget> {
               },
               child: Container(
                 constraints: const BoxConstraints.expand(),
-                // color: widget.chatTheme.colorTheme.inputBg,
                 alignment: Alignment.center,
-                // child: Text(
-                //   'sdfdsfds',
-                //   style: TextStyle(
-                //     // color: widget.chatTheme.colorTheme.accentPrimary,
-                //     fontWeight: FontWeight.bold,
-                //   ),
-                // ),
               ),
             );
           }
@@ -625,24 +576,8 @@ class _PickerWidgetState extends State<_PickerWidget> {
                   'svgs/icon_picture_empty_state.svg',
                   package: 'stream_chat_flutter',
                   height: 140,
-                  // color: widget.chatTheme.colorTheme.disabled,
                 ),
-                // Text(
-                //   context.translations.enablePhotoAndVideoAccessMessage,
-                //   style: widget.streamChatTheme.textTheme.body.copyWith(
-                //     color: widget.streamChatTheme.colorTheme.textLowEmphasis,
-                //   ),
-                //   textAlign: TextAlign.center,
-                // ),
                 const SizedBox(height: 6),
-                // Center(
-                //   child: Text(
-                //     context.translations.allowGalleryAccessMessage,
-                //     style: widget.streamChatTheme.textTheme.bodyBold.copyWith(
-                //       color: widget.streamChatTheme.colorTheme.accentPrimary,
-                //     ),
-                //   ),
-                // ),
               ],
             ),
           ),
@@ -652,22 +587,16 @@ class _PickerWidgetState extends State<_PickerWidget> {
   }
 }
 
-/// Class which holds data for a custom attachment type in the attachment picker
 class CustomAttachmentType {
-  /// Default constructor for creating a custom attachment for the attachment
-  /// picker.
   CustomAttachmentType({
     required this.type,
     required this.iconBuilder,
     required this.pickerBuilder,
   });
 
-  /// Type name.
   String type;
 
-  /// Builds the icon in the attachment picker top row.
   CustomAttachmentIconBuilder iconBuilder;
 
-  /// Builds content in the attachment builder when icon is selected.
   WidgetBuilder pickerBuilder;
 }

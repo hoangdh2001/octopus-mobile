@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:octopus/core/data/models/enums/message_type.dart';
 import 'package:octopus/core/data/models/message.dart';
+import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/octopus.dart';
 
 class MessagePreviewText extends StatelessWidget {
@@ -29,6 +31,10 @@ class MessagePreviewText extends StatelessWidget {
     //   caseSensitive: false,
     // );
 
+    if (message.isSystem) {
+      return _buildSystemMessage(context);
+    }
+
     final messageTextParts = [
       ...messageAttachments.map((it) {
         if (it.type == 'image') {
@@ -38,9 +44,7 @@ class MessagePreviewText extends StatelessWidget {
         } else if (it.type == 'giphy') {
           return '[GIF]';
         }
-        return it == message.attachments.last
-            ? (it.title ?? 'File')
-            : '${it.title ?? 'File'} , ';
+        return ('sent ${messageAttachments.length > 1 ? messageAttachments.length : 'a'} file${' ${it.title ?? ''}'}');
       }),
       if (messageText != null)
         // if (messageMentionedUsers.isNotEmpty)
@@ -91,6 +95,38 @@ class MessagePreviewText extends StatelessWidget {
       overflow: TextOverflow.ellipsis,
       textAlign: TextAlign.start,
     );
+  }
+
+  Widget _buildSystemMessage(BuildContext context) {
+    return Text(
+      _buildActionText(context),
+      textAlign: TextAlign.center,
+      softWrap: true,
+      style: textStyle,
+    );
+  }
+
+  String _buildActionText(BuildContext context) {
+    final message = this.message;
+    final currentUser = Octopus.of(context).currentUser;
+
+    final isMyMessage = currentUser!.id == message.sender!.id;
+    switch (message.type) {
+      case MessageType.systemAddMember:
+        return '${isMyMessage ? 'You' : message.sender!.name} added ${message.text} to the group';
+      case MessageType.systemMemberLeft:
+        return '${isMyMessage ? 'You' : message.sender!.name} left the group';
+      case MessageType.systemRemovedMember:
+        return '${isMyMessage ? 'You' : message.sender!.name} removed ${message.text} from the group';
+      case MessageType.systemCreatedChannel:
+        return '${isMyMessage ? 'You' : message.sender!.name} created group';
+      case MessageType.systemChangedAvatar:
+        return '${isMyMessage ? 'You' : message.sender!.name} changed group avatar';
+      case MessageType.systemChangedName:
+        return '${isMyMessage ? 'You' : message.sender!.name} changed group name ${message.text}';
+      default:
+        return '${message.text}';
+    }
   }
 }
 

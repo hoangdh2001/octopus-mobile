@@ -15,6 +15,9 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       channel: json['channel'] == null
           ? null
           : ChannelState.fromJson(json['channel'] as Map<String, dynamic>),
+      channelModel: json['channelModel'] == null
+          ? null
+          : ChannelModel.fromJson(json['channelModel'] as Map<String, dynamic>),
       channelID: json['channelID'] as String?,
       message: json['message'] == null
           ? null
@@ -26,11 +29,18 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
           ? null
           : User.fromJson(json['user'] as Map<String, dynamic>),
       active: json['active'] as bool?,
+      members: (json['members'] as List<dynamic>?)
+          ?.map((e) => Member.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      read: json['read'] == null
+          ? null
+          : Read.fromJson(json['read'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'type': instance.type,
       'channel': instance.channel,
+      'channelModel': instance.channelModel,
       'channelID': instance.channelID,
       'message': instance.message,
       'connectionID': instance.connectionID,
@@ -38,4 +48,6 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'user': instance.user,
       'createdAt': instance.createdAt.toIso8601String(),
       'active': instance.active,
+      'members': instance.members,
+      'read': instance.read,
     };

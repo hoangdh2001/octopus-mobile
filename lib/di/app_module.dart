@@ -6,6 +6,8 @@ import 'package:logging/logging.dart';
 import 'package:octopus/core/data/client/client.dart';
 import 'package:octopus/core/data/repositories/channel_repository.dart';
 import 'package:octopus/core/data/repositories/user_repository.dart';
+import 'package:octopus/core/data/repositories/workspace_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 @module
@@ -14,6 +16,11 @@ abstract class AppModule {
   @preResolve
   Future<StreamingSharedPreferences> get shared =>
       StreamingSharedPreferences.instance;
+
+  @singleton
+  @preResolve
+  Future<SharedPreferences> get sharedPreferences =>
+      SharedPreferences.getInstance();
 
   @singleton
   AndroidOptions getAndroidOptions() =>
@@ -37,13 +44,16 @@ abstract class AppModule {
   Client client(
           ChannelRepository channelRepository,
           UserRepository userRepository,
+          WorkspaceRepository workspaceRepository,
           @Named('BaseUrl') String baseUrl,
           @Named('app-logger') Logger logger,
           @Named('socket-logger') Logger socketLogger) =>
       Client(
-          channelRepository: channelRepository,
-          userRepository: userRepository,
-          baseUrl: baseUrl,
-          logger: logger,
-          socketLogger: socketLogger);
+        channelRepository: channelRepository,
+        userRepository: userRepository,
+        workspaceRepository: workspaceRepository,
+        baseUrl: baseUrl,
+        logger: logger,
+        socketLogger: socketLogger,
+      );
 }

@@ -19,16 +19,9 @@ class _ChannelService implements ChannelService {
   String? baseUrl;
 
   @override
-  Future<Page<ChannelState>> getChannels(
-    skip,
-    limit,
-  ) async {
+  Future<Page<ChannelState>> getChannels(payload) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{
-      r'skip': skip,
-      r'limit': limit,
-    };
-    queryParameters.removeWhere((k, v) => v == null);
+    final queryParameters = <String, dynamic>{r'payload': payload};
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
     final _result = await _dio
@@ -39,7 +32,7 @@ class _ChannelService implements ChannelService {
     )
             .compose(
               _dio.options,
-              '/channels/search',
+              '/channels',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -209,10 +202,12 @@ class _ChannelService implements ChannelService {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = FormData.fromMap({'file': file});
-    _data.fields.add(MapEntry(
-      'attachmentID',
-      attachmentID,
-    ));
+    if (attachmentID != null) {
+      _data.fields.add(MapEntry(
+        'attachmentID',
+        attachmentID,
+      ));
+    }
     final _result = await _dio
         .fetch<Map<String, dynamic>>(_setStreamType<Attachment>(Options(
       method: 'POST',
@@ -379,7 +374,7 @@ class _ChannelService implements ChannelService {
     _data.addAll(channelData);
     final _result = await _dio
         .fetch<Map<String, dynamic>>(_setStreamType<ChannelState>(Options(
-      method: 'POST',
+      method: 'PUT',
       headers: _headers,
       extra: _extra,
     )
@@ -391,6 +386,130 @@ class _ChannelService implements ChannelService {
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = ChannelState.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<Message> updateMessage(
+    String channelID,
+    String messageID,
+    Map<String, Object?>? set,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(set ?? {});
+    final _result =
+        await _dio.fetch<Map<String, dynamic>>(_setStreamType<Message>(Options(
+      method: 'PUT',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/channels/${channelID}/messages/${messageID}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = Message.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<EmptyResponse> muteChannel(String channelID) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<EmptyResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/channels/${channelID}/mute',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = EmptyResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<EmptyResponse> unmuteChannel(String channelID) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<EmptyResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/channels/${channelID}/unmute',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = EmptyResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<SearchMessagesResponse> search(String payload) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'payload': payload};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<SearchMessagesResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/channels/search',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = SearchMessagesResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<EmptyResponse> addMembers(
+    String channelID,
+    AddMembersRequest members,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(members.toJson());
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<EmptyResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/channels/${channelID}/members',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = EmptyResponse.fromJson(_result.data!);
     return value;
   }
 

@@ -29,8 +29,11 @@ class ChannelName extends StatelessWidget {
           overflow: textOverflow,
         ),
         noDataBuilder: (context) => _NameGenerator(
-            currentUser: channel.client.state.currentUser!,
-            members: channel.state!.members),
+          currentUser: channel.client.state.currentUser!,
+          members: channel.state!.members,
+          textStyle: textStyle,
+          textOverflow: textOverflow,
+        ),
       );
 }
 
@@ -63,23 +66,23 @@ class _NameGenerator extends StatelessWidget {
               channelName = user.name;
             }
           } else {
-            final maxWidth = constraints.maxWidth;
-            final maxChars = maxWidth / (textStyle?.fontSize ?? 1);
-            var currentChars = 0;
+            // final maxWidth = constraints.maxWidth;
+            // final maxChars = maxWidth / (textStyle?.fontSize ?? 1);
+            // var currentChars = 0;
             final currentMembers = <Member>[];
             otherMembers.forEach((element) {
-              final newLength = currentChars + (element.user?.name.length ?? 0);
-              if (newLength < maxChars) {
-                currentChars = newLength;
-                currentMembers.add(element);
-              }
+              // final newLength = currentChars + (element.user?.name.length ?? 0);
+              // if (newLength < maxChars) {
+              //   currentChars = newLength;
+              currentMembers.add(element);
+              // }
             });
 
             final exceedingMembers =
                 otherMembers.length - currentMembers.length;
             channelName =
-                '${currentMembers.map((e) => e.user?.name).join(', ')} '
-                '${exceedingMembers > 0 ? '+ $exceedingMembers' : ''}';
+                '${currentMembers.map((e) => e.user?.name).join(', ')} ';
+            // '${exceedingMembers > 0 ? '+ $exceedingMembers' : ''}';
           }
         }
 

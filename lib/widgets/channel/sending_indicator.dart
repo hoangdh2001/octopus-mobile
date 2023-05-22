@@ -22,7 +22,7 @@ class SendingIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     if (isMessageRead) {
       return SvgPicture.asset(
-        'assets/icons/check-all.svg',
+        'assets/icons/check_all.svg',
         width: size,
         height: size,
         color: OctopusTheme.of(context).colorTheme.brandPrimary,

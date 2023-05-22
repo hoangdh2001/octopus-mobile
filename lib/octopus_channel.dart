@@ -1,13 +1,10 @@
-import 'package:dartz/dartz.dart' hide State;
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:octopus/core/data/client/channel.dart';
 import 'package:octopus/core/data/models/channel_state.dart';
-import 'package:octopus/core/data/models/error.dart';
 import 'package:octopus/core/data/models/pagination_params.dart';
 import 'package:octopus/core/extensions/extension_stream_controller.dart';
-import 'package:octopus/di/service_locator.dart';
-import 'package:octopus/pages/channel/bloc/cubit/message_list_cubit.dart';
 import 'package:rxdart/rxdart.dart';
 
 enum QueryDirection {
@@ -17,12 +14,19 @@ enum QueryDirection {
 }
 
 class OctopusChannel extends StatefulWidget {
-  const OctopusChannel({super.key, required this.child, required this.channel});
+  const OctopusChannel({
+    super.key,
+    required this.child,
+    required this.channel,
+    this.initialMessageId,
+  });
 
   final Widget child;
 
   /// [channel] specifies the channel with which child should be wrapped
   final Channel channel;
+
+  final String? initialMessageId;
 
   static OctopusChannelState of(BuildContext context) {
     OctopusChannelState? octopusChannelState;
@@ -61,6 +65,8 @@ class OctopusChannelState extends State<OctopusChannel> {
   bool _bottomPaginationEnded = false;
 
   late List<Future<bool>> _futures;
+
+  String? get initialMessageId => widget.initialMessageId;
 
   @override
   void initState() {
@@ -106,7 +112,7 @@ class OctopusChannelState extends State<OctopusChannel> {
     final oldestMessage = channel.state!.messages.first.id;
 
     try {
-      final state = await getIt<MessageListCubit>().queryChannel(channel.id!,
+      final state = await channel.query(
           messagesPagination:
               PaginationParams(limit: limit, lessThan: oldestMessage));
       if (state.messages == null ||
@@ -134,7 +140,7 @@ class OctopusChannelState extends State<OctopusChannel> {
     final recentMessage = channel.state!.messages.last;
 
     try {
-      final state = await getIt<MessageListCubit>().queryChannel(channel.id!,
+      final state = await channel.query(
           messagesPagination: PaginationParams(
               limit: limit, greaterThanOrEqual: recentMessage.id));
       if (state.messages == null ||
@@ -184,8 +190,7 @@ class OctopusChannelState extends State<OctopusChannel> {
     String messageId, {
     int limit = 20,
   }) =>
-      getIt<MessageListCubit>().queryChannel(
-        channel.id!,
+      channel.query(
         messagesPagination: PaginationParams(
           idAround: messageId,
           limit: limit,
@@ -214,11 +219,10 @@ class OctopusChannelState extends State<OctopusChannel> {
           return Center(child: Text(message ?? ''));
         }
         final initialized = snapshot.data![0];
-        // ignore: avoid_bool_literals_in_conditional_expressions
         // final dataLoaded = initialMessageId == null ? true : snapshot.data![1];
-        // if (widget.showLoading && (!initialized || !dataLoaded)) {
-        //   return const Center(
-        //     child: CircularProgressIndicator(),
+        // if ((!initialized || !dataLoaded)) {
+        //   return Center(
+        //     child: _getIndicatorWidget(Theme.of(context).platform),
         //   );
         // }
         return widget.child;
@@ -228,5 +232,19 @@ class OctopusChannelState extends State<OctopusChannel> {
     //   child = Material(child: child);
     // }
     return child;
+  }
+
+  Widget _getIndicatorWidget(TargetPlatform platform) {
+    switch (platform) {
+      case TargetPlatform.iOS:
+        return const CupertinoActivityIndicator(
+          color: Colors.grey,
+        );
+      case TargetPlatform.android:
+      default:
+        return const CircularProgressIndicator(
+          color: Colors.grey,
+        );
+    }
   }
 }

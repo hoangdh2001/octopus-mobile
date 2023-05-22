@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:octopus/core/data/models/add_members_request.dart';
 import 'package:octopus/core/data/models/attachment.dart';
-import 'package:octopus/core/data/models/attachment_file.dart';
-import 'package:octopus/core/data/models/call_response.dart';
 import 'package:octopus/core/data/models/channel_query.dart';
 import 'package:octopus/core/data/models/channel_state.dart';
 import 'package:octopus/core/data/models/empty_response.dart';
@@ -10,6 +9,7 @@ import 'package:octopus/core/data/models/mark_read_request.dart';
 import 'package:octopus/core/data/models/message.dart';
 import 'package:octopus/core/data/models/new_channel.dart';
 import 'package:octopus/core/data/models/page.dart';
+import 'package:octopus/core/data/models/search_message_response.dart';
 import 'package:octopus/core/data/models/send_reaction_response.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -19,9 +19,8 @@ part 'channel_service.g.dart';
 abstract class ChannelService {
   factory ChannelService(Dio dio, {String baseUrl}) = _ChannelService;
 
-  @GET('/channels/search')
-  Future<Page<ChannelState>> getChannels(
-      @Query('skip') int? skip, @Query('limit') int? limit);
+  @GET('/channels')
+  Future<Page<ChannelState>> getChannels(@Query('payload') String payload);
 
   @POST('/channels')
   Future<ChannelState> createChannel(@Body() NewChannel newChannel);
@@ -51,12 +50,13 @@ abstract class ChannelService {
   @POST('/channels/{channelID}/image')
   @MultiPart()
   Future<Attachment> sendImage(
-      @Path('channelID') String channelID,
-      @Part(name: 'attachmentID') String attachmentID,
-      @Part(fileName: 'image') MultipartFile file,
-      @SendProgress() ProgressCallback? onSendProgress,
-      @ReceiveProgress() ProgressCallback? onReceiveProgress,
-      @CancelRequest() CancelToken? cancelToken);
+    @Path('channelID') String channelID,
+    @Part(name: 'attachmentID') String? attachmentID,
+    @Part(fileName: 'image') MultipartFile? file,
+    @SendProgress() ProgressCallback? onSendProgress,
+    @ReceiveProgress() ProgressCallback? onReceiveProgress,
+    @CancelRequest() CancelToken? cancelToken,
+  );
 
   @POST('/channels/{channelID}/event')
   Future<EmptyResponse> sendEvent(
@@ -84,7 +84,24 @@ abstract class ChannelService {
   Future<String> call(
       @Path('channelID') String channelID, @Path('callType') String callType);
 
-  @POST('/channels/{channelID}')
+  @PUT('/channels/{channelID}')
   Future<ChannelState> updateChannel(@Path('channelID') String channelID,
       @Body() Map<String, Object?> channelData);
+
+  @PUT('/channels/{channelID}/messages/{messageID}')
+  Future<Message> updateMessage(@Path('channelID') String channelID,
+      @Path('messageID') String messageID, @Body() Map<String, Object?>? set);
+
+  @POST('/channels/{channelID}/mute')
+  Future<EmptyResponse> muteChannel(@Path('channelID') String channelID);
+
+  @POST('/channels/{channelID}/unmute')
+  Future<EmptyResponse> unmuteChannel(@Path('channelID') String channelID);
+
+  @GET('/channels/search')
+  Future<SearchMessagesResponse> search(@Query('payload') String payload);
+
+  @POST('/channels/{channelID}/members')
+  Future<EmptyResponse> addMembers(
+      @Path('channelID') String channelID, @Body() AddMembersRequest members);
 }

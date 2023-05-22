@@ -59,7 +59,7 @@ dependencies:
   flutter_secure_storage: ^5.0.2
   dartz: ^0.10.1
   flutter_slidable: ^2.0.0
-  modal_bottom_sheet: ^2.1.2
+  modal_bottom_sheet: ^3.0.0-pre
   jiffy: ^5.0.0
   socket_io_client: ^2.0.1
   rxdart: ^0.27.7
@@ -95,6 +95,19 @@ dependencies:
   go_router: ^7.0.0
   agora_rtc_engine: ^6.1.1
   permission_handler: ^10.2.0
+  share_plus: ^4.5.3
+  scrollable_positioned_list: ^0.3.8
+  cupertino_refresh: ^0.9.5
+  image_cropper: ^3.0.3
+  characters: ^1.2.1
+  dotted_border: ^2.0.0+3
+  provider: ^6.0.5
+  boardview: ^0.2.2
+  shared_preferences: ^2.1.1
+  syncfusion_flutter_datepicker: ^21.2.3
+  intl: ^0.17.0
+  flutter_colorpicker: ^1.0.3
+  adaptive_dialog: ^1.8.3+1
 
 dev_dependencies:
   flutter_test:

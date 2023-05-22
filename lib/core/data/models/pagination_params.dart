@@ -1,89 +1,125 @@
-// ignore_for_file: deprecated_member_use_from_same_package
-
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'pagination_params.g.dart';
 
-/// Pagination options.
 @JsonSerializable(includeIfNull: false)
 class PaginationParams extends Equatable {
-  /// Creates a new PaginationParams instance
-  ///
-  /// For example:
-  /// ```dart
-  /// // limit to 50
-  /// final paginationParams = PaginationParams(limit: 50);
-  ///
-  /// // limit to 50 with offset
-  /// final paginationParams = PaginationParams(limit: 50, offset: 50);
-  /// ```
   const PaginationParams({
     this.limit = 10,
-    this.skip = 10,
+    this.before = 10,
+    this.after = 10,
+    this.page,
+    this.offset,
+    this.next,
     this.idAround,
     this.greaterThan,
     this.greaterThanOrEqual,
     this.lessThan,
     this.lessThanOrEqual,
-  });
+    this.createdAtAfterOrEqual,
+    this.createdAtAfter,
+    this.createdAtBeforeOrEqual,
+    this.createdAtBefore,
+    this.createdAtAround,
+  }) : assert(
+          offset == null || offset == 0 || next == null,
+          'Cannot specify non-zero `offset` with `next` parameter',
+        );
 
-  /// Create a new instance from a json
   factory PaginationParams.fromJson(Map<String, dynamic> json) =>
       _$PaginationParamsFromJson(json);
 
-  /// The amount of items requested from the APIs.
   final int limit;
 
-  /// The amount of items requested before message ID from the APIs.
-  @JsonKey(name: 'skip')
-  final int skip;
+  @Deprecated('before is deprecated, use limit instead')
+  final int before;
+
+  @Deprecated('after is deprecated, use limit instead')
+  final int after;
+
+  final int? page;
+
+  final int? offset;
+
+  final String? next;
 
   @JsonKey(name: 'id_around')
   final String? idAround;
 
-  /// Filter on ids greater than the given value.
   @JsonKey(name: 'id_gt')
   final String? greaterThan;
 
-  /// Filter on ids greater than or equal to the given value.
   @JsonKey(name: 'id_gte')
   final String? greaterThanOrEqual;
 
-  /// Filter on ids smaller than the given value.
   @JsonKey(name: 'id_lt')
   final String? lessThan;
 
-  /// Filter on ids smaller than or equal to the given value.
   @JsonKey(name: 'id_lte')
   final String? lessThanOrEqual;
 
-  /// Serialize model to json
+  @JsonKey(name: 'created_at_after_or_equal')
+  final DateTime? createdAtAfterOrEqual;
+
+  @JsonKey(name: 'created_at_after')
+  final DateTime? createdAtAfter;
+
+  @JsonKey(name: 'created_at_before_or_equal')
+  final DateTime? createdAtBeforeOrEqual;
+
+  @JsonKey(name: 'created_at_before')
+  final DateTime? createdAtBefore;
+
+  @JsonKey(name: 'created_at_around')
+  final DateTime? createdAtAround;
+
   Map<String, dynamic> toJson() => _$PaginationParamsToJson(this);
 
-  /// Creates a copy of [PaginationParams] with specified attributes overridden.
   PaginationParams copyWith({
     int? limit,
-    int? skip,
+    int? before,
+    int? after,
+    int? offset,
     String? idAround,
+    String? next,
     String? greaterThan,
     String? greaterThanOrEqual,
     String? lessThan,
     String? lessThanOrEqual,
+    DateTime? createdAtAfterOrEqual,
+    DateTime? createdAtAfter,
+    DateTime? createdAtBeforeOrEqual,
+    DateTime? createdAtBefore,
+    DateTime? createdAtAround,
   }) =>
       PaginationParams(
         limit: limit ?? this.limit,
-        skip: limit ?? this.skip,
+        before: before ?? this.before,
+        after: limit ?? this.after,
+        offset: offset ?? this.offset,
         idAround: idAround ?? this.idAround,
+        next: next ?? this.next,
         greaterThan: greaterThan ?? this.greaterThan,
         greaterThanOrEqual: greaterThanOrEqual ?? this.greaterThanOrEqual,
         lessThan: lessThan ?? this.lessThan,
         lessThanOrEqual: lessThanOrEqual ?? this.lessThanOrEqual,
+        createdAtAfterOrEqual:
+            createdAtAfterOrEqual ?? this.createdAtAfterOrEqual,
+        createdAtAfter: createdAtAfter ?? this.createdAtAfter,
+        createdAtBeforeOrEqual:
+            createdAtBeforeOrEqual ?? this.createdAtBeforeOrEqual,
+        createdAtBefore: createdAtBefore ?? this.createdAtBefore,
+        createdAtAround: createdAtAround ?? this.createdAtAround,
       );
 
   @override
   List<Object?> get props => [
         limit,
+        before,
+        after,
+        offset,
+        next,
         idAround,
         greaterThan,
         greaterThanOrEqual,

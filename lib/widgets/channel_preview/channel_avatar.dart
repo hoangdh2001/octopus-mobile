@@ -97,6 +97,7 @@ class ChannelAvatar extends StatelessWidget {
               borderRadius: borderRadius ?? previewTheme?.borderRadius,
               user: member.user!,
               constraints: constraints ?? previewTheme?.constraints,
+              showOnlineStatus: true,
               // onTap: onTap != null ? (_) => onTap!() : null,
               // selected: selected,
               // selectionColor: selectionColor ?? colorTheme.accentPrimary,

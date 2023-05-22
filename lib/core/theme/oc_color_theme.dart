@@ -40,6 +40,12 @@ class OCColorTheme {
 
   final Color disabled;
 
+  final Color highlight;
+
+  final Color contentViewSecondary;
+
+  final Color iconBrandPrimary;
+
   const OCColorTheme({
     required this.brandPrimary,
     required this.brandPrimarySelect,
@@ -60,6 +66,9 @@ class OCColorTheme {
     required this.overlay,
     required this.overlayDark,
     required this.disabled,
+    required this.highlight,
+    required this.contentViewSecondary,
+    required this.iconBrandPrimary,
   });
 
   factory OCColorTheme.light({required OCStyleGuide styleGuide}) =>
@@ -85,6 +94,9 @@ class OCColorTheme {
         overlay: styleGuide.overlay.lightAppearance,
         overlayDark: styleGuide.overlayDark.lightAppearance,
         disabled: styleGuide.disabled.lightAppearance,
+        highlight: styleGuide.highlight.lightAppearance,
+        contentViewSecondary: styleGuide.bgGray.lightAppearance,
+        iconBrandPrimary: styleGuide.iconBrandPrimary.lightAppearance,
       );
 
   factory OCColorTheme.dark({required OCStyleGuide styleGuide}) => OCColorTheme(
@@ -109,5 +121,8 @@ class OCColorTheme {
         overlay: styleGuide.overlay.darkAppearance,
         overlayDark: styleGuide.overlayDark.darkAppearance,
         disabled: styleGuide.disabled.darkAppearance,
+        highlight: styleGuide.highlight.darkAppearance,
+        contentViewSecondary: styleGuide.bgGray.darkAppearance,
+        iconBrandPrimary: styleGuide.iconBrandPrimary.darkAppearance,
       );
 }

@@ -458,7 +458,7 @@ class _MessageInputState extends State<MessageInput>
       // if (resp.message?.type == 'error') {
       //   _effectiveController.value = message;
       // }
-      widget.onMessageSent?.call(resp.message);
+      widget.onMessageSent?.call(resp);
     } catch (e, stk) {
       if (widget.onError != null) {
         widget.onError?.call(e, stk);

@@ -8,6 +8,7 @@ class OCButtonTheme {
   final ButtonStyle buttonBrandPrimary;
   final ButtonStyle buttonPrimaryGreyBorder;
   final ButtonStyle buttonStyleIOS;
+  final ButtonStyle greyButton;
 
   const OCButtonTheme({
     required this.brandPrimaryButton,
@@ -15,6 +16,7 @@ class OCButtonTheme {
     required this.buttonBrandPrimary,
     required this.buttonPrimaryGreyBorder,
     required this.buttonStyleIOS,
+    required this.greyButton,
   });
 
   factory OCButtonTheme.light({required OCStyleGuide styleGuide}) =>
@@ -23,7 +25,9 @@ class OCButtonTheme {
           foregroundColor: const MaterialStatePropertyAll(Colors.white),
           backgroundColor: MaterialStateProperty.resolveWith<Color>(
               (Set<MaterialState> states) {
-            if (states.contains(MaterialState.pressed)) {
+            if (states.contains(MaterialState.disabled)) {
+              return styleGuide.brandPrimary.lightAppearance.withOpacity(.5);
+            } else if (states.contains(MaterialState.pressed)) {
               return styleGuide.brandPrimarySelect.lightAppearance;
             }
             return styleGuide.brandPrimary.lightAppearance;
@@ -77,6 +81,20 @@ class OCButtonTheme {
           backgroundColor: MaterialStatePropertyAll(Colors.transparent),
           foregroundColor: MaterialStatePropertyAll(CupertinoColors.activeBlue),
           overlayColor: MaterialStatePropertyAll(Colors.transparent),
+        ),
+        greyButton: ButtonStyle(
+          backgroundColor:
+              MaterialStatePropertyAll(styleGuide.mediumGrey.lightAppearance),
+          foregroundColor:
+              MaterialStatePropertyAll(styleGuide.primaryGrey.lightAppearance),
+          overlayColor: const MaterialStatePropertyAll(Colors.transparent),
+          iconColor:
+              MaterialStatePropertyAll(styleGuide.primaryGrey.lightAppearance),
+          shape: MaterialStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
         ),
       );
   factory OCButtonTheme.dark({required OCStyleGuide styleGuide}) =>
@@ -148,6 +166,20 @@ class OCButtonTheme {
           backgroundColor: MaterialStatePropertyAll(Colors.transparent),
           foregroundColor: MaterialStatePropertyAll(CupertinoColors.activeBlue),
           overlayColor: MaterialStatePropertyAll(Colors.transparent),
+        ),
+        greyButton: ButtonStyle(
+          backgroundColor:
+              MaterialStatePropertyAll(styleGuide.mediumGrey.lightAppearance),
+          foregroundColor:
+              MaterialStatePropertyAll(styleGuide.primaryGrey.lightAppearance),
+          overlayColor: const MaterialStatePropertyAll(Colors.transparent),
+          iconColor:
+              MaterialStatePropertyAll(styleGuide.primaryGrey.lightAppearance),
+          shape: MaterialStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
         ),
       );
 }

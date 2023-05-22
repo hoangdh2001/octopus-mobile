@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:octopus/core/data/models/enums/message_status.dart';
 import 'package:octopus/core/extensions/extension_string.dart';
@@ -8,6 +10,7 @@ import 'package:octopus/utils.dart';
 import 'package:octopus/widgets/attachment/attachment_widget.dart';
 import 'package:octopus/widgets/attachment/video_thumbnail.dart';
 import 'package:octopus/widgets/indicator/upload_progress_indicator.dart';
+import 'package:shimmer/shimmer.dart';
 
 class FileAttachment extends AttachmentWidget {
   const FileAttachment({
@@ -18,6 +21,7 @@ class FileAttachment extends AttachmentWidget {
     this.title,
     this.trailing,
     this.onAttachmentTap,
+    this.showExpanded = false,
   });
 
   final Widget? title;
@@ -30,6 +34,8 @@ class FileAttachment extends AttachmentWidget {
 
   bool get isImageAttachment => attachment.title?.mimeType?.type == 'image';
 
+  final bool showExpanded;
+
   @override
   Widget build(BuildContext context) {
     final colorTheme = OctopusTheme.of(context).colorTheme;
@@ -38,7 +44,7 @@ class FileAttachment extends AttachmentWidget {
         onTap: onAttachmentTap,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: showExpanded ? MainAxisSize.max : MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
@@ -48,20 +54,7 @@ class FileAttachment extends AttachmentWidget {
               child: _getFileTypeImage(context),
             ),
             const SizedBox(width: 8),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  attachment.title ?? "File",
-                  style: OctopusTheme.of(context).textTheme.primaryGreyBodyBold,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 3),
-                _buildSubtitle(context),
-              ],
-            ),
+            _buildCenter(context),
             const SizedBox(width: 8),
             _buildTrailing(context),
           ],
@@ -70,12 +63,93 @@ class FileAttachment extends AttachmentWidget {
     );
   }
 
+  Widget _buildCenter(BuildContext context) {
+    final textStyle = OctopusTheme.of(context).textTheme.primaryGreyBodyBold;
+    final maxWidth = 0.8.sw;
+    final maxChars = maxWidth / (textStyle.fontSize ?? 1);
+    final isMaxLength = attachment.title!.length > maxChars;
+
+    Widget child = SizedBox(
+      width: showExpanded || !isMaxLength ? null : 150,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            attachment.title ?? "File",
+            style: textStyle,
+            maxLines: 1,
+            textWidthBasis: TextWidthBasis.parent,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 3),
+          _buildSubtitle(context),
+        ],
+      ),
+    );
+    if (showExpanded) {
+      return Expanded(child: child);
+    }
+
+    return child;
+  }
+
   ShapeBorder _getDefaultShape(BuildContext context) => RoundedRectangleBorder(
         side: const BorderSide(width: 0, color: Colors.transparent),
         borderRadius: BorderRadius.circular(8),
       );
 
   Widget _getFileTypeImage(BuildContext context) {
+    if (isImageAttachment) {
+      return Material(
+        clipBehavior: Clip.hardEdge,
+        type: MaterialType.transparency,
+        shape: _getDefaultShape(context),
+        child: source.when(
+          local: () {
+            if (attachment.file?.bytes == null) {
+              return getFileTypeImage(attachment.mimeType?.split('/').last);
+            }
+            return Image.memory(
+              attachment.file!.bytes!,
+              fit: BoxFit.cover,
+              errorBuilder: (_, obj, trace) =>
+                  getFileTypeImage(attachment.mimeType?.split('/').last),
+            );
+          },
+          network: () {
+            if ((attachment.url ??
+                    attachment.secureUrl ??
+                    attachment.thumbnailUrl) ==
+                null) {
+              return getFileTypeImage(attachment.mimeType?.split('/').last);
+            }
+            return CachedNetworkImage(
+              imageUrl: attachment.url ??
+                  attachment.secureUrl ??
+                  attachment.thumbnailUrl!,
+              fit: BoxFit.cover,
+              errorWidget: (_, obj, trace) =>
+                  getFileTypeImage(attachment.mimeType?.split('/').last),
+              placeholder: (_, __) {
+                final image = Image.asset(
+                  'images/placeholder.png',
+                  fit: BoxFit.cover,
+                  package: 'stream_chat_flutter',
+                );
+
+                final colorTheme = OctopusTheme.of(context).colorTheme;
+                return Shimmer.fromColors(
+                  baseColor: colorTheme.disabled,
+                  highlightColor: colorTheme.brandPrimary,
+                  child: image,
+                );
+              },
+            );
+          },
+        ),
+      );
+    }
     if (isVideoAttachment) {
       return Material(
         clipBehavior: Clip.hardEdge,

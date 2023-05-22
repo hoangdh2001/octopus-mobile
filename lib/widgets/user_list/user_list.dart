@@ -48,6 +48,7 @@ class UserListView extends StatelessWidget {
     this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
     this.restorationId,
     this.clipBehavior = Clip.hardEdge,
+    this.showOnlineStatus = false,
   });
 
   final UserListBloc controller;
@@ -98,6 +99,8 @@ class UserListView extends StatelessWidget {
 
   final Clip clipBehavior;
 
+  final bool showOnlineStatus;
+
   @override
   Widget build(BuildContext context) => PagedValueListView<int, User>(
         scrollDirection: scrollDirection,
@@ -127,6 +130,7 @@ class UserListView extends StatelessWidget {
             user: user,
             onTap: onTap == null ? null : () => onTap(user),
             onLongPress: onLongPress == null ? null : () => onLongPress(user),
+            showOnlineStatus: showOnlineStatus,
           );
 
           return itemBuilder?.call(

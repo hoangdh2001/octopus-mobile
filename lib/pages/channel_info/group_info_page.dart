@@ -4,7 +4,11 @@ import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide BackButton;
 import 'package:flutter_svg/svg.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:octopus/core/data/models/attachment.dart';
+import 'package:octopus/core/data/models/attachment_file.dart';
 import 'package:octopus/core/data/models/channel_state.dart';
 import 'package:octopus/core/data/models/member.dart';
 import 'package:octopus/core/data/models/user.dart';
@@ -13,8 +17,13 @@ import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/core/ui/paged_value_scroll_view/bloc/paged_value_bloc.dart';
 import 'package:octopus/octopus.dart';
 import 'package:octopus/octopus_channel.dart';
+import 'package:octopus/pages/add_user_group_page.dart';
+import 'package:octopus/pages/channel_file_display_screen.dart';
+import 'package:octopus/pages/channel_media_display_screen.dart';
+import 'package:octopus/pages/pinned_messages_page.dart';
 import 'package:octopus/widgets/avatars/user_avatar.dart';
 import 'package:octopus/widgets/channel/channel_back_button.dart';
+import 'package:octopus/widgets/channel_preview/channel_avatar.dart';
 import 'package:octopus/widgets/options/options_list.dart';
 import 'package:octopus/widgets/user_list/user_list_bloc.dart';
 
@@ -43,11 +52,13 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
 
   bool listExpanded = false;
 
-  ValueNotifier<bool?> mutedBool = ValueNotifier(false);
+  ValueNotifier<bool?> mutedBool = ValueNotifier(true);
 
   late final channel = OctopusChannel.of(context).channel;
 
   late UserListBloc userListController;
+
+  final _imagePicker = ImagePicker();
 
   void _userNameListener() {
     if (_searchController!.text == _userNameQuery) {
@@ -92,7 +103,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
   @override
   void didChangeDependencies() {
     userListController = UserListBloc(
-      Octopus.of(context).client,
+      client: Octopus.of(context).client,
     );
     super.didChangeDependencies();
   }
@@ -174,22 +185,28 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
               ),
               centerTitle: true,
               actions: [
-                // if (channel.ownCapabilities
-                //     .contains(PermissionType.updateChannelMembers))
-                // NeumorphicButton(
-                //   child: InkWell(
-                //     onTap: () {
-                //       _buildAddUserModal(context);
-                //     },
-                //     child: Padding(
-                //       padding: const EdgeInsets.all(8.0),
-                //       child: StreamSvgIcon.userAdd(
-                //           color: StreamChatTheme.of(context)
-                //               .colorTheme
-                //               .accentPrimary),
-                //     ),
-                //   ),
-                // ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => OctopusChannel(
+                          channel: channel,
+                          child: const AddUserPage(),
+                        ),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SvgPicture.asset(
+                      'assets/icons/user_add.svg',
+                      width: 24,
+                      height: 24,
+                      color: OctopusTheme.of(context).colorTheme.primaryGrey,
+                    ),
+                  ),
+                ),
               ],
             ),
             body: ListView(
@@ -212,7 +229,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
   Widget _buildMembers(List<Member> members) {
     final groupMembers = members
       ..sort((prev, curr) {
-        // if (curr.userID == channel.createdBy?.id) return 1;
+        if (curr.userID == channel.createdBy?.id) return 1;
         return 0;
       });
 
@@ -288,11 +305,9 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              // member.userID == channel.createdBy?.id
-                              // ?
-                              'Owner'
-                              // : ''
-                              ,
+                              member.userID == channel.createdBy?.id
+                                  ? 'Owner'
+                                  : '',
                               style: TextStyle(
                                   color: OctopusTheme.of(context)
                                       .colorTheme
@@ -449,15 +464,18 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                         color: OctopusTheme.of(context).colorTheme.brandPrimary,
                         width: 24.0,
                       ),
-                      onTap: () {
-                        channel.update({
-                          'name': _nameController!.text.trim(),
-                        }).catchError((err) {
+                      onTap: () async {
+                        try {
+                          await channel.update({
+                            'name': _nameController!.text.trim(),
+                          });
+                          _focusNode.unfocus();
+                        } catch (e) {
                           setState(() {
                             _nameController!.text = channelName;
                             _focusNode.unfocus();
                           });
-                        });
+                        }
                       },
                     ),
                   ),
@@ -485,6 +503,21 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
         //   onTap: () {},
         // ),
         // if (channel.ownCapabilities.contains(PermissionType.muteChannel))
+        OptionListTile(
+          title: 'Change Avatar',
+          tileColor: OctopusTheme.of(context).colorTheme.contentView,
+          titleTextStyle: OctopusTheme.of(context).textTheme.primaryGreyBody,
+          leading: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: ChannelAvatar(
+              channel: channel,
+              constraints: const BoxConstraints.tightFor(width: 32, height: 32),
+            ),
+          ),
+          onTap: () {
+            showOptionDialog();
+          },
+        ),
         StreamBuilder<bool>(
             stream: channel.isActiveNotifyStream,
             builder: (context, snapshot) {
@@ -516,13 +549,12 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                           return CupertinoSwitch(
                             value: !value!,
                             onChanged: (val) {
-                              mutedBool.value = val;
-
-                              // if (snapshot.data!) {
-                              //   channel.unmute();
-                              // } else {
-                              //   channel.mute();
-                              // }
+                              mutedBool.value = !val;
+                              if (snapshot.data!) {
+                                channel.mute();
+                              } else {
+                                channel.unmute();
+                              }
                             },
                           );
                         }),
@@ -557,7 +589,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
               MaterialPageRoute(
                 builder: (context) => OctopusChannel(
                   channel: channel,
-                  child: Container(),
+                  child: const PinnedMessagesScreen(),
                 ),
               ),
             );
@@ -585,14 +617,16 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
             color: OctopusTheme.of(context).colorTheme.primaryGrey,
           ),
           onTap: () {
-            var channel = OctopusChannel.of(context).channel;
+            final channel = OctopusChannel.of(context).channel;
 
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => OctopusChannel(
                   channel: channel,
-                  child: Container(),
+                  child: ChannelMediaDisplayScreen(
+                    messageTheme: widget.messageTheme,
+                  ),
                 ),
               ),
             );
@@ -627,9 +661,9 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
               MaterialPageRoute(
                 builder: (context) => OctopusChannel(
                   channel: channel,
-                  child: Container(
-                      // messageTheme: widget.messageTheme,
-                      ),
+                  child: ChannelFileDisplayScreen(
+                    messageTheme: widget.messageTheme,
+                  ),
                 ),
               ),
             );
@@ -1059,6 +1093,154 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
   //     ),
   //   );
   // }
+
+  void showOptionDialog() {
+    final platform = Theme.of(context).platform;
+
+    switch (platform) {
+      case TargetPlatform.iOS:
+        showCupertinoModalPopup(
+          context: context,
+          builder: (context) => CupertinoActionSheet(
+            actions: [
+              CupertinoActionSheetAction(
+                onPressed: () {
+                  Navigator.pop(context);
+                  pickImageFromGallery();
+                },
+                child: const Text('Select photo from gallery'),
+              ),
+              CupertinoActionSheetAction(
+                onPressed: () {
+                  Navigator.pop(context);
+                  takePhoto();
+                },
+                child: const Text('Take photo'),
+              ),
+            ],
+            cancelButton: CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancel'),
+            ),
+          ),
+        );
+        break;
+      default:
+        showDialog(
+          context: context,
+          builder: (context) => SimpleDialog(
+            children: [
+              ListTile(
+                onTap: () {
+                  Navigator.pop(context);
+                  pickImageFromGallery();
+                },
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Select photo from gallery'),
+              ),
+              ListTile(
+                onTap: () {
+                  Navigator.pop(context);
+                  takePhoto();
+                },
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Take photo'),
+              ),
+            ],
+          ),
+        );
+    }
+  }
+
+  void pickImageFromGallery() async {
+    XFile? pickedFile =
+        await _imagePicker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      CroppedFile? croppedFile = await ImageCropper().cropImage(
+        sourcePath: pickedFile.path,
+        cropStyle: CropStyle.circle,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+        ],
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false,
+          ),
+          IOSUiSettings(
+            title: 'Cropper',
+            showCancelConfirmationDialog: true,
+            aspectRatioPickerButtonHidden: true,
+          ),
+          WebUiSettings(
+            context: context,
+          ),
+        ],
+      );
+
+      if (croppedFile == null) return;
+      Octopus.of(context).showLoadingOverlay(context);
+      final bytes = await croppedFile.readAsBytes();
+      final attachmentFile = AttachmentFile(
+        bytes: bytes,
+        size: bytes.length,
+        path: croppedFile.path,
+      );
+
+      await channel.changeAvatar(attachmentFile);
+      Navigator.pop(context);
+    }
+  }
+
+  void takePhoto() async {
+    XFile? pickedFile =
+        await _imagePicker.pickImage(source: ImageSource.camera);
+
+    if (pickedFile != null) {
+      CroppedFile? croppedFile = await ImageCropper().cropImage(
+        sourcePath: pickedFile.path,
+        cropStyle: CropStyle.circle,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+        ],
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false,
+          ),
+          IOSUiSettings(
+            title: 'Cropper',
+            showCancelConfirmationDialog: true,
+            aspectRatioPickerButtonHidden: true,
+          ),
+          WebUiSettings(
+            context: context,
+          ),
+        ],
+      );
+
+      if (croppedFile == null) return;
+      Octopus.of(context).showLoadingOverlay(context);
+      final bytes = await croppedFile.readAsBytes();
+      final attachmentFile = AttachmentFile(
+        bytes: bytes,
+        size: bytes.length,
+        path: croppedFile.path,
+      );
+
+      await channel.changeAvatar(attachmentFile);
+      Navigator.pop(context);
+    }
+  }
 
   String? _getChannelName(
     double width, {

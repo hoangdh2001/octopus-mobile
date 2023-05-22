@@ -14,6 +14,7 @@ import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/di/service_locator.dart';
 import 'package:octopus/pages/home_page.dart';
 import 'package:octopus/pages/options_signin_screen.dart';
+import 'package:octopus/pages/sign_up/sign_up_page.dart';
 import 'package:octopus/pages/verify/bloc/login_bloc.dart';
 import 'package:octopus/widgets/screen_header.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -173,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
                           _connectUser(token).then((client) {
                             Navigator.pushNamedAndRemoveUntil(
                                 context, Routes.HOME, (route) => false,
-                                arguments: HomePageArgs(client));
+                                arguments: HomePageArgs(client, null));
                           }).catchError((error) {
                             print(error.toString());
                           });
@@ -181,9 +182,8 @@ class _LoginPageState extends State<LoginPage> {
                           Navigator.pushNamed(
                             context,
                             Routes.SIGNUP,
-                            arguments: LoginPageArgs(
-                              email: widget.email,
-                              verificationType: widget.verificationType,
+                            arguments: SignUpPageArgs(
+                              token: token,
                             ),
                           );
                         }

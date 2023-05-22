@@ -4,8 +4,11 @@ import 'dart:math';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:octopus/core/data/client/channel.dart';
 import 'package:octopus/core/data/client/client.dart';
+import 'package:octopus/core/data/models/channel_state.dart';
 import 'package:octopus/core/data/models/event.dart';
+import 'package:octopus/core/data/models/filter.dart';
 import 'package:octopus/core/data/models/pagination_params.dart';
+import 'package:octopus/core/data/models/sort_option.dart';
 import 'package:octopus/core/data/socketio/chat_error.dart';
 import 'package:octopus/core/data/socketio/event_type.dart';
 import 'package:octopus/core/ui/paged_value_scroll_view/bloc/paged_value_bloc.dart';
@@ -18,13 +21,33 @@ const _kDefaultBackendPaginationLimit = 30;
 class ChannelListBloc extends PagedValueBloc<int, Channel> {
   final Client client;
 
+  final Filter? filter;
+  Filter? _activeFilter;
+
+  final List<SortOption<ChannelModel>>? sort;
+  List<SortOption<ChannelModel>>? _activeSort;
+
   final int limit;
+
+  final int? messageLimit;
+
+  final int? memberLimit;
+
+  set filter(Filter? value) => _activeFilter = value;
+
+  set sort(List<SortOption<ChannelModel>>? value) => _activeSort = value;
 
   ChannelListBloc({
     required this.client,
     ChannelListEventHandler? eventHandler,
+    this.filter,
+    this.sort,
     this.limit = defaultChannelPagedLimit,
-  })  : _eventHandler = eventHandler ?? ChannelListEventHandler(),
+    this.messageLimit,
+    this.memberLimit,
+  })  : _activeFilter = filter,
+        _activeSort = sort,
+        _eventHandler = eventHandler ?? ChannelListEventHandler(),
         super(const PagedValueState.loading());
 
   set channels(List<Channel> channels) {
@@ -45,6 +68,10 @@ class ChannelListBloc extends PagedValueBloc<int, Channel> {
     );
     try {
       await for (final channels in client.queryChannels(
+        filter: _activeFilter,
+        sort: _activeSort,
+        memberLimit: memberLimit,
+        messageLimit: messageLimit,
         paginationParams: PaginationParams(limit: limit),
       )) {
         final nextKey = channels.length < limit ? null : channels.length;
@@ -60,6 +87,7 @@ class ChannelListBloc extends PagedValueBloc<int, Channel> {
     } catch (error) {
       final chatError = OCError(error.toString());
       emit(PagedValueState.error(chatError));
+      rethrow;
     }
   }
 
@@ -70,8 +98,12 @@ class ChannelListBloc extends PagedValueBloc<int, Channel> {
     const limit = _kDefaultBackendPaginationLimit;
     try {
       await for (final channels in client.queryChannels(
-          paginationParams:
-              PaginationParams(limit: limit, skip: nextPageKey))) {
+        filter: _activeFilter,
+        sort: _activeSort,
+        memberLimit: memberLimit,
+        messageLimit: messageLimit,
+        paginationParams: PaginationParams(limit: limit, offset: nextPageKey),
+      )) {
         final previousItems = previousState.items;
         final newItems = previousItems + channels;
         final nextKey = channels.length < limit ? null : newItems.length;

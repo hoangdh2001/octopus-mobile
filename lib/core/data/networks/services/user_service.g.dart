@@ -19,9 +19,9 @@ class _UserService implements UserService {
   String? baseUrl;
 
   @override
-  Future<List<User>> getUsers() async {
+  Future<List<User>> getUsers(String payload) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'payload': payload};
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
     final _result =
@@ -32,7 +32,7 @@ class _UserService implements UserService {
     )
             .compose(
               _dio.options,
-              '/users',
+              '/users/search',
               queryParameters: queryParameters,
               data: _data,
             )

@@ -11,10 +11,10 @@ class OCBaseStyleGuide extends OCStyleGuide {
   OCFont get h1 => _brandFont.bold(16.sp);
 
   @override
-  OCFont get h2 => _brandFont.bold(15.sp);
+  OCFont get h2 => _brandFont.bold(14.sp);
 
   @override
-  OCFont get title => _brandFont.medium(16.sp);
+  OCFont get title => _brandFont.medium(14.sp);
 
   @override
   OCFont get body => _brandFont.main(13.sp);
@@ -45,6 +45,9 @@ class OCBaseStyleGuide extends OCStyleGuide {
 
   @override
   OCFont get footnoteBold => _brandFont.bold(10.sp);
+
+  @override
+  OCFont get hintLarge => _brandFont.bold(16.sp);
 
   @override
   OCColor get brandPrimary => const OCColor(
@@ -95,6 +98,10 @@ class OCBaseStyleGuide extends OCStyleGuide {
       lightAppearance: Colors.black, darkAppearance: Colors.white);
 
   @override
+  OCColor get iconBrandPrimary => const OCColor(
+      lightAppearance: Colors.white, darkAppearance: Colors.black);
+
+  @override
   OCColor get navigationTitle => const OCColor(
       lightAppearance: Color(0xFF404040), darkAppearance: Color(0xFFF5F5F5));
 
@@ -135,4 +142,12 @@ class OCBaseStyleGuide extends OCStyleGuide {
   @override
   OCColor get disabled => const OCColor(
       lightAppearance: Color(0xffdbdbdb), darkAppearance: Color(0xff2d2f2f));
+
+  @override
+  OCColor get highlight => const OCColor(
+      lightAppearance: Color(0xfffbf4dd), darkAppearance: Color(0xff302d22));
+
+  @override
+  OCColor get bgGray => const OCColor(
+      lightAppearance: Color(0xfff6f9fa), darkAppearance: Color(0xFF121212));
 }

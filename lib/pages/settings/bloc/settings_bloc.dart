@@ -18,7 +18,8 @@ enum SettingSection {
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   final SettingsSectionFactory sectionFactory;
   final FlutterSecureStorage secureStorage;
-  SettingsBloc(this.sectionFactory, this.secureStorage) : super(SettingsState.initial()) {
+  SettingsBloc(this.sectionFactory, this.secureStorage)
+      : super(SettingsState.initial()) {
     on<SettingsEvent>((event, emit) async {
       await event.map(fetchInitial: (value) async {
         emit(state.copyWith(

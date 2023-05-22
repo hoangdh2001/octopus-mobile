@@ -3,25 +3,33 @@ import 'dart:async';
 import 'package:logging/logging.dart';
 import 'package:octopus/core/data/client/channel.dart';
 import 'package:octopus/core/data/client/connection_id_manager.dart';
+import 'package:octopus/core/data/client/workspace.dart';
 import 'package:octopus/core/data/http/interceptors/token_manager.dart';
 import 'package:octopus/core/data/http/interceptors/token_raw.dart';
 import 'package:octopus/core/data/models/channel_state.dart';
 import 'package:octopus/core/data/models/device.dart';
+import 'package:octopus/core/data/models/empty_response.dart';
 import 'package:octopus/core/data/models/event.dart';
-import 'package:octopus/core/data/models/member.dart';
+import 'package:octopus/core/data/models/filter.dart';
 import 'package:octopus/core/data/models/message.dart';
 import 'package:octopus/core/data/models/own_user.dart';
 import 'package:octopus/core/data/models/pagination_params.dart';
+import 'package:octopus/core/data/models/project.dart';
+import 'package:octopus/core/data/models/search_message_response.dart';
+import 'package:octopus/core/data/models/sort_option.dart';
 import 'package:octopus/core/data/models/token.dart';
 import 'package:octopus/core/data/models/user.dart';
+import 'package:octopus/core/data/models/workspace_state.dart';
 import 'package:octopus/core/data/repositories/channel_repository.dart';
 import 'package:octopus/core/data/repositories/user_repository.dart';
+import 'package:octopus/core/data/repositories/workspace_repository.dart';
 import 'package:octopus/core/data/socketio/chat_error.dart';
 import 'package:octopus/core/data/socketio/connection_status.dart';
 import 'package:octopus/core/data/socketio/event_type.dart';
 import 'package:octopus/core/data/socketio/socketio_manager.dart';
 import 'package:octopus/utils.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 class Client {
   late final SocketIOManager _io;
@@ -52,16 +60,21 @@ class Client {
 
   final UserRepository _userRepository;
 
+  final WorkspaceRepository _workspaceRepository;
+
   final _connectionIdManager = ConnectionIdManager();
 
   Client({
     required ChannelRepository channelRepository,
     required UserRepository userRepository,
+    required WorkspaceRepository workspaceRepository,
     required String baseUrl,
     required this.logger,
     required Logger socketLogger,
+    WorkspaceState? currentWorkspace,
   })  : _channelRepository = channelRepository,
-        _userRepository = userRepository {
+        _userRepository = userRepository,
+        _workspaceRepository = workspaceRepository {
     _io = SocketIOManager(
         baseUrl: baseUrl,
         logger: socketLogger,
@@ -161,7 +174,7 @@ class Client {
 
     // resetting credentials
     _tokenManager.reset();
-    // _connectionIdManager.reset();
+    _connectionIdManager.reset();
 
     // disconnecting persistence client
     // await _chatPersistenceClient?.disconnect(flush: flushChatPersistence);
@@ -204,26 +217,89 @@ class Client {
     }
   }
 
+  Future<List<Workspace>> searchWorkspaces(
+    Filter? filter, {
+    String? query,
+    List<SortOption>? sort,
+    PaginationParams pagination = const PaginationParams(),
+  }) async {
+    final workspace = await _workspaceRepository.searchWorkspace(
+      filter,
+      query: query,
+      sort: sort,
+      pagination: pagination,
+    );
+
+    final updateData = _mapWorkspaceStateToWorkspace(workspace);
+
+    state.workspaces = updateData.key;
+    return updateData.value;
+  }
+
+  MapEntry<Map<String, Workspace>, List<Workspace>>
+      _mapWorkspaceStateToWorkspace(
+    List<WorkspaceState> workspaceStates,
+  ) {
+    final workspaces = {...state.workspaces};
+    final newWorkspaces = <Workspace>[];
+    for (final workspaceState in workspaceStates) {
+      final workspace = workspaces[workspaceState.id];
+      if (workspace != null) {
+        workspace.state?.updateWorkspaceState(workspaceState);
+        newWorkspaces.add(workspace);
+      } else {
+        final newWorkspace =
+            Workspace.fromState(this, workspaceState, _workspaceRepository);
+        if (newWorkspace.id != null) {
+          workspaces[newWorkspace.id!] = newWorkspace;
+        }
+        newWorkspaces.add(newWorkspace);
+      }
+    }
+    return MapEntry(workspaces, newWorkspaces);
+  }
+
+  Future<List<Workspace>> getWorkspace() async {
+    final workspace = await _workspaceRepository.getWorkspaceByUser();
+    final updateData = _mapWorkspaceStateToWorkspace(workspace);
+    state.workspaces = updateData.key;
+
+    return updateData.value;
+  }
+
+  // Future<List<Workspace>> queryWorkspace() async {
+  //   final workspace = await getWorkspace();
+
+  //   final updateData = _mapWorkspaceStateToWorkspace(workspace);
+  //   state.workspaces = updateData.key;
+
+  //   return updateData.value;
+  // }
+
+  Future<Workspace> createWorkspace({
+    required String name,
+  }) async {
+    final workspace = await _workspaceRepository
+        .createWorkspace(name, members: [state.currentUser!.id]);
+    final updateData = _mapWorkspaceStateToWorkspace([workspace]);
+
+    state.workspaces = updateData.key;
+    return updateData.value.first;
+  }
+
   final _queryChannelsStreams = <String, Future<List<Channel>>>{};
 
   Stream<List<Channel>> queryChannels({
-    bool state = true,
-    bool watch = true,
-    bool presence = false,
+    Filter? filter,
+    List<SortOption<ChannelModel>>? sort,
     int? memberLimit,
     int? messageLimit,
     PaginationParams paginationParams = const PaginationParams(),
     bool waitForConnect = true,
   }) async* {
-    if (!_connectionIdManager.hasConnectionId) {
-      // ignore: parameter_assignments
-      watch = false;
-    }
-
     final hash = generateHash([
-      state,
-      watch,
-      presence,
+      filter,
+      sort,
       memberLimit,
       messageLimit,
       paginationParams,
@@ -241,9 +317,8 @@ class Client {
 
       try {
         final newQueryChannelsFuture = queryChannelsOnline(
-          state: state,
-          watch: watch,
-          presence: presence,
+          filter: filter,
+          sort: sort,
           memberLimit: memberLimit,
           messageLimit: messageLimit,
           paginationParams: paginationParams,
@@ -262,9 +337,8 @@ class Client {
   }
 
   Future<List<Channel>> queryChannelsOnline({
-    bool state = true,
-    bool watch = true,
-    bool presence = false,
+    Filter? filter,
+    List<SortOption<ChannelModel>>? sort,
     int? memberLimit,
     int? messageLimit,
     bool waitForConnect = true,
@@ -283,17 +357,16 @@ class Client {
       }
     }
 
-    if (!_connectionIdManager.hasConnectionId) {
-      // ignore: parameter_assignments
-      watch = false;
-    }
-
     logger.info('Query channel start');
     final page = await _channelRepository.getChannels(
-      limit: paginationParams.limit,
+      filter: filter,
+      sort: sort,
+      memberLimit: memberLimit,
+      messageLimit: memberLimit,
+      pagination: paginationParams,
     );
 
-    if (page.data.isEmpty && paginationParams.skip == 0) {
+    if (page.data.isEmpty && paginationParams.offset == 0) {
       logger.warning('''
         We could not find any channel for this query.
         Please make sure to take a look at the Flutter tutorial: https://getstream.io/chat/flutter/tutorial
@@ -321,7 +394,7 @@ class Client {
     //   clearQueryCache: paginationParams.offset == 0,
     // );
 
-    this.state.channels = updateData.key;
+    state.channels = updateData.key;
     return updateData.value;
   }
 
@@ -347,8 +420,13 @@ class Client {
     return MapEntry(channels, newChannels);
   }
 
-  Future<List<User>> queryUser({PaginationParams? messagePagination}) async {
-    final users = await _userRepository.getUsers();
+  Future<List<User>> queryUser({
+    Filter? filter,
+    List<SortOption>? sort,
+    PaginationParams? pagination,
+  }) async {
+    final users = await _userRepository.getUsers(
+        filter: filter, sort: sort, pagination: pagination);
     return users;
   }
 
@@ -372,7 +450,8 @@ class Client {
 
   Channel channel({
     String? id,
-    Map<String, Object?>? extraData,
+    String? name,
+    List<String>? members,
   }) {
     if (id != null && state.channels.containsKey(id)) {
       return state.channels[id]!;
@@ -381,7 +460,23 @@ class Client {
       this,
       _channelRepository,
       id,
+      name: name,
+      members: members,
     );
+  }
+
+  Future<Channel> createChannel({
+    String? name,
+    required List<String> members,
+  }) async {
+    final channel = await _channelRepository.createChannel(
+      name: name,
+      newMembers: members,
+    );
+    final updateData = _mapChannelStateToChannel([channel]);
+
+    state.channels = updateData.key;
+    return updateData.value.first;
   }
 
   Future<void> addDevice(String token, String pushProvider) async {
@@ -397,6 +492,35 @@ class Client {
           String id, Map<String, Object?> channelData,
           [Message? updateMessage]) =>
       _channelRepository.udpateChannel(id, channelData);
+
+  Future<EmptyResponse> muteChannel(
+    String channelID, {
+    Duration? expiration,
+  }) =>
+      _channelRepository.muteChannel(
+        channelID,
+      );
+
+  /// Unmutes the channel
+  Future<EmptyResponse> unmuteChannel(String channelID) =>
+      _channelRepository.unmuteChannel(channelID);
+
+  Future<SearchMessagesResponse> search(
+    Filter filter, {
+    String? query,
+    List<SortOption>? sort,
+    PaginationParams? paginationParams,
+    Filter? messageFilters,
+    Filter? attachmentFilters,
+  }) =>
+      _channelRepository.search(
+        filter,
+        query: query,
+        sort: sort,
+        pagination: paginationParams,
+        messageFilters: messageFilters,
+        attachmentFilters: attachmentFilters,
+      );
 
   Stream<Event> on([
     String? eventType,
@@ -438,29 +562,31 @@ class ClientState {
     }
 
     _eventsSubscription = CompositeSubscription();
-    // _eventsSubscription!
-    //   ..add(_client
-    //       .on()
-    //       .where((event) =>
-    //           event.me != null && event.type != EventType.healthCheck)
-    //       .map((e) => e.me!)
-    //       .listen((user) {
-    //     currentUser = currentUser?.merge(user) ?? user;
-    //   }))
-    //   ..add(_client
-    //       .on()
-    //       .map((event) => event.unreadChannels)
-    //       .whereType<int>()
-    //       .listen((count) {
-    //     currentUser = currentUser?.copyWith(unreadChannels: count);
-    //   }))
-    //   ..add(_client
-    //       .on()
-    //       .map((event) => event.totalUnreadCount)
-    //       .whereType<int>()
-    //       .listen((count) {
-    //     currentUser = currentUser?.copyWith(totalUnreadCount: count);
-    //   }));
+    _eventsSubscription!.add(_client
+            .on()
+            .where((event) =>
+                event.me != null && event.type != EventType.healthCheck)
+            .map((e) => e.me!)
+            .listen((user) {
+      currentUser = currentUser?.merge(user) ?? user;
+    }))
+        // ..add(_client
+        //     .on()
+        //     .map((event) => event.unreadChannels)
+        //     .whereType<int>()
+        //     .listen((count) {
+        //   currentUser = currentUser?.copyWith(unreadChannels: count);
+        // }))
+        // ..add(_client
+        //     .on()
+        //     .map((event) => event.totalUnreadCount)
+        //     .whereType<int>()
+        //     .listen((count) {
+        //   currentUser = currentUser?.copyWith(totalUnreadCount: count);
+        // }))
+        ;
+
+    // _listenerChannelCreated();
 
     _listenChannelDeleted();
 
@@ -489,6 +615,25 @@ class ClientState {
   void resumeEventSubscription() {
     _eventsSubscription?.resume();
   }
+
+  // void _listenerChannelCreated() {
+  //   _eventsSubscription?.add(
+  //     _client.on(EventType.channelCreated).listen((event) {
+  //       final eventChannel = event.channel;
+  //       if (eventChannel != null) {
+  //         final channel = Channel.fromState(
+  //           _client,
+  //           eventChannel,
+  //           _client._channelRepository,
+  //         );
+  //         addChannels({
+  //           ...channels,
+  //           channel.id!: channel,
+  //         });
+  //       }
+  //     }),
+  //   );
+  // }
 
   void _listenChannelHidden() {
     _eventsSubscription?.add(
@@ -553,9 +698,23 @@ class ClientState {
 
   Stream<int> get totalUnreadCountStream => _totalUnreadCountController.stream;
 
+  Stream<Map<String, Workspace>> get workspacesStream =>
+      _workspacesController.stream;
+
+  Map<String, Workspace> get workspaces => _workspacesController.value;
+
   Stream<Map<String, Channel>> get channelsStream => _channelsController.stream;
 
   Map<String, Channel> get channels => _channelsController.value;
+
+  Stream<Workspace?> get currentWorkspaceStream =>
+      _currentWorkspaceController.stream;
+
+  Workspace? get currentWorkspace => _currentWorkspaceController.valueOrNull;
+
+  set totalUnreadCount(int unreadCount) {
+    _totalUnreadCountController.add(unreadCount);
+  }
 
   set channels(Map<String, Channel> newChannels) {
     _channelsController.add(newChannels);
@@ -573,21 +732,31 @@ class ClientState {
     channels = channels..remove(channelCid);
   }
 
+  set workspaces(Map<String, Workspace> newWorkspaces) {
+    _workspacesController.add(newWorkspaces);
+  }
+
+  set currentWorkspace(Workspace? workspace) {
+    _currentWorkspaceController.add(workspace);
+  }
+
+  final _workspacesController =
+      BehaviorSubject<Map<String, Workspace>>.seeded({});
   final _channelsController = BehaviorSubject<Map<String, Channel>>.seeded({});
   final _currentUserController = BehaviorSubject<OwnUser?>();
   final _unreadChannelsController = BehaviorSubject<int>.seeded(0);
   final _totalUnreadCountController = BehaviorSubject<int>.seeded(0);
+  final _currentWorkspaceController = BehaviorSubject<Workspace?>();
 
   void dispose() {
     cancelEventSubscription();
     _currentUserController.close();
-    // _unreadChannelsController.close();
-    // _totalUnreadCountController.close();
-
-    final channels = this.channels.values.toList();
-    for (final channel in channels) {
-      channel.dispose();
+    _unreadChannelsController.close();
+    _totalUnreadCountController.close();
+    for (var c in channels.values) {
+      c.dispose();
     }
     _channelsController.close();
+    _workspacesController.close();
   }
 }

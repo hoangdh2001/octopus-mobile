@@ -12,8 +12,13 @@ import 'package:octopus/pages/home_page.dart';
 import 'package:octopus/pages/main_page.dart';
 import 'package:octopus/pages/new_group_page/new_group_page.dart';
 import 'package:octopus/pages/new_message_page/new_message_page.dart';
+import 'package:octopus/pages/new_workspace/new_workspace_page.dart';
 import 'package:octopus/pages/options_signin_screen.dart';
+import 'package:octopus/pages/sign_up/sign_up_page.dart';
+import 'package:octopus/pages/task_detail/task_detail_page.dart';
+import 'package:octopus/pages/task_list/task_list.dart';
 import 'package:octopus/pages/verify/login_page.dart';
+import 'package:octopus/pages/verify/login_with_pass_screen.dart';
 import 'package:octopus/pages/welcome_page.dart';
 
 class AppRoutes {
@@ -51,6 +56,17 @@ class AppRoutes {
             return const OptionsSignInScreen();
           },
         );
+      case Routes.SIGNUP:
+        return MaterialPageRoute(
+            settings: RouteSettings(arguments: args, name: Routes.SIGNUP),
+            builder: (_) {
+              final signUpArgs = args as SignUpPageArgs;
+              return SignUpPage(token: signUpArgs.token);
+            });
+      case Routes.LOGIN_WITH_PASS:
+        return MaterialPageRoute(builder: (_) {
+          return const LoginWithPassScreen();
+        });
       case Routes.APP:
         return MaterialPageRoute(
             settings: RouteSettings(arguments: args, name: Routes.APP),
@@ -64,6 +80,7 @@ class AppRoutes {
               final homePageArgs = args as HomePageArgs;
               return HomePage(
                 chatClient: homePageArgs.chatClient,
+                workspaceState: homePageArgs.workspaceState,
               );
             });
       case Routes.CHANNEL_PAGE:
@@ -114,34 +131,6 @@ class AppRoutes {
             builder: (_) {
               return const NewGroupPage();
             });
-      // case Routes.NEW_GROUP_CHAT_DETAILS:
-      //   return MaterialPageRoute(
-      //       settings: RouteSettings(
-      //           arguments: args, name: Routes.NEW_GROUP_CHAT_DETAILS),
-      //       builder: (_) {
-      //         return GroupChatDetailsScreen(
-      //           selectedUsers: args as List<User>?,
-      //         );
-      //       });
-      // case Routes.CHAT_INFO_SCREEN:
-      //   return MaterialPageRoute(
-      //       settings:
-      //           RouteSettings(arguments: args, name: Routes.CHAT_INFO_SCREEN),
-      //       builder: (context) {
-      //         return ChatInfoScreen(
-      //           user: args as User?,
-      //           messageTheme: StreamChatTheme.of(context).ownMessageTheme,
-      //         );
-      //       });
-      // case Routes.GROUP_INFO_SCREEN:
-      //   return MaterialPageRoute(
-      //       settings:
-      //           RouteSettings(arguments: args, name: Routes.GROUP_INFO_SCREEN),
-      //       builder: (context) {
-      //         return GroupInfoScreen(
-      //           messageTheme: StreamChatTheme.of(context).ownMessageTheme,
-      //         );
-      //       });
       case Routes.MAIN:
         return MaterialPageRoute(
             settings: RouteSettings(arguments: args, name: Routes.MAIN),
@@ -169,6 +158,42 @@ class AppRoutes {
                 isJoin: channelPageArgs.isJoin,
               );
             });
+      case Routes.TASK_DETAIL:
+        return MaterialPageRoute(
+          settings: RouteSettings(arguments: args, name: Routes.TASK_DETAIL),
+          builder: (_) {
+            return const TaskDetailPage();
+          },
+        );
+      case Routes.TASK_LIST:
+        return MaterialPageRoute(
+          settings: RouteSettings(arguments: args, name: Routes.TASK_LIST),
+          builder: (context) {
+            final taskListPageArgs = args as TaskListPageArgs;
+            return TaskListPage(
+              spaces: taskListPageArgs.spaces,
+            );
+          },
+        );
+      case Routes.CREATE_WORKSPACE:
+        return PageRouteBuilder(
+          settings:
+              RouteSettings(arguments: args, name: Routes.CREATE_WORKSPACE),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(0.0, 1.0);
+            const end = Offset.zero;
+            const curve = Curves.ease;
+            var tween =
+                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          },
+          pageBuilder: (context, animation, secondaryAnimation) {
+            return const NewWorkspacePage();
+          },
+        );
       // Default case, should not reach here.
       default:
         return null;

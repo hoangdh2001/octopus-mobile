@@ -3,12 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:logging/logging.dart';
 import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/data/client/client.dart';
 import 'package:octopus/core/data/models/token.dart';
-import 'package:octopus/core/data/repositories/channel_repository.dart';
-import 'package:octopus/core/data/repositories/user_repository.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/di/service_locator.dart';
 import 'package:octopus/pages/home_page.dart';
@@ -306,10 +303,10 @@ class _SignUpPageState extends State<SignUpPage> {
                             context,
                             Routes.HOME,
                             ModalRoute.withName(Routes.HOME),
-                            arguments: HomePageArgs(value),
+                            arguments: HomePageArgs(value, null),
                           );
                         }).catchError((e) {
-                          debugPrint(e);
+                          print(e);
                         });
                       }, (error) => null);
                     });

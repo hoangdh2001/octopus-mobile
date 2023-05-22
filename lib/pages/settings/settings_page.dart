@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:octopus/core/data/client/client.dart';
+import 'package:octopus/core/data/models/user.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/di/service_locator.dart';
 import 'package:octopus/pages/settings/bloc/settings_bloc.dart';
@@ -16,22 +17,24 @@ class SettingsPage extends StatefulWidget {
   State<SettingsPage> createState() => SettingsPageState();
 
   static SettingsPageState of(BuildContext context) {
-    SettingsPageState? settingPageState;
+    SettingsPageState? octopusState;
 
-    settingPageState = context.findAncestorStateOfType<SettingsPageState>();
+    octopusState = context.findAncestorStateOfType<SettingsPageState>();
 
-    if (settingPageState == null) {
+    if (octopusState == null) {
       throw Exception(
         'You must have a Octopus widget at the top of your widget tree',
       );
     }
 
-    return settingPageState;
+    return octopusState;
   }
 }
 
 class SettingsPageState extends State<SettingsPage> {
   Client get client => widget.client;
+
+  User get currentUser => widget.client.state.currentUser!;
 
   @override
   void initState() {

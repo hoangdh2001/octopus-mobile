@@ -1,5 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:octopus/core/data/models/device.dart';
+import 'package:octopus/core/data/models/sort_option.dart';
+import 'package:octopus/core/data/models/pagination_params.dart';
+import 'package:octopus/core/data/models/filter.dart';
 import 'package:octopus/core/data/models/user.dart';
 import 'package:octopus/core/data/networks/services/user_service.dart';
 import 'package:octopus/core/data/repositories/user_repository.dart';
@@ -10,8 +15,16 @@ class UserRepositoryImpl implements UserRepository {
   UserRepositoryImpl(this._userService);
 
   @override
-  Future<List<User>> getUsers() async {
-    final users = await _userService.getUsers();
+  Future<List<User>> getUsers(
+      {Filter? filter,
+      List<SortOption>? sort,
+      PaginationParams? pagination}) async {
+    final users = await _userService.getUsers(jsonEncode({
+      if (filter != null) 'filter_conditions': filter,
+      if (sort != null) 'sort': sort,
+      'page': pagination?.page,
+      'size': pagination?.limit,
+    }));
     return users;
   }
 

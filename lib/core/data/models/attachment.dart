@@ -28,7 +28,7 @@ class Attachment extends Equatable {
     this.createdAt,
     this.updatedAt,
   })  : id = id ?? const Uuid().v4(),
-        title = title ?? file?.name,
+        title = title ?? file?.name ?? originalName,
         localUri = file?.path != null ? Uri.parse(file!.path!) : null {
     this.uploadState = uploadState ??
         ((url != null)

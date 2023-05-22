@@ -306,20 +306,20 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
   //   }
   // }
 
-  // void _togglePin() async {
-  //   final channel = StreamChannel.of(context).channel;
+  void _togglePin() async {
+    final channel = OctopusChannel.of(context).channel;
 
-  //   Navigator.pop(context);
-  //   try {
-  //     if (!widget.message.pinned) {
-  //       await channel.pinMessage(widget.message);
-  //     } else {
-  //       await channel.unpinMessage(widget.message);
-  //     }
-  //   } catch (e) {
-  //     _showErrorAlert();
-  //   }
-  // }
+    Navigator.pop(context);
+    try {
+      if (!widget.message.pinned) {
+        await channel.pinMessage(widget.message);
+      } else {
+        await channel.unpinMessage(widget.message);
+      }
+    } catch (e) {
+      // _showErrorAlert();
+    }
+  }
 
   void _showDeleteDialog() async {
     setState(() {
@@ -426,7 +426,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
   Widget _buildPinButton(BuildContext context) {
     final streamChatThemeData = OctopusTheme.of(context);
     return InkWell(
-      // onTap: _togglePin,
+      onTap: _togglePin,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 11, horizontal: 16),
         child: Row(
@@ -439,7 +439,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
             ),
             const SizedBox(width: 16),
             Text(
-              "Pin",
+              "${widget.message.pinned ? 'Unpin' : 'Pin'} Message",
               style: streamChatThemeData.textTheme.primaryGreyBody,
             ),
           ],

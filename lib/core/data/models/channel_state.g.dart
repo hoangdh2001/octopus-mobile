@@ -24,9 +24,9 @@ ChannelModel _$ChannelModelFromJson(Map<String, dynamic> json) => ChannelModel(
           : DateTime.parse(json['deletedAt'] as String),
       hidden: json['hiddenChannel'] as bool,
       activeNotify: json['activeNotify'] as bool,
-      // createdBy: json['createdBy'] == null
-      //     ? null
-      //     : User.fromJson(json['createdBy'] as Map<String, dynamic>),
+      createdBy: json['createdBy'] == null
+          ? null
+          : User.fromJson(json['createdBy'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$ChannelModelToJson(ChannelModel instance) =>
@@ -40,7 +40,7 @@ Map<String, dynamic> _$ChannelModelToJson(ChannelModel instance) =>
       'deletedAt': instance.deletedAt?.toIso8601String(),
       'hiddenChannel': instance.hidden,
       'activeNotify': instance.activeNotify,
-      // 'createdBy': instance.createdBy,
+      'createdBy': instance.createdBy,
     };
 
 ChannelState _$ChannelStateFromJson(Map<String, dynamic> json) => ChannelState(
@@ -56,6 +56,9 @@ ChannelState _$ChannelStateFromJson(Map<String, dynamic> json) => ChannelState(
       read: (json['read'] as List<dynamic>?)
           ?.map((e) => Read.fromJson(e as Map<String, dynamic>))
           .toList(),
+      pinnedMessages: (json['pinnedMessages'] as List<dynamic>?)
+          ?.map((e) => Message.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$ChannelStateToJson(ChannelState instance) =>
@@ -64,4 +67,5 @@ Map<String, dynamic> _$ChannelStateToJson(ChannelState instance) =>
       'messages': instance.messages,
       'members': instance.members,
       'read': instance.read,
+      'pinnedMessages': instance.pinnedMessages,
     };

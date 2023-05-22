@@ -6,8 +6,11 @@ import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/data/client/client.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/di/service_locator.dart';
+import 'package:octopus/octopus.dart';
 import 'package:octopus/pages/settings/bloc/settings_bloc.dart';
 import 'package:octopus/pages/settings/settings_page.dart';
+import 'package:octopus/utils/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LogoutCell extends StatelessWidget {
   const LogoutCell({super.key});
@@ -56,7 +59,8 @@ class LogoutCell extends StatelessWidget {
     if (token != null) {
       await client.removeDevice(token);
     }
-    client.disconnectUser();
+    getIt<SharedPreferences>().remove(workspaceLocal);
+    await client.disconnectUser();
     await client.dispose();
   }
 }
