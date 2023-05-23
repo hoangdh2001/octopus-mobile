@@ -17,7 +17,7 @@ Task _$TaskFromJson(Map<String, dynamic> json) => Task(
           : DateTime.parse(json['dueDate'] as String),
       description: json['description'] as String?,
       assignees: (json['assignees'] as List<dynamic>?)
-          ?.map((e) => User.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => e as String)
           .toList(),
       createdDate: json['createdDate'] == null
           ? null
@@ -28,6 +28,9 @@ Task _$TaskFromJson(Map<String, dynamic> json) => Task(
       deletedDate: json['deletedDate'] == null
           ? null
           : DateTime.parse(json['deletedDate'] as String),
+      taskStatus: json['taskStatus'] == null
+          ? null
+          : TaskStatus.fromJson(json['taskStatus'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$TaskToJson(Task instance) => <String, dynamic>{
@@ -40,4 +43,5 @@ Map<String, dynamic> _$TaskToJson(Task instance) => <String, dynamic>{
       'createdDate': instance.createdDate?.toIso8601String(),
       'updatedDate': instance.updatedDate?.toIso8601String(),
       'deletedDate': instance.deletedDate?.toIso8601String(),
+      'taskStatus': instance.taskStatus,
     };

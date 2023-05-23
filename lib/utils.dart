@@ -8,7 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 const appId = '509316ca45954759bbbc95c5a7186933';
 const token =
-    '007eJxTYMi4ud077oTex4U9S513VFZP3LTjWsu2BfUbjDvTfzaIS0UqMJgaWBobmiUnmphampqYm1omJSUlW5ommyaaG1qYWRobn6wNT2kIZGRo6ZFnYmSAQBCfhaEktbiEgQEAvmMgOQ==';
+    '007eJxTYJhw9PMR0zRGjiZvzplp9rY+lvuufC+4/vFL55GLQT6p6VcVGEwNLI0NzZITTUwtTU3MTS2TkpKSLU2TTRPNDS3MLI2NbebkpDQEMjL8EOtkZWSAQBCfnSE/uSS/oLSYgQEAxoUg6g==';
 
 Future<void> launchURL(BuildContext context, String url) async {
   try {

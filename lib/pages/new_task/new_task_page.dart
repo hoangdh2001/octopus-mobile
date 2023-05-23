@@ -6,11 +6,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:octopus/core/data/models/task_status.dart';
+import 'package:octopus/core/extensions/extension_color.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/core/ui/better_stream_builder.dart';
 import 'package:octopus/octopus.dart';
 import 'package:octopus/octopus_workspace.dart';
 import 'package:octopus/pages/assign_user/assign_user_page.dart';
+import 'package:octopus/pages/choose_status/choose_status_page.dart';
 import 'package:octopus/pages/date_picker/date_picker_page.dart';
 import 'package:octopus/pages/new_task/bloc/new_task_bloc.dart';
 import 'package:octopus/widgets/avatars/space_avatar.dart';
@@ -200,20 +203,48 @@ class _NewTaskPageState extends State<NewTaskPage> {
                   child: SvgPicture.asset('assets/icons/double_square.svg'),
                 ),
                 GestureDetector(
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: theme.colorTheme.mediumGrey,
-                    ),
-                    child: Center(
-                      child: Text(
-                        'TO DO',
-                        style: theme.textTheme.primaryGreyBodyBold.copyWith(
-                          color: Colors.white,
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      useSafeArea: true,
+                      builder: (context) => Dialog(
+                        backgroundColor:
+                            OctopusTheme.of(context).colorTheme.contentView,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(20),
+                          ),
+                        ),
+                        insetPadding: const EdgeInsets.all(16),
+                        clipBehavior: Clip.antiAlias,
+                        child: ChooseStatusPage(
+                          statuses: bloc.state.space?.setting.statuses ??
+                              TaskStatus.defaultStatusList(),
+                          onStatusSelected: (statusTask) {
+                            bloc.add(StatusChanged(statusTask));
+                          },
                         ),
                       ),
-                    ),
+                    );
+                  },
+                  child: BlocBuilder<NewTaskBloc, NewTaskState>(
+                    builder: (context, state) {
+                      return Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: HexColor.fromHex(state.taskStatus.color),
+                        ),
+                        child: Center(
+                          child: Text(
+                            state.taskStatus.name ?? 'No status',
+                            style: theme.textTheme.primaryGreyBodyBold.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],

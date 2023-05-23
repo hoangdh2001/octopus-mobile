@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'project.dart';
+part of 'space_state.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-Project _$ProjectFromJson(Map<String, dynamic> json) => Project(
+SpaceState _$SpaceStateFromJson(Map<String, dynamic> json) => SpaceState(
       id: json['id'] as String,
       name: json['name'] as String,
       status: json['status'] as bool?,
@@ -19,19 +19,20 @@ Project _$ProjectFromJson(Map<String, dynamic> json) => Project(
       deletedDate: json['deletedDate'] == null
           ? null
           : DateTime.parse(json['deletedDate'] as String),
-      spaces: (json['spaces'] as List<dynamic>?)
-          ?.map((e) => Space.fromJson(e as Map<String, dynamic>))
+      tasks: (json['tasks'] as List<dynamic>?)
+          ?.map((e) => Task.fromJson(e as Map<String, dynamic>))
           .toList(),
       setting: Setting.fromJson(json['setting'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$ProjectToJson(Project instance) => <String, dynamic>{
+Map<String, dynamic> _$SpaceStateToJson(SpaceState instance) =>
+    <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'status': instance.status,
-      'createdDate': instance.createdDate?.toIso8601String(),
       'updatedDate': instance.updatedDate?.toIso8601String(),
       'deletedDate': instance.deletedDate?.toIso8601String(),
-      'spaces': instance.spaces,
+      'tasks': instance.tasks,
       'setting': instance.setting,
+      'createdDate': instance.createdDate.toIso8601String(),
     };

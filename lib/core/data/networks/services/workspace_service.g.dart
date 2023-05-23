@@ -169,7 +169,7 @@ class _WorkspaceService implements WorkspaceService {
   }
 
   @override
-  Future<Project> createSpace(
+  Future<ProjectState> createSpace(
     String id,
     String projectID,
     CreateSpaceRequest project,
@@ -179,8 +179,8 @@ class _WorkspaceService implements WorkspaceService {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(project.toJson());
-    final _result =
-        await _dio.fetch<Map<String, dynamic>>(_setStreamType<Project>(Options(
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<ProjectState>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -192,12 +192,12 @@ class _WorkspaceService implements WorkspaceService {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = Project.fromJson(_result.data!);
+    final value = ProjectState.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<Project> createTask(
+  Future<ProjectState> createTask(
     String id,
     String projectID,
     String spaceID,
@@ -208,8 +208,8 @@ class _WorkspaceService implements WorkspaceService {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(addTaskRequest.toJson());
-    final _result =
-        await _dio.fetch<Map<String, dynamic>>(_setStreamType<Project>(Options(
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<ProjectState>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -221,7 +221,35 @@ class _WorkspaceService implements WorkspaceService {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = Project.fromJson(_result.data!);
+    final value = ProjectState.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<ProjectState> updateTask(
+    String id,
+    String taskID,
+    Task data,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(data.toJson());
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<ProjectState>(Options(
+      method: 'PUT',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/workspaces/${id}/tasks/${taskID}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = ProjectState.fromJson(_result.data!);
     return value;
   }
 

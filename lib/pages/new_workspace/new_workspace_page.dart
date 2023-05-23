@@ -1,13 +1,27 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
+
+import 'package:flutter/material.dart' hide BackButton;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
+import 'package:octopus/di/service_locator.dart';
 import 'package:octopus/octopus.dart';
 import 'package:octopus/pages/new_workspace/bloc/new_workspace_bloc.dart';
+import 'package:octopus/utils/constants.dart';
+import 'package:octopus/widgets/channel/channel_back_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class NewWorkspacePageArgs {
+  final bool showBack;
+
+  NewWorkspacePageArgs({this.showBack = false});
+}
 
 class NewWorkspacePage extends StatefulWidget {
-  const NewWorkspacePage({super.key});
+  const NewWorkspacePage({super.key, this.showBack = false});
+
+  final bool showBack;
 
   @override
   State<NewWorkspacePage> createState() => _NewWorkspacePageState();
@@ -21,17 +35,32 @@ class _NewWorkspacePageState extends State<NewWorkspacePage> {
     return BlocProvider(
       create: (context) => bloc,
       child: Scaffold(
-        backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
-        body: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
+        appBar: widget.showBack
+            ? AppBar(
+                backgroundColor:
+                    OctopusTheme.of(context).colorTheme.contentView,
+                leading: const BackButton(),
+                elevation: 0,
+                title: Text(
                   "Create Workspace",
                   style: OctopusTheme.of(context).textTheme.primaryGreyH1,
                 ),
+              )
+            : null,
+        backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
+        body: SafeArea(
+          child: Padding(
+            padding: widget.showBack
+                ? EdgeInsets.symmetric(horizontal: 16.w, vertical: 0)
+                : EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (!widget.showBack)
+                  Text(
+                    "Create Workspace",
+                    style: OctopusTheme.of(context).textTheme.primaryGreyH1,
+                  ),
                 SizedBox(
                   height: 16.h,
                 ),
@@ -88,7 +117,14 @@ class _NewWorkspacePageState extends State<NewWorkspacePage> {
                           () {},
                           (workspace) {
                             client.state.currentWorkspace = workspace;
-                            Navigator.pushNamed(context, Routes.MAIN);
+                            getIt<SharedPreferences>().setString(
+                              workspaceLocal,
+                              jsonEncode(client.state.currentWorkspace!.state!
+                                  .workspaceState),
+                            );
+                            if (widget.showBack) {
+                              Navigator.pop(context);
+                            }
                           },
                         );
                       },

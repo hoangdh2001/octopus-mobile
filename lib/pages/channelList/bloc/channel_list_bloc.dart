@@ -66,6 +66,7 @@ class ChannelListBloc extends PagedValueBloc<int, Channel> {
       this.limit * defaultInitialPagedLimitMultiplier,
       _kDefaultBackendPaginationLimit,
     );
+    emit(const PagedValueState.loading());
     try {
       await for (final channels in client.queryChannels(
         filter: _activeFilter,

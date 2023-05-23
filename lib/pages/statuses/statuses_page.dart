@@ -23,18 +23,21 @@ class StatusesPage extends StatefulWidget {
 }
 
 class _StatusesPageState extends State<StatusesPage> {
-  final _statuses = <TaskStatus>[];
+  late List<TaskStatus> _activeStatuses;
+
+  late List<TaskStatus> _closedStatuses;
 
   @override
   void initState() {
     super.initState();
-    _statuses.addAll(widget.statuses);
+    _activeStatuses =
+        widget.statuses.where((status) => !status.closeStatus).toList();
+    _closedStatuses =
+        widget.statuses.where((status) => status.closeStatus).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    final activeStatuses = _statuses.where((status) => !status.closeStatus);
-    final closedStatuses = _statuses.where((status) => status.closeStatus);
     return Scaffold(
       backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
       appBar: AppBar(
@@ -50,7 +53,10 @@ class _StatusesPageState extends State<StatusesPage> {
             style: OctopusTheme.of(context).buttonTheme.buttonBrandPrimary,
             onPressed: () {
               Navigator.pop(context);
-              widget.onStatusChanged.call(_statuses);
+              widget.onStatusChanged.call([
+                ..._activeStatuses,
+                ..._closedStatuses,
+              ]);
             },
             child: const Text('Create'),
           ),
@@ -75,9 +81,9 @@ class _StatusesPageState extends State<StatusesPage> {
                 height: 16,
               ),
               ...List<Widget>.generate(
-                activeStatuses.length,
+                _activeStatuses.length,
                 (index) {
-                  final status = activeStatuses.elementAt(index);
+                  final status = _activeStatuses.elementAt(index);
                   return ListTile(
                     leading: Card(
                       elevation: 0,
@@ -107,7 +113,7 @@ class _StatusesPageState extends State<StatusesPage> {
                             return EditPage(
                               onDelete: () {
                                 setState(() {
-                                  _statuses.remove(status);
+                                  _activeStatuses.remove(status);
                                 });
                               },
                               onEdit: () {
@@ -120,9 +126,10 @@ class _StatusesPageState extends State<StatusesPage> {
                                       onCreate: (name, color) {
                                         setState(
                                           () {
-                                            _statuses[index] = status.copyWith(
-                                                name: name,
-                                                color: color?.toHex());
+                                            _activeStatuses[index] =
+                                                status.copyWith(
+                                                    name: name,
+                                                    color: color?.toHex());
                                           },
                                         );
                                       },
@@ -185,11 +192,13 @@ class _StatusesPageState extends State<StatusesPage> {
                         return AddStatusPage(
                           onCreate: (name, color) {
                             setState(() {
-                              _statuses.add(TaskStatus(
-                                name: name,
-                                color: color?.toHex(),
-                                closeStatus: false,
-                              ));
+                              _activeStatuses.add(
+                                TaskStatus(
+                                  name: name,
+                                  color: color?.toHex(),
+                                  closeStatus: false,
+                                ),
+                              );
                             });
                           },
                         );
@@ -219,9 +228,9 @@ class _StatusesPageState extends State<StatusesPage> {
                 height: 16,
               ),
               ...List.generate(
-                closedStatuses.length,
+                _closedStatuses.length,
                 (index) {
-                  final status = closedStatuses.elementAt(index);
+                  final status = _closedStatuses.elementAt(index);
                   return ListTile(
                     leading: Card(
                       elevation: 0,

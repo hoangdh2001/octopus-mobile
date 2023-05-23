@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:octopus/core/data/client/client.dart';
-import 'package:octopus/core/data/models/project.dart';
+import 'package:octopus/core/data/client/project.dart';
+import 'package:octopus/core/data/models/project_state.dart';
 import 'package:octopus/core/data/models/setting.dart';
+import 'package:octopus/core/data/models/task.dart';
 import 'package:octopus/core/data/models/task_status.dart';
 import 'package:octopus/core/data/models/user.dart';
 import 'package:octopus/core/data/models/workspace_state.dart';
@@ -49,7 +51,7 @@ class Workspace {
     return workspace;
   }
 
-  Future<Project> createSpace(
+  Future<ProjectState> createSpace(
       String projectID, String name, Setting setting) async {
     _checkInitialized();
     final project =
@@ -58,7 +60,7 @@ class Workspace {
     return project;
   }
 
-  Future<Project> newTask(
+  Future<ProjectState> newTask(
     String projectID,
     String spaceID,
     String name, {
@@ -66,10 +68,11 @@ class Workspace {
     List<User>? assignees,
     DateTime? startDate,
     DateTime? dueDate,
-  }) {
+    required TaskStatus taskStatus,
+  }) async {
     _checkInitialized();
     final a = assignees?.map((e) => e.id).toList();
-    return _workspaceRepository.createTask(
+    final project = await _workspaceRepository.createTask(
       id!,
       projectID,
       spaceID,
@@ -78,7 +81,17 @@ class Workspace {
       assignees: a,
       startDate: startDate,
       dueDate: dueDate,
+      taskStatus: taskStatus,
     );
+    state?.updateProject(project);
+    return project;
+  }
+
+  Future<ProjectState> updatePartialTask(Task task) async {
+    _checkInitialized();
+    final project = await _workspaceRepository.updateTask(id!, task.id, task);
+    state?.updateProject(project);
+    return project;
   }
 
   void _checkInitialized() {
@@ -104,10 +117,11 @@ class WorkspaceClientState {
     updateWorkspaceState(workspaceState);
   }
 
-  List<Project> get projects => _workspaceState.projects ?? <Project>[];
+  List<ProjectState> get projects =>
+      _workspaceState.projects ?? <ProjectState>[];
 
-  Stream<List<Project>> get projectsStream => workspaceStateStream
-      .map((cs) => cs.projects ?? <Project>[])
+  Stream<List<ProjectState>> get projectsStream => workspaceStateStream
+      .map((cs) => cs.projects ?? <ProjectState>[])
       .distinct(const ListEquality().equals);
 
   WorkspaceState get _workspaceState => _workspaceStateController.value;
@@ -115,18 +129,39 @@ class WorkspaceClientState {
   Stream<WorkspaceState> get workspaceStateStream =>
       _workspaceStateController.stream;
 
+  List<Project> get projectsMap => _projectsController.value;
+
+  Stream<List<Project>> get projectsMapStream => _projectsController.stream;
+
   WorkspaceState get workspaceState => _workspaceStateController.value;
   late BehaviorSubject<WorkspaceState> _workspaceStateController;
+
+  final BehaviorSubject<List<Project>> _projectsController =
+      BehaviorSubject.seeded([]);
+
+  set projectsMap(List<Project> v) {
+    _projectsController.add(v);
+  }
+
+  void addProject(List<Project> projects) {
+    final newProjects = [...projectsMap, ...projects];
+    projectsMap = newProjects;
+  }
+
+  void removeProject(String projectID) {
+    projectsMap = projectsMap
+      ..removeWhere((project) => project.id == projectID);
+  }
 
   set _workspaceState(WorkspaceState v) {
     _workspaceStateController.add(v);
   }
 
-  void updateProject(Project project) {
+  void updateProject(ProjectState project) {
     final newProjects = [...projects];
     final oldIndex = newProjects.indexWhere((p) => p.id == project.id);
     if (oldIndex != -1) {
-      Project? p;
+      ProjectState? p;
       newProjects[oldIndex] = project;
     } else {
       newProjects.add(project);
@@ -134,12 +169,35 @@ class WorkspaceClientState {
     _workspaceState = _workspaceState.copyWith(
       projects: newProjects,
     );
+    projectsMap = _mapProjectStateToProject([project]);
+  }
+
+  List<Project> _mapProjectStateToProject(
+    List<ProjectState> projectsState,
+  ) {
+    final projects = [...projectsMap];
+    for (final projectState in projectsState) {
+      final project =
+          projects.firstWhereOrNull((project) => project.id == projectState.id);
+      if (project != null) {
+        project.state?.updateProjectState(projectState);
+      } else {
+        final newProject = Project.fromState(
+            _workspace, projectState, _workspace._workspaceRepository);
+        if (newProject.id != null) {
+          projects.add(newProject);
+        }
+      }
+    }
+    return projects;
   }
 
   void updateWorkspaceState(WorkspaceState workspaceState) {
     _workspaceState = workspaceState.copyWith(
       projects: workspaceState.projects,
     );
+    final project = _mapProjectStateToProject(workspaceState.projects ?? []);
+    projectsMap = project;
   }
 
   void dispose() {

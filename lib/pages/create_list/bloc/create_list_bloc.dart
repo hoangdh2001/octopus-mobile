@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:octopus/core/data/client/workspace.dart';
-import 'package:octopus/core/data/models/project.dart';
+import 'package:octopus/core/data/models/project_state.dart';
 import 'package:octopus/core/data/models/task_status.dart';
 
 part 'create_list_bloc.freezed.dart';
@@ -10,7 +10,7 @@ part 'create_list_bloc.freezed.dart';
 class CreateListBloc extends Bloc<CreateListEvent, CreateListState> {
   final Workspace _workspace;
 
-  final Project _project;
+  final ProjectState _project;
 
   CreateListBloc(this._workspace, this._project)
       : super(CreateListState.initial()) {
@@ -48,7 +48,7 @@ class CreateListState with _$CreateListState {
   const factory CreateListState({
     required String name,
     required bool isSubmitting,
-    required Option<Project> successOrFail,
+    required Option<ProjectState> successOrFail,
     required List<TaskStatus> statusList,
   }) = _CreateListState;
 

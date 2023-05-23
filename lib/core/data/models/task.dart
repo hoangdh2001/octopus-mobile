@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:octopus/core/data/models/user.dart';
+import 'package:octopus/core/data/models/task_status.dart';
 
 part 'task.g.dart';
 
@@ -11,12 +11,13 @@ class Task extends Equatable {
   final DateTime? startDate;
   final DateTime? dueDate;
   final String? description;
-  final List<User>? assignees;
+  final List<String>? assignees;
   final DateTime? createdDate;
   final DateTime? updatedDate;
   final DateTime? deletedDate;
+  final TaskStatus? taskStatus;
 
-  Task({
+  const Task({
     required this.id,
     this.name,
     this.startDate,
@@ -26,11 +27,37 @@ class Task extends Equatable {
     this.createdDate,
     this.updatedDate,
     this.deletedDate,
+    this.taskStatus,
   });
 
   factory Task.fromJson(Map<String, dynamic> json) => _$TaskFromJson(json);
 
   Map<String, dynamic> toJson() => _$TaskToJson(this);
+
+  Task copyWith({
+    String? id,
+    String? name,
+    DateTime? startDate,
+    DateTime? dueDate,
+    String? description,
+    List<String>? assignees,
+    DateTime? createdDate,
+    DateTime? updatedDate,
+    DateTime? deletedDate,
+    TaskStatus? taskStatus,
+  }) =>
+      Task(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        startDate: startDate ?? this.startDate,
+        dueDate: dueDate ?? this.dueDate,
+        description: description ?? this.description,
+        assignees: assignees ?? this.assignees,
+        createdDate: createdDate ?? this.createdDate,
+        updatedDate: updatedDate ?? this.updatedDate,
+        deletedDate: deletedDate ?? this.deletedDate,
+        taskStatus: taskStatus ?? this.taskStatus,
+      );
 
   @override
   List<Object?> get props => [
@@ -42,6 +69,7 @@ class Task extends Equatable {
         assignees,
         createdDate,
         updatedDate,
-        deletedDate
+        deletedDate,
+        taskStatus,
       ];
 }

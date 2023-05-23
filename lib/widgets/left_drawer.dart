@@ -11,6 +11,7 @@ import 'package:octopus/octopus.dart';
 import 'package:octopus/octopus_workspace.dart';
 import 'package:octopus/pages/create_project/create_project_page.dart';
 import 'package:octopus/pages/new_task/new_task_page.dart';
+import 'package:octopus/pages/new_workspace/new_workspace_page.dart';
 import 'package:octopus/pages/workspace/workspace_page.dart';
 import 'package:octopus/widgets/avatars/workspace_avatar.dart';
 import 'package:octopus/widgets/custom_expansion_tile/expansion_tile.dart';
@@ -68,6 +69,17 @@ class _LeftDrawerState extends State<LeftDrawer> {
                   return Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      GestureDetector(
+                        onTap: () {},
+                        child: SvgPicture.asset(
+                          'assets/icons/reboot.svg',
+                          width: 24,
+                          height: 24,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10.w,
+                      ),
                       GestureDetector(
                         onTap: () {
                           showNewProjectModal(context);
@@ -272,7 +284,8 @@ class _LeftDrawerState extends State<LeftDrawer> {
   }
 
   void showCreateWorkspace() {
-    Navigator.pushNamed(context, Routes.CREATE_WORKSPACE);
+    Navigator.pushNamed(context, Routes.CREATE_WORKSPACE,
+        arguments: NewWorkspacePageArgs(showBack: true));
   }
 
   void showNewProjectModal(BuildContext context) {

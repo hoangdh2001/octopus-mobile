@@ -112,6 +112,7 @@ class _AssignUserPageState extends State<AssignUserPage> {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = Octopus.of(context).currentUser;
     return NestedScrollView(
       headerSliverBuilder: (context, innerBoxIsScrolled) {
         return [
@@ -234,6 +235,27 @@ class _AssignUserPageState extends State<AssignUserPage> {
             index,
             defaultWidget,
           ) {
+            final showText = users[index].id == currentUser!.id;
+            if (showText) {
+              return defaultWidget.copyWith(
+                showSelectWidget: true,
+                selected: _selectedUsers.contains(users[index]),
+                title: Text.rich(
+                  TextSpan(
+                    text: users[index].name,
+                    style:
+                        OctopusTheme.of(context).textTheme.primaryGreyBodyBold,
+                    children: [
+                      TextSpan(
+                        text: ' (You)',
+                        style:
+                            OctopusTheme.of(context).textTheme.primaryGreyBody,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
             return defaultWidget.copyWith(
               showSelectWidget: true,
               selected: _selectedUsers.contains(users[index]),

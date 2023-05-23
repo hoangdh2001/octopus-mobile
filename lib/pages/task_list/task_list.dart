@@ -2,15 +2,22 @@ import 'package:boardview/board_item.dart';
 import 'package:boardview/board_list.dart';
 import 'package:boardview/boardview.dart';
 import 'package:boardview/boardview_controller.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart' hide ExpansionTile;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:octopus/core/config/routes.dart';
-import 'package:octopus/core/data/models/space.dart';
+import 'package:octopus/core/data/client/project.dart';
+import 'package:octopus/core/data/models/space_state.dart';
 import 'package:octopus/core/data/models/task.dart';
 import 'package:octopus/core/extensions/extension_color.dart';
 import 'package:octopus/core/extensions/extension_iterable.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
+import 'package:octopus/core/ui/better_stream_builder.dart';
+import 'package:octopus/octopus_project.dart';
+import 'package:octopus/octopus_workspace.dart';
+import 'package:octopus/pages/task_detail/task_detail_page.dart';
+import 'package:octopus/widgets/avatars/user_avatar.dart';
 import 'package:octopus/widgets/task/task_list_header.dart';
 
 class BoardItemObject {
@@ -40,38 +47,27 @@ class BoardListObject {
 }
 
 class TaskListPageArgs {
-  final List<Space> spaces;
+  final List<SpaceState> spaces;
 
-  TaskListPageArgs({required this.spaces});
+  final Project project;
+
+  TaskListPageArgs({required this.spaces, required this.project});
 }
 
 class TaskListPage extends StatefulWidget {
   const TaskListPage({super.key, required this.spaces});
 
-  final List<Space> spaces;
+  final List<SpaceState> spaces;
 
   @override
   State<TaskListPage> createState() => _TaskListPageState();
 }
 
 class _TaskListPageState extends State<TaskListPage> {
-  // final List<BoardListObject> _listData = [
-  //   BoardListObject(title: "TO DO", items: [
-  //     BoardItemObject(
-  //         title:
-  //             "Android - Program lead button is overlapping the description"),
-  //     BoardItemObject(
-  //         title: "Android - Program lead button is overlapping the description")
-  //   ]),
-  //   BoardListObject(
-  //     title: "IN PROGRESS",
-  //     color: Color(0xFF7C68EC),
-  //   ),
-  //   BoardListObject(title: "DONE", color: Colors.green)
-  // ];
-
   //Can be used to animate to different sections of the BoardView
   BoardViewController boardViewController = BoardViewController();
+
+  late SpaceState space = widget.spaces.first;
 
   @override
   void initState() {
@@ -80,16 +76,6 @@ class _TaskListPageState extends State<TaskListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final space = widget.spaces[0];
-    List<BoardList> _lists = [];
-    for (int i = 0; i < space.setting.statuses.length; i++) {
-      final status = space.setting.statuses[i];
-      _lists.add(_createBoardList(BoardListObject(
-        title: status.name,
-        color: HexColor.fromHex(status.color),
-        items: space.tasks,
-      )) as BoardList);
-    }
     return Scaffold(
       backgroundColor: OctopusTheme.of(context).colorTheme.contentViewSecondary,
       appBar: TaskListHeader(
@@ -111,7 +97,7 @@ class _TaskListPageState extends State<TaskListPage> {
           children: [
             SvgPicture.asset('assets/icons/description.svg'),
             Text(
-              "List",
+              "Board",
               style: OctopusTheme.of(context).textTheme.primaryGreyBody,
             ),
             SvgPicture.asset('assets/icons/arrow_down.svg'),
@@ -120,11 +106,32 @@ class _TaskListPageState extends State<TaskListPage> {
           )),
         ),
       ),
-      body: BoardView(
-        lists: _lists,
-        boardViewController: boardViewController,
-        width: 0.9.sw,
-      ),
+      body: BetterStreamBuilder(
+          stream: OctopusProject.of(context).project.state!.spacesStateStream,
+          builder: (context, data) {
+            final inSpace = widget.spaces[0];
+            space = data.firstWhere((space) => space.id == inSpace.id);
+            final statuses = space.setting.statuses
+              ..sort((a, b) => a.numOrder?.compareTo(b.numOrder ?? 0) ?? 0);
+            List<BoardList> _lists = [];
+            for (int i = 0; i < statuses.length; i++) {
+              final status = statuses[i];
+              final tasks = space.tasks
+                      ?.where((task) => task.taskStatus?.id == status.id)
+                      .toList() ??
+                  [];
+              _lists.add(_createBoardList(BoardListObject(
+                title: status.name,
+                color: HexColor.fromHex(status.color),
+                items: tasks,
+              )) as BoardList);
+            }
+            return BoardView(
+              lists: _lists,
+              boardViewController: boardViewController,
+              width: 0.9.sw,
+            );
+          }),
     );
   }
 
@@ -134,20 +141,111 @@ class _TaskListPageState extends State<TaskListPage> {
           (int? listIndex, int? itemIndex, BoardItemState? state) {},
       onDropItem: (int? listIndex, int? itemIndex, int? oldListIndex,
           int? oldItemIndex, BoardItemState? state) {
-        //Used to update our local item data
-        // var item = _listData[oldListIndex!].items![oldItemIndex!];
-        // _listData[oldListIndex].items!.removeAt(oldItemIndex!);
-        // _listData[listIndex!].items!.insert(itemIndex!, item);
+        final workspace = OctopusWorkspace.of(context).workspace;
+        final project = OctopusProject.of(context).project;
+        final newTask = task.copyWith(
+            taskStatus: space.setting.statuses.firstWhere(
+                (status) => status.numOrder == listIndex,
+                orElse: () => space.setting.statuses.first));
+        project.updateTask(space.id, newTask);
+        workspace.updatePartialTask(newTask);
       },
       onTapItem: (int? listIndex, int? itemIndex, BoardItemState? state) async {
-        Navigator.pushNamed(context, Routes.TASK_DETAIL);
+        Navigator.pushNamed(context, Routes.TASK_DETAIL,
+            arguments: TaskDetailPageArgs(task: task, space: widget.spaces[0]));
       },
       item: Card(
         child: Padding(
           padding: const EdgeInsets.all(12.0),
-          child: Text(
-            task.name!,
-            style: OctopusTheme.of(context).textTheme.primaryGreyBody,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 10.w,
+                height: 10.w,
+                decoration: BoxDecoration(
+                  color: HexColor.fromHex(task.taskStatus?.color),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              SizedBox(
+                width: 16.w,
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      task.name!,
+                      style: OctopusTheme.of(context).textTheme.primaryGreyBody,
+                    ),
+                    Row(
+                      children: [
+                        Row(
+                          children: [
+                            SvgPicture.asset('assets/icons/calendar.svg'),
+                            SizedBox(
+                              width: 8.w,
+                            ),
+                            Text(
+                              task.startDate != null
+                                  ? '${DateFormat('MMMM dd').format(task.startDate!)} - '
+                                  : 'Start date - ',
+                              style: OctopusTheme.of(context)
+                                  .textTheme
+                                  .primaryGreyBody,
+                            ),
+                            const SizedBox(
+                              width: 8,
+                            ),
+                            Text(
+                              task.dueDate != null
+                                  ? DateFormat('MMMM dd').format(task.dueDate!)
+                                  : 'Due date',
+                              style: OctopusTheme.of(context)
+                                  .textTheme
+                                  .primaryGreyBody,
+                            ),
+                          ],
+                        ),
+                        Expanded(
+                          child: SizedBox(
+                            height: 30.h,
+                            child: Builder(builder: (context) {
+                              final workspace =
+                                  OctopusWorkspace.of(context).workspace;
+                              final assignees = workspace
+                                  .state!.workspaceState.members
+                                  ?.where((member) =>
+                                      task.assignees?.contains(member.id) ??
+                                      false)
+                                  .toList();
+                              return Stack(
+                                clipBehavior: Clip.none,
+                                alignment: Alignment.centerRight,
+                                children: List.generate(
+                                  assignees?.length ?? 0,
+                                  (index) {
+                                    final user = assignees![index];
+                                    return Positioned(
+                                      right: index * 20,
+                                      child: UserAvatar(
+                                        user: user,
+                                        showOnlineStatus: false,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            }),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

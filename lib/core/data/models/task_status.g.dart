@@ -8,6 +8,7 @@ part of 'task_status.dart';
 
 TaskStatus _$TaskStatusFromJson(Map<String, dynamic> json) => TaskStatus(
       id: json['id'] as String?,
+      numOrder: json['numOrder'] as int?,
       name: json['name'] as String?,
       color: json['color'] as String?,
       createdDate: json['createdDate'] == null
@@ -25,6 +26,7 @@ TaskStatus _$TaskStatusFromJson(Map<String, dynamic> json) => TaskStatus(
 Map<String, dynamic> _$TaskStatusToJson(TaskStatus instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'numOrder': instance.numOrder,
       'name': instance.name,
       'color': instance.color,
       'createdDate': instance.createdDate?.toIso8601String(),

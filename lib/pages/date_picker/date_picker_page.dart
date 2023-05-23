@@ -6,7 +6,12 @@ import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class DatePickerPage extends StatefulWidget {
-  const DatePickerPage({super.key, required this.onDone});
+  const DatePickerPage(
+      {super.key, required this.onDone, this.startDate, this.dueDate});
+
+  final DateTime? startDate;
+
+  final DateTime? dueDate;
 
   final void Function(DateTime? startDate, DateTime? dueDate) onDone;
 
@@ -27,8 +32,13 @@ class _DatePickerPageState extends State<DatePickerPage> {
 
   @override
   void initState() {
+    _startDate = widget.startDate ?? DateTime.now();
+    _dueDate = widget.dueDate;
     _startDateController = TextEditingController();
+    _startDateController.text = DateFormat('dd MMMM').format(_startDate);
     _dueDateController = TextEditingController();
+    _dueDateController.text =
+        _dueDate != null ? DateFormat('dd MMMM').format(_dueDate!) : 'Set date';
     _startDateFocusNode = FocusNode();
     _dueDateFocusNode = FocusNode();
     super.initState();

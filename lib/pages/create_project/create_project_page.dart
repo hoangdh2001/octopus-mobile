@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -134,6 +135,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                       child: Column(
                         children: [
                           GestureDetector(
+                            behavior: HitTestBehavior.opaque,
                             onTap: () {
                               showBarModalBottomSheet(
                                 context: context,
@@ -141,7 +143,11 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                                   return StatusesPage(
                                       statuses: bloc.state.statusList,
                                       onStatusChanged: (statusList) {
-                                        bloc.add(StatusChanged(statusList));
+                                        bloc.add(StatusChanged(statusList
+                                            .mapIndexed((index, status) =>
+                                                status.copyWith(
+                                                    numOrder: index))
+                                            .toList()));
                                       });
                                 },
                               );

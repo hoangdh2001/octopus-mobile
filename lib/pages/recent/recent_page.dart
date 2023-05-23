@@ -111,586 +111,602 @@ class _RecentPageState extends State<RecentPage> {
               ),
             ];
           },
-          body: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                ExpansionTile(
-                  childrenPadding: EdgeInsets.zero,
-                  title: Row(
-                    children: [
-                      Expanded(
-                        child: Text.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'Today',
-                                style: OctopusTheme.of(context)
-                                    .textTheme
-                                    .primaryGreyBodyBold,
-                              ),
-                              TextSpan(
-                                text: ' (5)',
-                                style: OctopusTheme.of(context)
-                                    .textTheme
-                                    .primaryGreyBody
-                                    .copyWith(
-                                      color: OctopusTheme.of(context)
-                                          .colorTheme
-                                          .primaryGrey
-                                          .withOpacity(.5),
-                                    ),
-                              ),
-                            ],
+          body: RefreshIndicator(
+            color: theme.colorTheme.brandPrimary,
+            onRefresh: () {
+              return Future.delayed(const Duration(seconds: 1));
+            },
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  ExpansionTile(
+                    childrenPadding: EdgeInsets.zero,
+                    title: Row(
+                      children: [
+                        Expanded(
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: 'Today',
+                                  style: OctopusTheme.of(context)
+                                      .textTheme
+                                      .primaryGreyBodyBold,
+                                ),
+                                TextSpan(
+                                  text: ' (5)',
+                                  style: OctopusTheme.of(context)
+                                      .textTheme
+                                      .primaryGreyBody
+                                      .copyWith(
+                                        color: OctopusTheme.of(context)
+                                            .colorTheme
+                                            .primaryGrey
+                                            .withOpacity(.5),
+                                      ),
+                                ),
+                              ],
+                            ),
+                            textAlign: TextAlign.start,
+                            softWrap: true,
+                            style: OctopusTheme.of(context)
+                                .textTheme
+                                .primaryGreyBodyBold,
                           ),
-                          textAlign: TextAlign.start,
-                          softWrap: true,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            showNewTaskModal();
+                          },
+                          child: SvgPicture.asset(
+                            'assets/icons/plus.svg',
+                            color: OctopusTheme.of(context).colorTheme.icon,
+                          ),
+                        ),
+                      ],
+                    ),
+                    leading: (context, animation) {
+                      return RotationTransition(
+                        turns: animation.drive(
+                          Tween<double>(begin: 0.0, end: 0.37).chain(
+                            CurveTween(curve: Curves.easeOut),
+                          ),
+                        ),
+                        child: SvgPicture.asset('assets/icons/arrow_right.svg'),
+                      );
+                    },
+                    children: <Widget>[
+                      ListTile(
+                        title: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Started 9 months ago',
+                              style: OctopusTheme.of(context)
+                                  .textTheme
+                                  .secondaryGreyCaption2,
+                            ),
+                            const Text('Meeting planning')
+                          ],
+                        ),
+                        horizontalTitleGap: 0,
+                        leading: SizedBox(
+                          height: double.infinity,
+                          child: SvgPicture.asset(
+                            'assets/icons/rounded_square.svg',
+                            color: OctopusTheme.of(context)
+                                .colorTheme
+                                .brandPrimary,
+                          ),
+                        ),
+                        subtitle: Text(
+                          "Khoá luận tốt nghiệp",
                           style: OctopusTheme.of(context)
                               .textTheme
-                              .primaryGreyBodyBold,
+                              .secondaryGreyCaption2,
                         ),
-                      ),
-                      GestureDetector(
+                        trailing: const Text('4 Sep'),
+                        dense: true,
+                        visualDensity: VisualDensity.compact,
                         onTap: () {
-                          showNewTaskModal();
+                          // Navigator.of(context).pushNamed(Routes.TASK_DETAIL, );
                         },
-                        child: SvgPicture.asset(
-                          'assets/icons/plus.svg',
-                          color: OctopusTheme.of(context).colorTheme.icon,
+                      ),
+                      ListTile(
+                        title: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Started 9 months ago',
+                              style: OctopusTheme.of(context)
+                                  .textTheme
+                                  .secondaryGreyCaption2,
+                            ),
+                            Text('Meeting planning')
+                          ],
                         ),
+                        horizontalTitleGap: 0,
+                        leading: SizedBox(
+                          height: double.infinity,
+                          child: SvgPicture.asset(
+                            'assets/icons/rounded_square.svg',
+                            color: OctopusTheme.of(context)
+                                .colorTheme
+                                .brandPrimary,
+                          ),
+                        ),
+                        subtitle: Text(
+                          "Khoá luận tốt nghiệp",
+                          style: OctopusTheme.of(context)
+                              .textTheme
+                              .secondaryGreyCaption2,
+                        ),
+                        trailing: const Text('4 Sep'),
+                        dense: true,
+                        onTap: () {},
+                      ),
+                      ListTile(
+                        title: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Started 9 months ago',
+                              style: OctopusTheme.of(context)
+                                  .textTheme
+                                  .secondaryGreyCaption2,
+                            ),
+                            Text('Meeting planning')
+                          ],
+                        ),
+                        leading: SizedBox(
+                          height: double.infinity,
+                          child: SvgPicture.asset(
+                            'assets/icons/rounded_square.svg',
+                            color: OctopusTheme.of(context)
+                                .colorTheme
+                                .brandPrimary,
+                          ),
+                        ),
+                        subtitle: Text(
+                          "Khoá luận tốt nghiệp",
+                          style: OctopusTheme.of(context)
+                              .textTheme
+                              .secondaryGreyCaption2,
+                        ),
+                        horizontalTitleGap: 0,
+                        trailing: const Text('4 Sep'),
+                        dense: true,
+                        onTap: () {},
+                      ),
+                      ListTile(
+                        title: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Started 9 months ago',
+                              style: OctopusTheme.of(context)
+                                  .textTheme
+                                  .secondaryGreyCaption2,
+                            ),
+                            Text('Meeting planning')
+                          ],
+                        ),
+                        horizontalTitleGap: 0,
+                        leading: SizedBox(
+                          height: double.infinity,
+                          child: SvgPicture.asset(
+                            'assets/icons/rounded_square.svg',
+                            color: OctopusTheme.of(context)
+                                .colorTheme
+                                .brandPrimary,
+                          ),
+                        ),
+                        subtitle: Text(
+                          "Khoá luận tốt nghiệp",
+                          style: OctopusTheme.of(context)
+                              .textTheme
+                              .secondaryGreyCaption2,
+                        ),
+                        trailing: const Text('4 Sep'),
+                        dense: true,
+                        onTap: () {},
+                      ),
+                      ListTile(
+                        title: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Started 9 months ago',
+                              style: OctopusTheme.of(context)
+                                  .textTheme
+                                  .secondaryGreyCaption2,
+                            ),
+                            Text('Meeting planning')
+                          ],
+                        ),
+                        leading: SizedBox(
+                          height: double.infinity,
+                          child: SvgPicture.asset(
+                            'assets/icons/rounded_square.svg',
+                            color: OctopusTheme.of(context)
+                                .colorTheme
+                                .brandPrimary,
+                          ),
+                        ),
+                        subtitle: Text(
+                          "Khoá luận tốt nghiệp",
+                          style: OctopusTheme.of(context)
+                              .textTheme
+                              .secondaryGreyCaption2,
+                        ),
+                        trailing: const Text('4 Sep'),
+                        dense: true,
+                        onTap: () {},
+                        horizontalTitleGap: 0,
                       ),
                     ],
                   ),
-                  leading: (context, animation) {
-                    return RotationTransition(
-                      turns: animation.drive(
-                        Tween<double>(begin: 0.0, end: 0.37).chain(
-                          CurveTween(curve: Curves.easeOut),
-                        ),
-                      ),
-                      child: SvgPicture.asset('assets/icons/arrow_right.svg'),
-                    );
-                  },
-                  children: <Widget>[
-                    ListTile(
-                      title: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Started 9 months ago',
+                  ExpansionTile(
+                    title: Row(
+                      children: [
+                        Expanded(
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: 'Overdue',
+                                  style: OctopusTheme.of(context)
+                                      .textTheme
+                                      .primaryGreyBodyBold,
+                                ),
+                                TextSpan(
+                                  text: ' (2)',
+                                  style: OctopusTheme.of(context)
+                                      .textTheme
+                                      .primaryGreyBody
+                                      .copyWith(
+                                        color: OctopusTheme.of(context)
+                                            .colorTheme
+                                            .primaryGrey
+                                            .withOpacity(.5),
+                                      ),
+                                ),
+                              ],
+                            ),
+                            textAlign: TextAlign.start,
+                            softWrap: true,
                             style: OctopusTheme.of(context)
                                 .textTheme
-                                .secondaryGreyCaption2,
+                                .primaryGreyBodyBold,
                           ),
-                          const Text('Meeting planning')
-                        ],
-                      ),
-                      horizontalTitleGap: 0,
-                      leading: SizedBox(
-                        height: double.infinity,
-                        child: SvgPicture.asset(
-                          'assets/icons/rounded_square.svg',
-                          color:
-                              OctopusTheme.of(context).colorTheme.brandPrimary,
                         ),
-                      ),
-                      subtitle: Text(
-                        "Khoá luận tốt nghiệp",
-                        style: OctopusTheme.of(context)
-                            .textTheme
-                            .secondaryGreyCaption2,
-                      ),
-                      trailing: const Text('4 Sep'),
-                      dense: true,
-                      visualDensity: VisualDensity.compact,
-                      onTap: () {
-                        Navigator.of(context).pushNamed(Routes.TASK_DETAIL);
-                      },
-                    ),
-                    ListTile(
-                      title: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Started 9 months ago',
-                            style: OctopusTheme.of(context)
-                                .textTheme
-                                .secondaryGreyCaption2,
+                        GestureDetector(
+                          onTap: () {
+                            showNewTaskModal();
+                          },
+                          child: SvgPicture.asset(
+                            'assets/icons/plus.svg',
+                            color: OctopusTheme.of(context).colorTheme.icon,
                           ),
-                          Text('Meeting planning')
-                        ],
-                      ),
-                      horizontalTitleGap: 0,
-                      leading: SizedBox(
-                        height: double.infinity,
-                        child: SvgPicture.asset(
-                          'assets/icons/rounded_square.svg',
-                          color:
-                              OctopusTheme.of(context).colorTheme.brandPrimary,
                         ),
-                      ),
-                      subtitle: Text(
-                        "Khoá luận tốt nghiệp",
-                        style: OctopusTheme.of(context)
-                            .textTheme
-                            .secondaryGreyCaption2,
-                      ),
-                      trailing: const Text('4 Sep'),
-                      dense: true,
-                      onTap: () {},
+                      ],
                     ),
-                    ListTile(
-                      title: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Started 9 months ago',
-                            style: OctopusTheme.of(context)
-                                .textTheme
-                                .secondaryGreyCaption2,
+                    leading: (context, animation) {
+                      return RotationTransition(
+                        turns: animation.drive(
+                          Tween<double>(begin: 0.0, end: 0.37).chain(
+                            CurveTween(curve: Curves.easeOut),
                           ),
-                          Text('Meeting planning')
-                        ],
-                      ),
-                      leading: SizedBox(
-                        height: double.infinity,
-                        child: SvgPicture.asset(
-                          'assets/icons/rounded_square.svg',
-                          color:
-                              OctopusTheme.of(context).colorTheme.brandPrimary,
                         ),
-                      ),
-                      subtitle: Text(
-                        "Khoá luận tốt nghiệp",
-                        style: OctopusTheme.of(context)
-                            .textTheme
-                            .secondaryGreyCaption2,
-                      ),
-                      horizontalTitleGap: 0,
-                      trailing: const Text('4 Sep'),
-                      dense: true,
-                      onTap: () {},
-                    ),
-                    ListTile(
-                      title: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Started 9 months ago',
-                            style: OctopusTheme.of(context)
-                                .textTheme
-                                .secondaryGreyCaption2,
-                          ),
-                          Text('Meeting planning')
-                        ],
-                      ),
-                      horizontalTitleGap: 0,
-                      leading: SizedBox(
-                        height: double.infinity,
-                        child: SvgPicture.asset(
-                          'assets/icons/rounded_square.svg',
-                          color:
-                              OctopusTheme.of(context).colorTheme.brandPrimary,
+                        child: SvgPicture.asset('assets/icons/arrow_right.svg'),
+                      );
+                    },
+                    children: <Widget>[
+                      ListTile(
+                        title: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Started 9 months ago',
+                              style: OctopusTheme.of(context)
+                                  .textTheme
+                                  .secondaryGreyCaption2,
+                            ),
+                            Text('Meeting planning')
+                          ],
                         ),
-                      ),
-                      subtitle: Text(
-                        "Khoá luận tốt nghiệp",
-                        style: OctopusTheme.of(context)
-                            .textTheme
-                            .secondaryGreyCaption2,
-                      ),
-                      trailing: const Text('4 Sep'),
-                      dense: true,
-                      onTap: () {},
-                    ),
-                    ListTile(
-                      title: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Started 9 months ago',
-                            style: OctopusTheme.of(context)
-                                .textTheme
-                                .secondaryGreyCaption2,
+                        horizontalTitleGap: 0,
+                        leading: SizedBox(
+                          height: double.infinity,
+                          child: SvgPicture.asset(
+                            'assets/icons/rounded_square.svg',
+                            color: OctopusTheme.of(context)
+                                .colorTheme
+                                .brandPrimary,
                           ),
-                          Text('Meeting planning')
-                        ],
-                      ),
-                      leading: SizedBox(
-                        height: double.infinity,
-                        child: SvgPicture.asset(
-                          'assets/icons/rounded_square.svg',
-                          color:
-                              OctopusTheme.of(context).colorTheme.brandPrimary,
                         ),
-                      ),
-                      subtitle: Text(
-                        "Khoá luận tốt nghiệp",
-                        style: OctopusTheme.of(context)
-                            .textTheme
-                            .secondaryGreyCaption2,
-                      ),
-                      trailing: const Text('4 Sep'),
-                      dense: true,
-                      onTap: () {},
-                      horizontalTitleGap: 0,
-                    ),
-                  ],
-                ),
-                ExpansionTile(
-                  title: Row(
-                    children: [
-                      Expanded(
-                        child: Text.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'Overdue',
-                                style: OctopusTheme.of(context)
-                                    .textTheme
-                                    .primaryGreyBodyBold,
-                              ),
-                              TextSpan(
-                                text: ' (2)',
-                                style: OctopusTheme.of(context)
-                                    .textTheme
-                                    .primaryGreyBody
-                                    .copyWith(
-                                      color: OctopusTheme.of(context)
-                                          .colorTheme
-                                          .primaryGrey
-                                          .withOpacity(.5),
-                                    ),
-                              ),
-                            ],
-                          ),
-                          textAlign: TextAlign.start,
-                          softWrap: true,
+                        subtitle: Text(
+                          "Khoá luận tốt nghiệp",
                           style: OctopusTheme.of(context)
                               .textTheme
-                              .primaryGreyBodyBold,
+                              .secondaryGreyCaption2,
                         ),
+                        trailing: const Text('4 Sep'),
+                        dense: true,
+                        onTap: () {},
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          showNewTaskModal();
-                        },
-                        child: SvgPicture.asset(
-                          'assets/icons/plus.svg',
-                          color: OctopusTheme.of(context).colorTheme.icon,
+                      ListTile(
+                        title: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Started 9 months ago',
+                              style: OctopusTheme.of(context)
+                                  .textTheme
+                                  .secondaryGreyCaption2,
+                            ),
+                            Text('Meeting planning')
+                          ],
                         ),
+                        horizontalTitleGap: 0,
+                        leading: SizedBox(
+                          height: double.infinity,
+                          child: SvgPicture.asset(
+                            'assets/icons/rounded_square.svg',
+                            color: OctopusTheme.of(context)
+                                .colorTheme
+                                .brandPrimary,
+                          ),
+                        ),
+                        subtitle: Text(
+                          "Khoá luận tốt nghiệp",
+                          style: OctopusTheme.of(context)
+                              .textTheme
+                              .secondaryGreyCaption2,
+                        ),
+                        trailing: const Text('4 Sep'),
+                        dense: true,
+                        onTap: () {},
                       ),
                     ],
                   ),
-                  leading: (context, animation) {
-                    return RotationTransition(
-                      turns: animation.drive(
-                        Tween<double>(begin: 0.0, end: 0.37).chain(
-                          CurveTween(curve: Curves.easeOut),
-                        ),
-                      ),
-                      child: SvgPicture.asset('assets/icons/arrow_right.svg'),
-                    );
-                  },
-                  children: <Widget>[
-                    ListTile(
-                      title: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Started 9 months ago',
+                  ExpansionTile(
+                    title: Row(
+                      children: [
+                        Expanded(
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: 'Next',
+                                  style: OctopusTheme.of(context)
+                                      .textTheme
+                                      .primaryGreyBodyBold,
+                                ),
+                                TextSpan(
+                                  text: ' (2)',
+                                  style: OctopusTheme.of(context)
+                                      .textTheme
+                                      .primaryGreyBody
+                                      .copyWith(
+                                        color: OctopusTheme.of(context)
+                                            .colorTheme
+                                            .primaryGrey
+                                            .withOpacity(.5),
+                                      ),
+                                ),
+                              ],
+                            ),
+                            textAlign: TextAlign.start,
+                            softWrap: true,
                             style: OctopusTheme.of(context)
                                 .textTheme
-                                .secondaryGreyCaption2,
+                                .primaryGreyBodyBold,
                           ),
-                          Text('Meeting planning')
-                        ],
-                      ),
-                      horizontalTitleGap: 0,
-                      leading: SizedBox(
-                        height: double.infinity,
-                        child: SvgPicture.asset(
-                          'assets/icons/rounded_square.svg',
-                          color:
-                              OctopusTheme.of(context).colorTheme.brandPrimary,
                         ),
-                      ),
-                      subtitle: Text(
-                        "Khoá luận tốt nghiệp",
-                        style: OctopusTheme.of(context)
-                            .textTheme
-                            .secondaryGreyCaption2,
-                      ),
-                      trailing: const Text('4 Sep'),
-                      dense: true,
-                      onTap: () {},
-                    ),
-                    ListTile(
-                      title: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Started 9 months ago',
-                            style: OctopusTheme.of(context)
-                                .textTheme
-                                .secondaryGreyCaption2,
+                        GestureDetector(
+                          onTap: () {
+                            showNewTaskModal();
+                          },
+                          child: SvgPicture.asset(
+                            'assets/icons/plus.svg',
+                            color: OctopusTheme.of(context).colorTheme.icon,
                           ),
-                          Text('Meeting planning')
-                        ],
-                      ),
-                      horizontalTitleGap: 0,
-                      leading: SizedBox(
-                        height: double.infinity,
-                        child: SvgPicture.asset(
-                          'assets/icons/rounded_square.svg',
-                          color:
-                              OctopusTheme.of(context).colorTheme.brandPrimary,
                         ),
-                      ),
-                      subtitle: Text(
-                        "Khoá luận tốt nghiệp",
-                        style: OctopusTheme.of(context)
-                            .textTheme
-                            .secondaryGreyCaption2,
-                      ),
-                      trailing: const Text('4 Sep'),
-                      dense: true,
-                      onTap: () {},
+                      ],
                     ),
-                  ],
-                ),
-                ExpansionTile(
-                  title: Row(
-                    children: [
-                      Expanded(
-                        child: Text.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'Next',
-                                style: OctopusTheme.of(context)
-                                    .textTheme
-                                    .primaryGreyBodyBold,
-                              ),
-                              TextSpan(
-                                text: ' (2)',
-                                style: OctopusTheme.of(context)
-                                    .textTheme
-                                    .primaryGreyBody
-                                    .copyWith(
-                                      color: OctopusTheme.of(context)
-                                          .colorTheme
-                                          .primaryGrey
-                                          .withOpacity(.5),
-                                    ),
-                              ),
-                            ],
+                    leading: (context, animation) {
+                      return RotationTransition(
+                        turns: animation.drive(
+                          Tween<double>(begin: 0.0, end: 0.37).chain(
+                            CurveTween(curve: Curves.easeOut),
                           ),
-                          textAlign: TextAlign.start,
-                          softWrap: true,
+                        ),
+                        child: SvgPicture.asset('assets/icons/arrow_right.svg'),
+                      );
+                    },
+                    children: <Widget>[
+                      ListTile(
+                        title: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Started 9 months ago',
+                              style: OctopusTheme.of(context)
+                                  .textTheme
+                                  .secondaryGreyCaption2,
+                            ),
+                            Text('Meeting planning')
+                          ],
+                        ),
+                        horizontalTitleGap: 0,
+                        leading: SizedBox(
+                          height: double.infinity,
+                          child: SvgPicture.asset(
+                            'assets/icons/rounded_square.svg',
+                            color: OctopusTheme.of(context)
+                                .colorTheme
+                                .brandPrimary,
+                          ),
+                        ),
+                        subtitle: Text(
+                          "Khoá luận tốt nghiệp",
                           style: OctopusTheme.of(context)
                               .textTheme
-                              .primaryGreyBodyBold,
+                              .secondaryGreyCaption2,
                         ),
+                        trailing: const Text('4 Sep'),
+                        dense: true,
+                        onTap: () {},
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          showNewTaskModal();
-                        },
-                        child: SvgPicture.asset(
-                          'assets/icons/plus.svg',
-                          color: OctopusTheme.of(context).colorTheme.icon,
+                      ListTile(
+                        title: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Started 9 months ago',
+                              style: OctopusTheme.of(context)
+                                  .textTheme
+                                  .secondaryGreyCaption2,
+                            ),
+                            Text('Meeting planning')
+                          ],
                         ),
+                        horizontalTitleGap: 0,
+                        leading: SizedBox(
+                          height: double.infinity,
+                          child: SvgPicture.asset(
+                            'assets/icons/rounded_square.svg',
+                            color: OctopusTheme.of(context)
+                                .colorTheme
+                                .brandPrimary,
+                          ),
+                        ),
+                        subtitle: Text(
+                          "Khoá luận tốt nghiệp",
+                          style: OctopusTheme.of(context)
+                              .textTheme
+                              .secondaryGreyCaption2,
+                        ),
+                        trailing: const Text('4 Sep'),
+                        dense: true,
+                        onTap: () {},
                       ),
                     ],
                   ),
-                  leading: (context, animation) {
-                    return RotationTransition(
-                      turns: animation.drive(
-                        Tween<double>(begin: 0.0, end: 0.37).chain(
-                          CurveTween(curve: Curves.easeOut),
-                        ),
-                      ),
-                      child: SvgPicture.asset('assets/icons/arrow_right.svg'),
-                    );
-                  },
-                  children: <Widget>[
-                    ListTile(
-                      title: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Started 9 months ago',
+                  ExpansionTile(
+                    title: Row(
+                      children: [
+                        Expanded(
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: 'No due date',
+                                  style: OctopusTheme.of(context)
+                                      .textTheme
+                                      .primaryGreyBodyBold,
+                                ),
+                                TextSpan(
+                                  text: ' (1)',
+                                  style: OctopusTheme.of(context)
+                                      .textTheme
+                                      .primaryGreyBody
+                                      .copyWith(
+                                        color: OctopusTheme.of(context)
+                                            .colorTheme
+                                            .primaryGrey
+                                            .withOpacity(.5),
+                                      ),
+                                ),
+                              ],
+                            ),
+                            textAlign: TextAlign.start,
+                            softWrap: true,
                             style: OctopusTheme.of(context)
                                 .textTheme
-                                .secondaryGreyCaption2,
+                                .primaryGreyBodyBold,
                           ),
-                          Text('Meeting planning')
-                        ],
-                      ),
-                      horizontalTitleGap: 0,
-                      leading: SizedBox(
-                        height: double.infinity,
-                        child: SvgPicture.asset(
-                          'assets/icons/rounded_square.svg',
-                          color:
-                              OctopusTheme.of(context).colorTheme.brandPrimary,
                         ),
-                      ),
-                      subtitle: Text(
-                        "Khoá luận tốt nghiệp",
-                        style: OctopusTheme.of(context)
-                            .textTheme
-                            .secondaryGreyCaption2,
-                      ),
-                      trailing: const Text('4 Sep'),
-                      dense: true,
-                      onTap: () {},
-                    ),
-                    ListTile(
-                      title: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Started 9 months ago',
-                            style: OctopusTheme.of(context)
-                                .textTheme
-                                .secondaryGreyCaption2,
+                        GestureDetector(
+                          onTap: () {
+                            showNewTaskModal();
+                          },
+                          child: SvgPicture.asset(
+                            'assets/icons/plus.svg',
+                            color: OctopusTheme.of(context).colorTheme.icon,
                           ),
-                          Text('Meeting planning')
-                        ],
-                      ),
-                      horizontalTitleGap: 0,
-                      leading: SizedBox(
-                        height: double.infinity,
-                        child: SvgPicture.asset(
-                          'assets/icons/rounded_square.svg',
-                          color:
-                              OctopusTheme.of(context).colorTheme.brandPrimary,
                         ),
-                      ),
-                      subtitle: Text(
-                        "Khoá luận tốt nghiệp",
-                        style: OctopusTheme.of(context)
-                            .textTheme
-                            .secondaryGreyCaption2,
-                      ),
-                      trailing: const Text('4 Sep'),
-                      dense: true,
-                      onTap: () {},
+                      ],
                     ),
-                  ],
-                ),
-                ExpansionTile(
-                  title: Row(
-                    children: [
-                      Expanded(
-                        child: Text.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'No due date',
-                                style: OctopusTheme.of(context)
-                                    .textTheme
-                                    .primaryGreyBodyBold,
-                              ),
-                              TextSpan(
-                                text: ' (1)',
-                                style: OctopusTheme.of(context)
-                                    .textTheme
-                                    .primaryGreyBody
-                                    .copyWith(
-                                      color: OctopusTheme.of(context)
-                                          .colorTheme
-                                          .primaryGrey
-                                          .withOpacity(.5),
-                                    ),
-                              ),
-                            ],
+                    leading: (context, animation) {
+                      return RotationTransition(
+                        turns: animation.drive(
+                          Tween<double>(begin: 0.0, end: 0.37).chain(
+                            CurveTween(curve: Curves.easeOut),
                           ),
-                          textAlign: TextAlign.start,
-                          softWrap: true,
+                        ),
+                        child: SvgPicture.asset('assets/icons/arrow_right.svg'),
+                      );
+                    },
+                    children: <Widget>[
+                      ListTile(
+                        title: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Started 9 months ago',
+                              style: OctopusTheme.of(context)
+                                  .textTheme
+                                  .secondaryGreyCaption2,
+                            ),
+                            Text('Meeting planning')
+                          ],
+                        ),
+                        horizontalTitleGap: 0,
+                        leading: SizedBox(
+                          height: double.infinity,
+                          child: SvgPicture.asset(
+                            'assets/icons/rounded_square.svg',
+                            color: OctopusTheme.of(context)
+                                .colorTheme
+                                .brandPrimary,
+                          ),
+                        ),
+                        subtitle: Text(
+                          "Khoá luận tốt nghiệp",
                           style: OctopusTheme.of(context)
                               .textTheme
-                              .primaryGreyBodyBold,
+                              .secondaryGreyCaption2,
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          showNewTaskModal();
-                        },
-                        child: SvgPicture.asset(
-                          'assets/icons/plus.svg',
-                          color: OctopusTheme.of(context).colorTheme.icon,
-                        ),
+                        trailing: const Text('4 Sep'),
+                        dense: true,
+                        onTap: () {},
                       ),
                     ],
                   ),
-                  leading: (context, animation) {
-                    return RotationTransition(
-                      turns: animation.drive(
-                        Tween<double>(begin: 0.0, end: 0.37).chain(
-                          CurveTween(curve: Curves.easeOut),
-                        ),
-                      ),
-                      child: SvgPicture.asset('assets/icons/arrow_right.svg'),
-                    );
-                  },
-                  children: <Widget>[
-                    ListTile(
-                      title: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Started 9 months ago',
-                            style: OctopusTheme.of(context)
-                                .textTheme
-                                .secondaryGreyCaption2,
-                          ),
-                          Text('Meeting planning')
-                        ],
-                      ),
-                      horizontalTitleGap: 0,
-                      leading: SizedBox(
-                        height: double.infinity,
-                        child: SvgPicture.asset(
-                          'assets/icons/rounded_square.svg',
-                          color:
-                              OctopusTheme.of(context).colorTheme.brandPrimary,
-                        ),
-                      ),
-                      subtitle: Text(
-                        "Khoá luận tốt nghiệp",
-                        style: OctopusTheme.of(context)
-                            .textTheme
-                            .secondaryGreyCaption2,
-                      ),
-                      trailing: const Text('4 Sep'),
-                      dense: true,
-                      onTap: () {},
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

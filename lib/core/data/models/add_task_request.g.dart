@@ -19,6 +19,8 @@ AddTaskRequest _$AddTaskRequestFromJson(Map<String, dynamic> json) =>
       dueDate: json['dueDate'] == null
           ? null
           : DateTime.parse(json['dueDate'] as String),
+      taskStatus:
+          TaskStatus.fromJson(json['taskStatus'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$AddTaskRequestToJson(AddTaskRequest instance) =>
@@ -28,4 +30,5 @@ Map<String, dynamic> _$AddTaskRequestToJson(AddTaskRequest instance) =>
       'assignees': instance.assignees,
       'startDate': instance.startDate?.toIso8601String(),
       'dueDate': instance.dueDate?.toIso8601String(),
+      'taskStatus': instance.taskStatus,
     };

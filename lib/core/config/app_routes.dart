@@ -5,6 +5,7 @@ import 'package:octopus/core/data/client/client.dart';
 import 'package:octopus/di/service_locator.dart';
 import 'package:octopus/octopus.dart';
 import 'package:octopus/octopus_channel.dart';
+import 'package:octopus/octopus_project.dart';
 import 'package:octopus/pages/calls/video_call_page.dart';
 import 'package:octopus/pages/channel/channel_page.dart';
 import 'package:octopus/pages/email/email_page.dart';
@@ -162,7 +163,11 @@ class AppRoutes {
         return MaterialPageRoute(
           settings: RouteSettings(arguments: args, name: Routes.TASK_DETAIL),
           builder: (_) {
-            return const TaskDetailPage();
+            final taskDetailPageArgs = args as TaskDetailPageArgs;
+            return TaskDetailPage(
+              task: taskDetailPageArgs.task,
+              space: taskDetailPageArgs.space,
+            );
           },
         );
       case Routes.TASK_LIST:
@@ -170,8 +175,11 @@ class AppRoutes {
           settings: RouteSettings(arguments: args, name: Routes.TASK_LIST),
           builder: (context) {
             final taskListPageArgs = args as TaskListPageArgs;
-            return TaskListPage(
-              spaces: taskListPageArgs.spaces,
+            return OctopusProject(
+              project: taskListPageArgs.project,
+              child: TaskListPage(
+                spaces: taskListPageArgs.spaces,
+              ),
             );
           },
         );
@@ -191,7 +199,10 @@ class AppRoutes {
             );
           },
           pageBuilder: (context, animation, secondaryAnimation) {
-            return const NewWorkspacePage();
+            final newWorkspacePageArgs = args as NewWorkspacePageArgs?;
+            return NewWorkspacePage(
+              showBack: newWorkspacePageArgs?.showBack ?? false,
+            );
           },
         );
       // Default case, should not reach here.

@@ -128,6 +128,7 @@ class _AddStatusPageState extends State<AddStatusPage> {
                 child: Column(
                   children: [
                     GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTap: () {
                         showCustomModalBottomSheet(
                           context: context,

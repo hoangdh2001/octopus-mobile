@@ -22,7 +22,7 @@ WorkspaceState _$WorkspaceStateFromJson(Map<String, dynamic> json) =>
           ? null
           : DateTime.parse(json['deletedAt'] as String),
       projects: (json['projects'] as List<dynamic>?)
-          ?.map((e) => Project.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => ProjectState.fromJson(e as Map<String, dynamic>))
           .toList(),
       members: (json['members'] as List<dynamic>?)
           ?.map((e) => User.fromJson(e as Map<String, dynamic>))

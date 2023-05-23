@@ -313,7 +313,7 @@ abstract class Submitted implements CreateListEvent {
 mixin _$CreateListState {
   String get name => throw _privateConstructorUsedError;
   bool get isSubmitting => throw _privateConstructorUsedError;
-  Option<Project> get successOrFail => throw _privateConstructorUsedError;
+  Option<ProjectState> get successOrFail => throw _privateConstructorUsedError;
   List<TaskStatus> get statusList => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
@@ -330,7 +330,7 @@ abstract class $CreateListStateCopyWith<$Res> {
   $Res call(
       {String name,
       bool isSubmitting,
-      Option<Project> successOrFail,
+      Option<ProjectState> successOrFail,
       List<TaskStatus> statusList});
 }
 
@@ -364,7 +364,7 @@ class _$CreateListStateCopyWithImpl<$Res, $Val extends CreateListState>
       successOrFail: null == successOrFail
           ? _value.successOrFail
           : successOrFail // ignore: cast_nullable_to_non_nullable
-              as Option<Project>,
+              as Option<ProjectState>,
       statusList: null == statusList
           ? _value.statusList
           : statusList // ignore: cast_nullable_to_non_nullable
@@ -384,7 +384,7 @@ abstract class _$$_CreateListStateCopyWith<$Res>
   $Res call(
       {String name,
       bool isSubmitting,
-      Option<Project> successOrFail,
+      Option<ProjectState> successOrFail,
       List<TaskStatus> statusList});
 }
 
@@ -416,7 +416,7 @@ class __$$_CreateListStateCopyWithImpl<$Res>
       successOrFail: null == successOrFail
           ? _value.successOrFail
           : successOrFail // ignore: cast_nullable_to_non_nullable
-              as Option<Project>,
+              as Option<ProjectState>,
       statusList: null == statusList
           ? _value._statusList
           : statusList // ignore: cast_nullable_to_non_nullable
@@ -440,7 +440,7 @@ class _$_CreateListState implements _CreateListState {
   @override
   final bool isSubmitting;
   @override
-  final Option<Project> successOrFail;
+  final Option<ProjectState> successOrFail;
   final List<TaskStatus> _statusList;
   @override
   List<TaskStatus> get statusList {
@@ -483,7 +483,7 @@ abstract class _CreateListState implements CreateListState {
   const factory _CreateListState(
       {required final String name,
       required final bool isSubmitting,
-      required final Option<Project> successOrFail,
+      required final Option<ProjectState> successOrFail,
       required final List<TaskStatus> statusList}) = _$_CreateListState;
 
   @override
@@ -491,7 +491,7 @@ abstract class _CreateListState implements CreateListState {
   @override
   bool get isSubmitting;
   @override
-  Option<Project> get successOrFail;
+  Option<ProjectState> get successOrFail;
   @override
   List<TaskStatus> get statusList;
   @override

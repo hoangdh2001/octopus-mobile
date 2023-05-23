@@ -11,7 +11,7 @@ class Setting extends Equatable {
   final DateTime? createdDate;
   final DateTime? updatedDate;
 
-  Setting({
+  const Setting({
     required this.id,
     required this.statuses,
     this.createdDate,
@@ -22,6 +22,19 @@ class Setting extends Equatable {
       _$SettingFromJson(json);
 
   Map<String, dynamic> toJson() => _$SettingToJson(this);
+
+  Setting copyWith({
+    String? id,
+    List<TaskStatus>? statuses,
+    DateTime? createdDate,
+    DateTime? updatedDate,
+  }) =>
+      Setting(
+        id: id ?? this.id,
+        statuses: statuses ?? this.statuses,
+        createdDate: createdDate ?? this.createdDate,
+        updatedDate: updatedDate ?? this.updatedDate,
+      );
 
   @override
   List<Object?> get props => [id, statuses, createdDate, updatedDate];

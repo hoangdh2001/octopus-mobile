@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:octopus/core/data/models/project.dart';
+import 'package:octopus/core/data/models/project_state.dart';
+import 'package:octopus/core/data/models/task_status.dart';
 import 'package:octopus/core/extensions/extension_color.dart';
 import 'package:octopus/core/extensions/extension_iterable.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
@@ -13,7 +14,7 @@ import 'package:octopus/widgets/avatars/space_avatar.dart';
 class CreateListPage extends StatefulWidget {
   const CreateListPage({super.key, required this.project});
 
-  final Project project;
+  final ProjectState project;
 
   @override
   State<CreateListPage> createState() => _CreateListPageState();
@@ -24,8 +25,13 @@ class _CreateListPageState extends State<CreateListPage> {
 
   @override
   void initState() {
-    bloc =
-        CreateListBloc(OctopusWorkspace.of(context).workspace, widget.project);
+    bloc = CreateListBloc(
+        OctopusWorkspace.of(context).workspace,
+        widget.project.copyWith(
+            setting: widget.project.setting.copyWith(statuses: [
+          ...widget.project.setting.statuses
+            ..sort((a, b) => a.numOrder?.compareTo(b.numOrder ?? 0) ?? 0)
+        ])));
     super.initState();
   }
 
@@ -222,16 +228,16 @@ class _CreateListPageState extends State<CreateListPage> {
                                 width: 16,
                               ),
                               const Spacer(),
-                              if (widget.project.setting != null)
+                              if (widget.project.setting.statuses.isNotEmpty)
                                 ...List<Widget>.generate(
-                                  widget.project.setting?.statuses.length ?? 0,
+                                  widget.project.setting.statuses.length,
                                   (index) => Container(
                                     height: 20,
                                     width: 20,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(4),
                                       color: HexColor.fromHex(widget.project
-                                              .setting?.statuses[index].color ??
+                                              .setting.statuses[index].color ??
                                           '#000000'),
                                     ),
                                   ),

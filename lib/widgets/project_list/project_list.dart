@@ -3,12 +3,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:octopus/core/config/routes.dart';
-import 'package:octopus/core/data/models/project.dart';
+import 'package:octopus/core/data/client/project.dart';
+import 'package:octopus/core/data/models/project_state.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/core/ui/better_stream_builder.dart';
 import 'package:octopus/octopus_workspace.dart';
 import 'package:octopus/pages/create_list/create_list_page.dart';
 import 'package:octopus/pages/task_list/task_list.dart';
+import 'package:octopus/widgets/avatars/space_avatar.dart';
 import 'package:octopus/widgets/custom_expansion_tile/expansion_tile.dart';
 
 class ProjectList extends StatelessWidget {
@@ -19,7 +21,7 @@ class ProjectList extends StatelessWidget {
     final theme = OctopusTheme.of(context);
     final workspace = OctopusWorkspace.of(context).workspace;
     return BetterStreamBuilder(
-      stream: workspace.state!.projectsStream,
+      stream: workspace.state!.projectsMapStream,
       builder: (context, data) {
         return ListView.builder(
           physics: const NeverScrollableScrollPhysics(),
@@ -32,16 +34,16 @@ class ProjectList extends StatelessWidget {
               title: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // SpaceAvatar(
-                  //   name: project.name,
-                  //   borderRadius: BorderRadius.circular(8),
-                  // ),
+                  SpaceAvatar(
+                    name: project.state!.projectState.name,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                   SizedBox(
                     width: 10.w,
                   ),
                   Expanded(
                     child: Text(
-                      project.name,
+                      project.state!.projectState.name,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.primaryGreyBody,
@@ -84,46 +86,44 @@ class ProjectList extends StatelessWidget {
                     SizedBox(
                       width: 10.w,
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        // Navigator.pushNamed(context, Routes.TASK_LIST);
-                      },
-                      child: SvgPicture.asset(
-                        'assets/icons/box_move_right.svg',
-                        width: 24,
-                        height: 24,
-                      ),
-                    ),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     // Navigator.pushNamed(context, Routes.TASK_LIST);
+                    //   },
+                    //   child: SvgPicture.asset(
+                    //     'assets/icons/box_move_right.svg',
+                    //     width: 24,
+                    //     height: 24,
+                    //   ),
+                    // ),
                   ],
                 );
               },
-              children: project.spaces != null
-                  ? List.generate(project.spaces!.length, (index) {
-                      final space = project.spaces![index];
-                      return ListTile(
-                        leading: SizedBox(
-                          height: double.infinity,
-                          child: SvgPicture.asset(
-                            'assets/icons/dot.svg',
-                            color: OctopusTheme.of(context).colorTheme.icon,
-                          ),
-                        ),
-                        onTap: () {
-                          Navigator.pop(context);
-                          Navigator.pushNamed(context, Routes.TASK_LIST,
-                              arguments: TaskListPageArgs(spaces: [space]));
-                        },
-                        horizontalTitleGap: 0,
-                        contentPadding: const EdgeInsets.only(left: 50).r,
-                        title: Text(
-                          space.name,
-                          style: OctopusTheme.of(context)
-                              .textTheme
-                              .primaryGreyBody,
-                        ),
-                      );
-                    })
-                  : [],
+              children:
+                  List.generate(project.state!.spacesState.length, (index) {
+                final space = project.state!.spacesState[index];
+                return ListTile(
+                  leading: SizedBox(
+                    height: double.infinity,
+                    child: SvgPicture.asset(
+                      'assets/icons/dot.svg',
+                      color: OctopusTheme.of(context).colorTheme.icon,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, Routes.TASK_LIST,
+                        arguments: TaskListPageArgs(
+                            spaces: [space], project: project));
+                  },
+                  horizontalTitleGap: 0,
+                  contentPadding: const EdgeInsets.only(left: 50).r,
+                  title: Text(
+                    space.name,
+                    style: OctopusTheme.of(context).textTheme.primaryGreyBody,
+                  ),
+                );
+              }),
             );
           },
         );
@@ -134,7 +134,8 @@ class ProjectList extends StatelessWidget {
   void showListModal(BuildContext context, Project project) {
     showBarModalBottomSheet(
       context: context,
-      builder: (context) => CreateListPage(project: project),
+      builder: (context) =>
+          CreateListPage(project: project.state!.projectState),
     );
   }
 }

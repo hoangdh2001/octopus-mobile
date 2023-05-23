@@ -4,11 +4,12 @@ import 'package:octopus/core/data/models/add_task_request.dart';
 import 'package:octopus/core/data/models/create_project_request.dart';
 import 'package:octopus/core/data/models/create_space_request.dart';
 import 'package:octopus/core/data/models/create_workspace_request.dart';
-import 'package:octopus/core/data/models/project.dart';
+import 'package:octopus/core/data/models/project_state.dart';
 import 'package:octopus/core/data/models/setting.dart';
 import 'package:octopus/core/data/models/sort_option.dart';
 import 'package:octopus/core/data/models/pagination_params.dart';
 import 'package:octopus/core/data/models/filter.dart';
+import 'package:octopus/core/data/models/task.dart';
 import 'package:octopus/core/data/models/task_status.dart';
 import 'package:octopus/core/data/models/workspace_state.dart';
 import 'package:octopus/core/data/networks/services/workspace_service.dart';
@@ -81,20 +82,25 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<Project> createSpace(String workspaceID, String projectID, String name,
-      Setting setting) async {
+  Future<ProjectState> createSpace(String workspaceID, String projectID,
+      String name, Setting setting) async {
     final space = await _workspaceService.createSpace(workspaceID, projectID,
         CreateSpaceRequest(name: name, setting: setting));
     return space;
   }
 
   @override
-  Future<Project> createTask(
-      String workspaceID, String projectID, String spaceID, String name,
-      {String? description,
-      List<String>? assignees,
-      DateTime? startDate,
-      DateTime? dueDate}) async {
+  Future<ProjectState> createTask(
+    String workspaceID,
+    String projectID,
+    String spaceID,
+    String name, {
+    String? description,
+    List<String>? assignees,
+    DateTime? startDate,
+    DateTime? dueDate,
+    required TaskStatus taskStatus,
+  }) async {
     final task = await _workspaceService.createTask(
       workspaceID,
       projectID,
@@ -105,8 +111,17 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
         assignees: assignees,
         startDate: startDate,
         dueDate: dueDate,
+        taskStatus: taskStatus,
       ),
     );
     return task;
+  }
+
+  @override
+  Future<ProjectState> updateTask(
+      String workspaceID, String taskID, Task task) async {
+    final project =
+        await _workspaceService.updateTask(workspaceID, taskID, task);
+    return project;
   }
 }

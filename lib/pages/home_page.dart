@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:octopus/core/config/app_routes.dart';
+import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/data/client/client.dart';
 
 import 'package:octopus/core/data/models/workspace_state.dart';
@@ -52,13 +53,15 @@ class _HomePageState extends State<HomePage> {
           },
           child: BetterStreamBuilder(
             stream: chatClient.state.currentWorkspaceStream,
-            builder: (context, data) => OctopusWorkspace(
-              worspace: data,
-              child: Navigator(
-                onGenerateRoute: AppRoutes.generateRoute,
-                initialRoute: initRoute,
-              ),
-            ),
+            builder: (context, data) {
+              return OctopusWorkspace(
+                worspace: data,
+                child: const Navigator(
+                  onGenerateRoute: AppRoutes.generateRoute,
+                  initialRoute: Routes.MAIN,
+                ),
+              );
+            },
             noDataBuilder: (context) {
               return Navigator(
                 onGenerateRoute: AppRoutes.generateRoute,

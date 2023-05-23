@@ -14,7 +14,7 @@ import 'package:octopus/core/data/models/filter.dart';
 import 'package:octopus/core/data/models/message.dart';
 import 'package:octopus/core/data/models/own_user.dart';
 import 'package:octopus/core/data/models/pagination_params.dart';
-import 'package:octopus/core/data/models/project.dart';
+import 'package:octopus/core/data/models/project_state.dart';
 import 'package:octopus/core/data/models/search_message_response.dart';
 import 'package:octopus/core/data/models/sort_option.dart';
 import 'package:octopus/core/data/models/token.dart';

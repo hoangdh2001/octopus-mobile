@@ -3,7 +3,8 @@ import 'package:octopus/core/data/models/add_task_request.dart';
 import 'package:octopus/core/data/models/create_project_request.dart';
 import 'package:octopus/core/data/models/create_space_request.dart';
 import 'package:octopus/core/data/models/create_workspace_request.dart';
-import 'package:octopus/core/data/models/project.dart';
+import 'package:octopus/core/data/models/project_state.dart';
+import 'package:octopus/core/data/models/task.dart';
 import 'package:octopus/core/data/models/workspace_state.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -35,13 +36,20 @@ abstract class WorkspaceService {
       @Path('id') String id, @Body() CreateProjectRequest project);
 
   @POST('/workspaces/{id}/projects/{projectID}/spaces')
-  Future<Project> createSpace(@Path('id') String id,
+  Future<ProjectState> createSpace(@Path('id') String id,
       @Path('projectID') String projectID, @Body() CreateSpaceRequest project);
 
   @POST('/workspaces/{id}/projects/{projectID}/spaces/{spaceID}/tasks')
-  Future<Project> createTask(
+  Future<ProjectState> createTask(
       @Path('id') String id,
       @Path('projectID') String projectID,
       @Path('spaceID') String spaceID,
       @Body() AddTaskRequest addTaskRequest);
+
+  @PUT('/workspaces/{id}/tasks/{taskID}')
+  Future<ProjectState> updateTask(
+    @Path('id') String id,
+    @Path('taskID') String taskID,
+    @Body() Task data,
+  );
 }

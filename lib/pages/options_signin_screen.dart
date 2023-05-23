@@ -53,7 +53,7 @@ class _OptionsSignInScreenState extends State<OptionsSignInScreen> {
                 onPressed: () {
                   Navigator.pushNamed(context, Routes.LOGIN_WITH_PASS);
                 },
-                child: const Text('Test'),
+                child: const Text('Login with password'),
               ),
             ),
           ],
