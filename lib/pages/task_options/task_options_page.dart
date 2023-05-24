@@ -31,6 +31,7 @@ class _TaskOptionsPageState extends State<TaskOptionsPage> {
         child: Scaffold(
           backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
           appBar: AppBar(
+            leading: const Offstage(),
             backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
             elevation: 0,
             leadingWidth: 0,
@@ -70,11 +71,10 @@ class _TaskOptionsPageState extends State<TaskOptionsPage> {
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       children: [
-                        SvgPicture.asset(
-                          'assets/icons/move.svg',
-                          width: 24,
-                          height: 24,
-                        ),
+                        SvgPicture.asset('assets/icons/move.svg',
+                            width: 24,
+                            height: 24,
+                            color: OctopusTheme.of(context).colorTheme.icon),
                         const SizedBox(
                           width: 16,
                         ),

@@ -167,6 +167,7 @@ class AppRoutes {
             return TaskDetailPage(
               task: taskDetailPageArgs.task,
               space: taskDetailPageArgs.space,
+              projectID: taskDetailPageArgs.projectID,
             );
           },
         );

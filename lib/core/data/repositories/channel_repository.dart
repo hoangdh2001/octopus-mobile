@@ -74,4 +74,7 @@ abstract class ChannelRepository {
   });
 
   Future<EmptyResponse> addMembers(String channelID, List<String> members);
+
+  Future<EmptyResponse> removeMembers(
+      String channelID, String memberID, String removeType);
 }

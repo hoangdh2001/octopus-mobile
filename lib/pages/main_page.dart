@@ -7,9 +7,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/octopus.dart';
+import 'package:octopus/octopus_workspace.dart';
 import 'package:octopus/pages/channelList/channel_list_page.dart';
 import 'package:octopus/pages/new_task/new_task_page.dart';
 import 'package:octopus/pages/notification_list_screen.dart';
+import 'package:octopus/pages/workspace_setting.dart';
 import 'package:octopus/widgets/left_drawer.dart';
 import 'package:octopus/widgets/menu_item.dart';
 import 'package:octopus/widgets/screen_header.dart';
@@ -86,7 +88,27 @@ class _MainPageState extends State<MainPage> {
           ),
           IconButton(
             splashColor: Colors.transparent,
-            onPressed: () {},
+            onPressed: () {
+              final workspace = OctopusWorkspace.of(context).workspace;
+              showDialog(
+                context: context,
+                useSafeArea: true,
+                builder: (context) {
+                  return Dialog(
+                    clipBehavior: Clip.antiAlias,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20),
+                      ),
+                    ),
+                    insetPadding: const EdgeInsets.all(16),
+                    child: WorkspaceSetting(
+                      workspace: workspace,
+                    ),
+                  );
+                },
+              );
+            },
             icon: SvgPicture.asset(
               'assets/icons/settings.svg',
               color: OctopusTheme.of(context).colorTheme.icon,
@@ -117,7 +139,7 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     final user = Octopus.of(context).currentUser;
     if (user == null) {
-      return Offstage();
+      return const Offstage();
     }
     return Scaffold(
       backgroundColor: OctopusTheme.of(context).colorTheme.contentView,

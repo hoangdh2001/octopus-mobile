@@ -75,6 +75,7 @@ class _LeftDrawerState extends State<LeftDrawer> {
                           'assets/icons/reboot.svg',
                           width: 24,
                           height: 24,
+                          color: OctopusTheme.of(context).colorTheme.icon,
                         ),
                       ),
                       SizedBox(
@@ -88,6 +89,7 @@ class _LeftDrawerState extends State<LeftDrawer> {
                           'assets/icons/plus.svg',
                           width: 24,
                           height: 24,
+                          color: OctopusTheme.of(context).colorTheme.icon,
                         ),
                       ),
                       SizedBox(
@@ -99,7 +101,10 @@ class _LeftDrawerState extends State<LeftDrawer> {
                             CurveTween(curve: Curves.easeOut),
                           ),
                         ),
-                        child: SvgPicture.asset('assets/icons/arrow_right.svg'),
+                        child: SvgPicture.asset(
+                          'assets/icons/arrow_right.svg',
+                          color: OctopusTheme.of(context).colorTheme.icon,
+                        ),
                       ),
                     ],
                   );
@@ -121,7 +126,10 @@ class _LeftDrawerState extends State<LeftDrawer> {
                         CurveTween(curve: Curves.easeOut),
                       ),
                     ),
-                    child: SvgPicture.asset('assets/icons/arrow_right.svg'),
+                    child: SvgPicture.asset(
+                      'assets/icons/arrow_right.svg',
+                      color: OctopusTheme.of(context).colorTheme.icon,
+                    ),
                   );
                 },
                 children: const [],

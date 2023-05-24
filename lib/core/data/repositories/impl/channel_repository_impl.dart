@@ -203,4 +203,10 @@ class ChannelRepositoryImpl implements ChannelRepository {
     return await _channelService.addMembers(
         channelID, AddMembersRequest(members: members));
   }
+
+  @override
+  Future<EmptyResponse> removeMembers(
+      String channelID, String memberID, String removeType) async {
+    return await _channelService.removeMember(channelID, memberID, removeType);
+  }
 }

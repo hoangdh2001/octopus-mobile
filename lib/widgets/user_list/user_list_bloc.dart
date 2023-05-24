@@ -58,7 +58,13 @@ class UserListBloc extends PagedValueBloc<int, User> {
         pagination: const PaginationParams(limit: limit),
       );
       final nextKey = users.length < limit ? null : 1;
-      emit(PagedValueState(items: users, nextPageKey: nextKey));
+      final membersWorkspace = users
+          .where((user) =>
+              client.state.currentWorkspace!.state!.workspaceState.members
+                  ?.contains(user) ??
+              false)
+          .toList();
+      emit(PagedValueState(items: membersWorkspace, nextPageKey: nextKey));
     } on OCError catch (error) {
       emit(PagedValueState.error(error));
     } catch (error) {
@@ -81,7 +87,13 @@ class UserListBloc extends PagedValueBloc<int, User> {
       final previousItems = previousState.items;
       final newItems = previousItems + users;
       final nextKey = users.length < limit ? null : nextPageKey + 1;
-      emit(PagedValueState(items: newItems, nextPageKey: nextKey));
+      final membersWorkspace = newItems
+          .where((user) =>
+              client.state.currentWorkspace!.state!.workspaceState.members
+                  ?.contains(user) ??
+              false)
+          .toList();
+      emit(PagedValueState(items: membersWorkspace, nextPageKey: nextKey));
     } on OCError catch (error) {
       emit(previousState.copyWith(error: error));
     } catch (error) {

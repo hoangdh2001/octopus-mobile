@@ -1,10 +1,13 @@
 import 'package:dio/dio.dart';
+import 'package:octopus/core/data/models/add_members_with_email.dart';
 import 'package:octopus/core/data/models/add_task_request.dart';
 import 'package:octopus/core/data/models/create_project_request.dart';
 import 'package:octopus/core/data/models/create_space_request.dart';
 import 'package:octopus/core/data/models/create_workspace_request.dart';
+import 'package:octopus/core/data/models/get_task_response.dart';
 import 'package:octopus/core/data/models/project_state.dart';
 import 'package:octopus/core/data/models/task.dart';
+import 'package:octopus/core/data/models/user.dart';
 import 'package:octopus/core/data/models/workspace_state.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -51,5 +54,40 @@ abstract class WorkspaceService {
     @Path('id') String id,
     @Path('taskID') String taskID,
     @Body() Task data,
+  );
+
+  @GET('/workspaces/{id}/tasks/today')
+  Future<GetTaskResponse> getTodayTasks(@Path('id') String id);
+
+  @GET('/workspaces/{id}/tasks/overdue')
+  Future<GetTaskResponse> getTasksOverdue(@Path('id') String id);
+
+  @GET('/workspaces/{id}/tasks/notduedate')
+  Future<GetTaskResponse> getTasksNotDueDate(@Path('id') String id);
+
+  @GET('/workspaces/{id}/tasks/notstartday')
+  Future<GetTaskResponse> getTasksByDateInterm(@Path('id') String id);
+
+  @GET('/workspaces/{id}/tasks/done')
+  Future<GetTaskResponse> getTaskDone(@Path('id') String id);
+
+  @DELETE('/workspaces/{id}/projects/{projectID}/tasks/{taskID}')
+  Future<ProjectState> deleteTask(
+    @Path('id') String id,
+    @Path('projectID') String projectID,
+    @Path('taskID') String taskID,
+  );
+
+  @DELETE('/workspaces/{id}/projects/{projectID}/spaces/{spaceID}')
+  Future<ProjectState> deleteSpace(
+    @Path('id') String id,
+    @Path('projectID') String projectID,
+    @Path('spaceID') String spaceID,
+  );
+
+  @POST('/workspaces/{id}/members')
+  Future<List<User>> addMembers(
+    @Path('id') String id,
+    @Body() AddMemberWithEmail addMemberWithEmail,
   );
 }

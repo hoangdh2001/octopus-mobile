@@ -65,6 +65,7 @@ class ProjectList extends StatelessWidget {
                       'assets/icons/sort_right.svg',
                       width: 10,
                       height: 10,
+                      color: OctopusTheme.of(context).colorTheme.icon,
                     ),
                   ),
                 );
@@ -81,6 +82,7 @@ class ProjectList extends StatelessWidget {
                         'assets/icons/plus.svg',
                         width: 24,
                         height: 24,
+                        color: OctopusTheme.of(context).colorTheme.icon,
                       ),
                     ),
                     SizedBox(

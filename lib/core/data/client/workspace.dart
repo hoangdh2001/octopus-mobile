@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:octopus/core/data/client/client.dart';
 import 'package:octopus/core/data/client/project.dart';
+import 'package:octopus/core/data/models/get_task_response.dart';
 import 'package:octopus/core/data/models/project_state.dart';
 import 'package:octopus/core/data/models/setting.dart';
 import 'package:octopus/core/data/models/task.dart';
@@ -92,6 +93,61 @@ class Workspace {
     final project = await _workspaceRepository.updateTask(id!, task.id, task);
     state?.updateProject(project);
     return project;
+  }
+
+  Future<GetTaskResponse> getTodayTasks() async {
+    _checkInitialized();
+    final tasks = await _workspaceRepository.getTodayTasks(id!);
+    state?.updateWorkspaceState(tasks.workspace);
+    return tasks;
+  }
+
+  Future<GetTaskResponse> getTasksOverdue() async {
+    _checkInitialized();
+    final tasks = await _workspaceRepository.getTasksOverdue(id!);
+    state?.updateWorkspaceState(tasks.workspace);
+    return tasks;
+  }
+
+  Future<GetTaskResponse> getTasksNotDueDate() async {
+    _checkInitialized();
+    final tasks = await _workspaceRepository.getTasksNotDueDate(id!);
+    state?.updateWorkspaceState(tasks.workspace);
+    return tasks;
+  }
+
+  Future<GetTaskResponse> getTasksByDateInterm() async {
+    _checkInitialized();
+    final tasks = await _workspaceRepository.getTasksByDateInterm(id!);
+    state?.updateWorkspaceState(tasks.workspace);
+    return tasks;
+  }
+
+  Future<GetTaskResponse> getTaskDone() async {
+    _checkInitialized();
+    final tasks = await _workspaceRepository.getTaskDone(id!);
+    state?.updateWorkspaceState(tasks.workspace);
+    return tasks;
+  }
+
+  Future<void> deleteTask(String projectID, String taskID) async {
+    _checkInitialized();
+    final project =
+        await _workspaceRepository.deleteTask(id!, projectID, taskID);
+    state?.updateProject(project);
+  }
+
+  Future<void> deleteSpace(String projectID, String spaceID) async {
+    _checkInitialized();
+    final project =
+        await _workspaceRepository.deleteSpace(id!, projectID, spaceID);
+    state?.updateProject(project);
+  }
+
+  Future<void> addMember(String email) async {
+    _checkInitialized();
+    final user = await _workspaceRepository.addMember(id!, email);
+    state?.updateMember(user);
   }
 
   void _checkInitialized() {
@@ -190,6 +246,19 @@ class WorkspaceClientState {
       }
     }
     return projects;
+  }
+
+  void updateMember(User user) {
+    final newMembers = [..._workspaceState.members ?? <User>[]];
+    final oldIndex = newMembers.indexWhere((p) => p.id == user.id);
+    if (oldIndex != -1) {
+      newMembers[oldIndex] = user;
+    } else {
+      newMembers.add(user);
+    }
+    _workspaceState = _workspaceState.copyWith(
+      members: newMembers,
+    );
   }
 
   void updateWorkspaceState(WorkspaceState workspaceState) {

@@ -61,6 +61,6 @@ class LogoutCell extends StatelessWidget {
     }
     getIt<SharedPreferences>().remove(workspaceLocal);
     await client.disconnectUser();
-    await client.dispose();
+    // await client.dispose();
   }
 }

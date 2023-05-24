@@ -8,7 +8,12 @@ class SettingsSectionFactory {
   Widget createSection(SettingSection section) {
     switch (section) {
       case SettingSection.general:
+        return SettingsSection(section: section);
+      case SettingSection.theme:
+        return SettingsSection(section: section);
       case SettingSection.logout:
+        return SettingsSection(section: section);
+      case SettingSection.appVer:
         return SettingsSection(section: section);
       default:
         return Container();

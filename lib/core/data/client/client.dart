@@ -430,6 +430,13 @@ class Client {
     return users;
   }
 
+  Future<EmptyResponse> leaveChannel(Channel channel, String userID) async {
+    final response =
+        await _channelRepository.removeMembers(channel.id!, userID, 'leave');
+    state.removeChannel(channel.id!);
+    return response;
+  }
+
   void _handleHealthCheckEvent(Event event) {
     final user = event.me;
     if (user != null) state.currentUser = user;
@@ -751,11 +758,11 @@ class ClientState {
   void dispose() {
     cancelEventSubscription();
     _currentUserController.close();
-    _unreadChannelsController.close();
-    _totalUnreadCountController.close();
-    for (var c in channels.values) {
-      c.dispose();
-    }
+    // _unreadChannelsController.close();
+    // _totalUnreadCountController.close();
+    final cs = <Channel>[];
+    channels.values.forEach((c) => cs.add(c));
+    cs.forEach((c) => c.dispose());
     _channelsController.close();
     _workspacesController.close();
   }

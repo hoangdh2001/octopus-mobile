@@ -6,6 +6,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart' hide ExpansionTile;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/data/client/project.dart';
 import 'package:octopus/core/data/models/space_state.dart';
@@ -17,6 +18,7 @@ import 'package:octopus/core/ui/better_stream_builder.dart';
 import 'package:octopus/octopus_project.dart';
 import 'package:octopus/octopus_workspace.dart';
 import 'package:octopus/pages/task_detail/task_detail_page.dart';
+import 'package:octopus/pages/task_options/task_options_page.dart';
 import 'package:octopus/widgets/avatars/user_avatar.dart';
 import 'package:octopus/widgets/task/task_list_header.dart';
 
@@ -76,31 +78,65 @@ class _TaskListPageState extends State<TaskListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final workspace = OctopusWorkspace.of(context).workspace;
     return Scaffold(
       backgroundColor: OctopusTheme.of(context).colorTheme.contentViewSecondary,
       appBar: TaskListHeader(
         showBackButton: true,
         elevation: 0,
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Center(
-              child: SvgPicture.asset(
-                'assets/icons/more.svg',
-                width: 26,
-                color: OctopusTheme.of(context).colorTheme.icon,
+          GestureDetector(
+            onTap: () {
+              showCustomModalBottomSheet(
+                context: context,
+                expand: false,
+                builder: (context) {
+                  return TaskOptionsPage(
+                    onDelete: () {
+                      deleteList();
+                    },
+                    onEdit: () {},
+                  );
+                },
+                backgroundColor: Colors.transparent,
+                containerWidget: (BuildContext context,
+                    Animation<double> animation, Widget child) {
+                  return Container(
+                    height: 200 + MediaQuery.of(context).padding.bottom,
+                    clipBehavior: Clip.antiAlias,
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(25.0),
+                        topRight: Radius.circular(25.0),
+                      ),
+                    ),
+                    child: child,
+                  );
+                },
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: Center(
+                child: SvgPicture.asset(
+                  'assets/icons/more.svg',
+                  width: 26,
+                  color: OctopusTheme.of(context).colorTheme.icon,
+                ),
               ),
             ),
           ),
         ],
         subtitleWidget: Row(
           children: [
-            SvgPicture.asset('assets/icons/description.svg'),
+            SvgPicture.asset('assets/icons/description.svg',
+                color: OctopusTheme.of(context).colorTheme.icon),
             Text(
               "Board",
               style: OctopusTheme.of(context).textTheme.primaryGreyBody,
             ),
-            SvgPicture.asset('assets/icons/arrow_down.svg'),
+            SvgPicture.asset('assets/icons/arrow_down.svg',
+                color: OctopusTheme.of(context).colorTheme.icon),
           ].insertBetween(const SizedBox(
             width: 6,
           )),
@@ -152,7 +188,12 @@ class _TaskListPageState extends State<TaskListPage> {
       },
       onTapItem: (int? listIndex, int? itemIndex, BoardItemState? state) async {
         Navigator.pushNamed(context, Routes.TASK_DETAIL,
-            arguments: TaskDetailPageArgs(task: task, space: widget.spaces[0]));
+            arguments: TaskDetailPageArgs(
+              task: task,
+              space: widget.spaces[0],
+              projectID:
+                  OctopusProject.of(context).project.state!.projectState.id,
+            ));
       },
       item: Card(
         child: Padding(
@@ -183,7 +224,9 @@ class _TaskListPageState extends State<TaskListPage> {
                       children: [
                         Row(
                           children: [
-                            SvgPicture.asset('assets/icons/calendar.svg'),
+                            SvgPicture.asset('assets/icons/calendar.svg',
+                                color:
+                                    OctopusTheme.of(context).colorTheme.icon),
                             SizedBox(
                               width: 8.w,
                             ),
@@ -287,15 +330,24 @@ class _TaskListPageState extends State<TaskListPage> {
         ),
         IconButton(
           onPressed: () {},
-          icon: SvgPicture.asset('assets/icons/plus.svg'),
+          icon: SvgPicture.asset('assets/icons/plus.svg',
+              color: OctopusTheme.of(context).colorTheme.icon),
         ),
         IconButton(
           onPressed: () {},
-          icon: SvgPicture.asset('assets/icons/more.svg'),
+          icon: SvgPicture.asset('assets/icons/more.svg',
+              color: OctopusTheme.of(context).colorTheme.icon),
         )
       ],
       items: items,
     );
+  }
+
+  void deleteList() {
+    Navigator.pop(context);
+    final projectID = OctopusProject.of(context).project.state!.projectState.id;
+    final workspace = OctopusWorkspace.of(context).workspace;
+    workspace.deleteSpace(projectID, space.id);
   }
 }
 

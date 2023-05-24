@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:octopus/core/data/client/project.dart';
 import 'package:octopus/core/data/client/workspace.dart';
 import 'package:octopus/core/data/models/project_state.dart';
 import 'package:octopus/core/data/models/space_state.dart';
@@ -97,7 +98,7 @@ class NewTaskBloc extends Bloc<NewTaskEvent, NewTaskState> {
     }
     try {
       final project = await _workspace.newTask(
-        state.project!.id,
+        state.project!.id!,
         state.space!.id,
         state.name,
         description: state.description,
@@ -124,8 +125,8 @@ class NewTaskEvent with _$NewTaskEvent {
   const factory NewTaskEvent.startDateChanged(DateTime? startDate) =
       StartDateChanged;
   const factory NewTaskEvent.dueDateChanged(DateTime? dueDate) = DueDateChanged;
-  const factory NewTaskEvent.selectList(
-      ProjectState project, SpaceState space) = SelectList;
+  const factory NewTaskEvent.selectList(Project project, SpaceState space) =
+      SelectList;
   const factory NewTaskEvent.statusChanged(TaskStatus status) = StatusChanged;
   const factory NewTaskEvent.submitted() = Submitted;
 }
@@ -135,7 +136,7 @@ class NewTaskState with _$NewTaskState {
   const factory NewTaskState({
     required String name,
     SpaceState? space,
-    ProjectState? project,
+    Project? project,
     String? description,
     DateTime? startDate,
     DateTime? dueDate,

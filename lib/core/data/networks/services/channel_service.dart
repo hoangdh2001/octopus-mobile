@@ -104,4 +104,8 @@ abstract class ChannelService {
   @POST('/channels/{channelID}/members')
   Future<EmptyResponse> addMembers(
       @Path('channelID') String channelID, @Body() AddMembersRequest members);
+
+  @DELETE('/channels/{channelID}/members/{memberID}/{removeType}')
+  Future<EmptyResponse> removeMember(@Path('channelID') String channelID,
+      @Path('memberID') String memberID, @Path('removeType') String removeType);
 }

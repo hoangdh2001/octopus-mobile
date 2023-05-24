@@ -17,18 +17,26 @@ import 'package:octopus/widgets/avatars/user_avatar.dart';
 import 'package:octopus/widgets/screen_header.dart';
 
 class TaskDetailPageArgs {
-  const TaskDetailPageArgs({required this.task, required this.space});
+  const TaskDetailPageArgs(
+      {required this.task, required this.space, required this.projectID});
 
   final SpaceState space;
   final Task task;
+  final String projectID;
 }
 
 class TaskDetailPage extends StatefulWidget {
-  const TaskDetailPage({super.key, required this.task, required this.space});
+  const TaskDetailPage(
+      {super.key,
+      required this.task,
+      required this.space,
+      required this.projectID});
 
   final Task task;
 
   final SpaceState space;
+
+  final String projectID;
 
   @override
   State<TaskDetailPage> createState() => _TaskDetailPageState();
@@ -73,7 +81,13 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                 expand: false,
                 builder: (context) {
                   return TaskOptionsPage(
-                    onDelete: () {},
+                    onDelete: () {
+                      workspace.deleteTask(
+                        widget.projectID,
+                        task.id,
+                      );
+                      Navigator.pop(context);
+                    },
                     onEdit: () {},
                   );
                 },

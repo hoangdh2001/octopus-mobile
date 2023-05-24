@@ -18,9 +18,11 @@ import 'package:octopus/core/ui/paged_value_scroll_view/bloc/paged_value_bloc.da
 import 'package:octopus/octopus.dart';
 import 'package:octopus/octopus_channel.dart';
 import 'package:octopus/pages/add_user_group_page.dart';
+import 'package:octopus/pages/channel/channel_page.dart';
 import 'package:octopus/pages/channel_file_display_screen.dart';
 import 'package:octopus/pages/channel_media_display_screen.dart';
 import 'package:octopus/pages/pinned_messages_page.dart';
+import 'package:octopus/utils.dart';
 import 'package:octopus/widgets/avatars/user_avatar.dart';
 import 'package:octopus/widgets/channel/channel_back_button.dart';
 import 'package:octopus/widgets/channel_preview/channel_avatar.dart';
@@ -256,8 +258,8 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                   final userMember = groupMembers.firstWhereOrNull(
                     (e) => e.user!.id == Octopus.of(context).currentUser!.id,
                   );
-                  // _showUserInfoModal(
-                  //     member.user, userMember?.userID == channel.createdBy?.id);
+                  _showUserInfoModal(
+                      member.user, userMember?.userID == channel.createdBy?.id);
                 },
                 child: SizedBox(
                   height: 65.0,
@@ -693,406 +695,266 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
             width: 24.0,
           ),
           onTap: () async {
-            // final res = await showConfirmationDialog(
-            //   context,
-            //   title: AppLocalizations.of(context).leaveConversation,
-            //   okText: AppLocalizations.of(context).leave.toUpperCase(),
-            //   question:
-            //       AppLocalizations.of(context).leaveConversationAreYouSure,
-            //   cancelText: AppLocalizations.of(context).cancel.toUpperCase(),
-            //   icon: StreamSvgIcon.userRemove(
-            //     color: StreamChatTheme.of(context).colorTheme.accentError,
-            //   ),
-            // );
-            // if (res == true) {
-            //   final channel = StreamChannel.of(context).channel;
-            //   await channel
-            //       .removeMembers([StreamChat.of(context).currentUser!.id]);
-            //   Navigator.pop(context);
-            // }
+            final res = await showConfirmationDialog(
+              context,
+              title: "Leave channel",
+              okText: 'LEAVE',
+              question:
+                  'You will leave this group and will no longer receive messages. Are you sure?',
+              cancelText: 'CANCEL',
+              icon: SvgPicture.asset(
+                'assets/icons/user_remove.svg',
+                color: OctopusTheme.of(context).colorTheme.error,
+              ),
+            );
+            if (res == true) {
+              final channel = OctopusChannel.of(context).channel;
+              final client = Octopus.of(context).client;
+              await client.leaveChannel(
+                  channel, Octopus.of(context).currentUser!.id);
+              Navigator.pop(context);
+              Navigator.pop(context);
+              Navigator.pop(context);
+            }
           },
         ),
       ],
     );
   }
 
-  // void _buildAddUserModal(context) {
-  //   showDialog(
-  //     useRootNavigator: false,
-  //     context: context,
-  //     barrierColor: StreamChatTheme.of(context).colorTheme.overlay,
-  //     builder: (context) {
-  //       return Padding(
-  //         padding: const EdgeInsets.only(top: 16.0, left: 8.0, right: 8.0),
-  //         child: Material(
-  //           borderRadius: const BorderRadius.only(
-  //             topLeft: Radius.circular(16.0),
-  //             topRight: Radius.circular(16.0),
-  //           ),
-  //           clipBehavior: Clip.antiAlias,
-  //           child: Scaffold(
-  //             body: Column(
-  //               children: [
-  //                 Padding(
-  //                   padding: const EdgeInsets.all(16),
-  //                   child: _buildTextInputSection(),
-  //                 ),
-  //                 Expanded(
-  //                   child: StreamUserGridView(
-  //                     controller: userListController,
-  //                     onUserTap: (user) async {
-  //                       _searchController!.clear();
+  void _showUserInfoModal(User? user, bool isUserAdmin) {
+    final color = OctopusTheme.of(context).colorTheme.contentView;
 
-  //                       await channel.addMembers([user.id]);
-  //                       Navigator.pop(context);
-  //                       setState(() {});
-  //                     },
-  //                     emptyBuilder: (_) {
-  //                       return LayoutBuilder(
-  //                         builder: (context, viewportConstraints) {
-  //                           return SingleChildScrollView(
-  //                             physics: const AlwaysScrollableScrollPhysics(),
-  //                             child: ConstrainedBox(
-  //                               constraints: BoxConstraints(
-  //                                 minHeight: viewportConstraints.maxHeight,
-  //                               ),
-  //                               child: Center(
-  //                                 child: Column(
-  //                                   children: [
-  //                                     Padding(
-  //                                       padding: const EdgeInsets.all(24),
-  //                                       child: StreamSvgIcon.search(
-  //                                         size: 96,
-  //                                         color: StreamChatTheme.of(context)
-  //                                             .colorTheme
-  //                                             .textLowEmphasis,
-  //                                       ),
-  //                                     ),
-  //                                     Text(AppLocalizations.of(context)
-  //                                         .noUserMatchesTheseKeywords),
-  //                                   ],
-  //                                 ),
-  //                               ),
-  //                             ),
-  //                           );
-  //                         },
-  //                       );
-  //                     },
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   ).whenComplete(() {
-  //     _searchController?.clear();
-  //   });
-  // }
+    showModalBottomSheet(
+      useRootNavigator: false,
+      context: context,
+      clipBehavior: Clip.antiAlias,
+      isScrollControlled: true,
+      backgroundColor: color,
+      builder: (context) {
+        return SafeArea(
+          child: OctopusChannel(
+            channel: channel,
+            child: Material(
+              color: color,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(
+                    height: 24.0,
+                  ),
+                  Center(
+                    child: Text(
+                      user!.name,
+                      style: const TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 5.0,
+                  ),
+                  _buildConnectedTitleState(user)!,
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: UserAvatar(
+                        user: user,
+                        constraints: const BoxConstraints.tightFor(
+                          height: 64.0,
+                          width: 64.0,
+                        ),
+                        borderRadius: BorderRadius.circular(32.0),
+                      ),
+                    ),
+                  ),
+                  if (Octopus.of(context).currentUser!.id != user.id)
+                    _buildModalListTile(
+                      context,
+                      SvgPicture.asset(
+                        'assets/icons/user.svg',
+                        color: OctopusTheme.of(context).colorTheme.primaryGrey,
+                        width: 24.0,
+                        height: 24.0,
+                      ),
+                      'View Info',
+                      () async {
+                        var client = Octopus.of(context).client;
 
-  // Widget _buildTextInputSection() {
-  //   final theme = StreamChatTheme.of(context);
-  //   return Column(
-  //     children: [
-  //       Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //         children: [
-  //           Expanded(
-  //             child: Container(
-  //               height: 36,
-  //               child: TextField(
-  //                 controller: _searchController,
-  //                 cursorColor: theme.colorTheme.textHighEmphasis,
-  //                 autofocus: true,
-  //                 decoration: InputDecoration(
-  //                   hintText: AppLocalizations.of(context).search,
-  //                   hintStyle: theme.textTheme.body.copyWith(
-  //                     color: theme.colorTheme.textLowEmphasis,
-  //                   ),
-  //                   prefixIconConstraints:
-  //                       BoxConstraints.tight(const Size(40, 24)),
-  //                   prefixIcon: StreamSvgIcon.search(
-  //                     color: theme.colorTheme.textHighEmphasis,
-  //                     size: 24,
-  //                   ),
-  //                   enabledBorder: OutlineInputBorder(
-  //                     borderRadius: BorderRadius.circular(24.0),
-  //                     borderSide: BorderSide(
-  //                       color: theme.colorTheme.borders,
-  //                     ),
-  //                   ),
-  //                   focusedBorder: OutlineInputBorder(
-  //                       borderRadius: BorderRadius.circular(24.0),
-  //                       borderSide: BorderSide(
-  //                         color: theme.colorTheme.borders,
-  //                       )),
-  //                   contentPadding: const EdgeInsets.all(0),
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //           const SizedBox(width: 16.0),
-  //           IconButton(
-  //             icon: StreamSvgIcon.closeSmall(
-  //               color: theme.colorTheme.textLowEmphasis,
-  //             ),
-  //             constraints: const BoxConstraints.tightFor(
-  //               height: 24,
-  //               width: 24,
-  //             ),
-  //             padding: EdgeInsets.zero,
-  //             splashRadius: 24,
-  //             onPressed: () => Navigator.pop(context),
-  //           )
-  //         ],
-  //       ),
-  //     ],
-  //   );
-  // }
+                        // var c = client.channel('messaging', extraData: {
+                        //   'members': [
+                        //     user.id,
+                        //     StreamChat.of(context).currentUser!.id,
+                        //   ],
+                        // });
 
-  // void _showUserInfoModal(User? user, bool isUserAdmin) {
-  //   final color = OctopusTheme.of(context).colorTheme.contentView;
+                        // await c.watch();
 
-  //   showModalBottomSheet(
-  //     useRootNavigator: false,
-  //     context: context,
-  //     clipBehavior: Clip.antiAlias,
-  //     isScrollControlled: true,
-  //     backgroundColor: color,
-  //     builder: (context) {
-  //       return SafeArea(
-  //         child: OctopusChannel(
-  //           channel: channel,
-  //           child: Material(
-  //             color: color,
-  //             child: Column(
-  //               mainAxisSize: MainAxisSize.min,
-  //               children: [
-  //                 const SizedBox(
-  //                   height: 24.0,
-  //                 ),
-  //                 Center(
-  //                   child: Text(
-  //                     user!.name,
-  //                     style: const TextStyle(
-  //                       fontSize: 16.0,
-  //                       fontWeight: FontWeight.bold,
-  //                     ),
-  //                   ),
-  //                 ),
-  //                 const SizedBox(
-  //                   height: 5.0,
-  //                 ),
-  //                 _buildConnectedTitleState(user)!,
-  //                 Center(
-  //                   child: Padding(
-  //                     padding: const EdgeInsets.all(16.0),
-  //                     child: UserAvatar(
-  //                       user: user,
-  //                       constraints: const BoxConstraints.tightFor(
-  //                         height: 64.0,
-  //                         width: 64.0,
-  //                       ),
-  //                       borderRadius: BorderRadius.circular(32.0),
-  //                     ),
-  //                   ),
-  //                 ),
-  //                 if (Octopus.of(context).currentUser!.id != user.id)
-  //                   _buildModalListTile(
-  //                     context,
-  //                     SvgPicture.asset(
-  //                       'assets/icons/user.svg',
-  //                       color: OctopusTheme.of(context)
-  //                           .colorTheme
-  //                           .primaryGrey,
-  //                       width: 24.0,
-  //                       height: 24.0,
-  //                     ),
-  //                     AppLocalizations.of(context).viewInfo,
-  //                     () async {
-  //                       var client = StreamChat.of(context).client;
+                        // await Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //     builder: (context) => StreamChannel(
+                        //       channel: c,
+                        //       child: ChatInfoScreen(
+                        //         messageTheme: widget.messageTheme,
+                        //         user: user,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // );
+                      },
+                    ),
+                  if (Octopus.of(context).currentUser!.id != user.id)
+                    _buildModalListTile(
+                      context,
+                      SvgPicture.asset(
+                        'assets/icons/message.svg',
+                        color: OctopusTheme.of(context).colorTheme.primaryGrey,
+                        width: 24.0,
+                        height: 24.0,
+                      ),
+                      "Message",
+                      () async {
+                        var client = Octopus.of(context).client;
 
-  //                       var c = client.channel('messaging', extraData: {
-  //                         'members': [
-  //                           user.id,
-  //                           StreamChat.of(context).currentUser!.id,
-  //                         ],
-  //                       });
+                        final newChannel =
+                            await client.createChannel(members: [user.id]);
 
-  //                       await c.watch();
+                        await newChannel.watch();
 
-  //                       await Navigator.push(
-  //                         context,
-  //                         MaterialPageRoute(
-  //                           builder: (context) => StreamChannel(
-  //                             channel: c,
-  //                             child: ChatInfoScreen(
-  //                               messageTheme: widget.messageTheme,
-  //                               user: user,
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       );
-  //                     },
-  //                   ),
-  //                 if (StreamChat.of(context).currentUser!.id != user.id)
-  //                   _buildModalListTile(
-  //                     context,
-  //                     StreamSvgIcon.message(
-  //                       color: StreamChatTheme.of(context)
-  //                           .colorTheme
-  //                           .textLowEmphasis,
-  //                       size: 24.0,
-  //                     ),
-  //                     AppLocalizations.of(context).message,
-  //                     () async {
-  //                       var client = StreamChat.of(context).client;
+                        Navigator.pop(context);
 
-  //                       var c = client.channel('messaging', extraData: {
-  //                         'members': [
-  //                           user.id,
-  //                           StreamChat.of(context).currentUser!.id,
-  //                         ],
-  //                       });
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => OctopusChannel(
+                              channel: newChannel,
+                              child: ChannelPage(),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  if (Octopus.of(context).currentUser!.id != user.id &&
+                      isUserAdmin)
+                    _buildModalListTile(
+                        context,
+                        SvgPicture.asset(
+                          'assets/icons/user_remove.svg',
+                          color: OctopusTheme.of(context).colorTheme.error,
+                          width: 24.0,
+                          height: 24.0,
+                        ),
+                        'Remove from group', () async {
+                      final res = await showConfirmationDialog(
+                        context,
+                        title: 'Remove member',
+                        okText: 'OK',
+                        question:
+                            'Are you sure you want to remove this member?',
+                        cancelText: 'Cancel',
+                      );
 
-  //                       await c.watch();
+                      if (res == true) {
+                        await channel.removeMember(user.id, 'remove');
+                      }
+                      Navigator.pop(context);
+                    }, color: OctopusTheme.of(context).colorTheme.error),
+                  _buildModalListTile(
+                      context,
+                      SvgPicture.asset(
+                        'assets/icons/close_sml.svg',
+                        color: OctopusTheme.of(context).colorTheme.primaryGrey,
+                        width: 24.0,
+                        height: 24.0,
+                      ),
+                      'Cancel', () {
+                    Navigator.pop(context);
+                  }),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
+        ),
+      ),
+    );
+  }
 
-  //                       await Navigator.push(
-  //                         context,
-  //                         MaterialPageRoute(
-  //                           builder: (context) => StreamChannel(
-  //                             channel: c,
-  //                             child: ChannelPage(),
-  //                           ),
-  //                         ),
-  //                       );
-  //                     },
-  //                   ),
-  //                 if (!channel.isDistinct &&
-  //                     StreamChat.of(context).currentUser!.id != user.id &&
-  //                     isUserAdmin)
-  //                   _buildModalListTile(
-  //                       context,
-  //                       StreamSvgIcon.userRemove(
-  //                         color: StreamChatTheme.of(context)
-  //                             .colorTheme
-  //                             .accentError,
-  //                         size: 24.0,
-  //                       ),
-  //                       AppLocalizations.of(context).removeFromGroup, () async {
-  //                     final res = await showConfirmationDialog(
-  //                       context,
-  //                       title: AppLocalizations.of(context).removeMember,
-  //                       okText:
-  //                           AppLocalizations.of(context).remove.toUpperCase(),
-  //                       question:
-  //                           AppLocalizations.of(context).removeMemberAreYouSure,
-  //                       cancelText:
-  //                           AppLocalizations.of(context).cancel.toUpperCase(),
-  //                     );
+  Widget? _buildConnectedTitleState(User? user) {
+    var alternativeWidget;
 
-  //                     if (res == true) {
-  //                       await channel.removeMembers([user.id]);
-  //                     }
-  //                     Navigator.pop(context);
-  //                   },
-  //                       color:
-  //                           StreamChatTheme.of(context).colorTheme.accentError),
-  //                 _buildModalListTile(
-  //                     context,
-  //                     StreamSvgIcon.closeSmall(
-  //                       color: StreamChatTheme.of(context)
-  //                           .colorTheme
-  //                           .textLowEmphasis,
-  //                       size: 24.0,
-  //                     ),
-  //                     AppLocalizations.of(context).cancel, () {
-  //                   Navigator.pop(context);
-  //                 }),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.only(
-  //         topLeft: Radius.circular(16.0),
-  //         topRight: Radius.circular(16.0),
-  //       ),
-  //     ),
-  //   );
-  // }
+    final otherMember = user;
 
-  // Widget? _buildConnectedTitleState(User? user) {
-  //   var alternativeWidget;
+    if (otherMember != null) {
+      if (otherMember.active ?? false) {
+        alternativeWidget = Text(
+          'Online',
+          style: TextStyle(
+              color: OctopusTheme.of(context)
+                  .colorTheme
+                  .primaryGrey
+                  .withOpacity(0.5)),
+        );
+      } else {
+        alternativeWidget = Text(
+          'Last seen ${Jiffy(otherMember.lastActive).fromNow()}',
+          style: TextStyle(
+              color: OctopusTheme.of(context)
+                  .colorTheme
+                  .primaryGrey
+                  .withOpacity(0.5)),
+        );
+      }
+    }
 
-  //   final otherMember = user;
+    return alternativeWidget;
+  }
 
-  //   if (otherMember != null) {
-  //     if (otherMember.online) {
-  //       alternativeWidget = Text(
-  //         AppLocalizations.of(context).online,
-  //         style: TextStyle(
-  //             color: StreamChatTheme.of(context)
-  //                 .colorTheme
-  //                 .textHighEmphasis
-  //                 .withOpacity(0.5)),
-  //       );
-  //     } else {
-  //       alternativeWidget = Text(
-  //         '${AppLocalizations.of(context).lastSeen} ${Jiffy(otherMember.lastActive).fromNow()}',
-  //         style: TextStyle(
-  //             color: StreamChatTheme.of(context)
-  //                 .colorTheme
-  //                 .textHighEmphasis
-  //                 .withOpacity(0.5)),
-  //       );
-  //     }
-  //   }
+  Widget _buildModalListTile(
+      BuildContext context, Widget leading, String title, VoidCallback onTap,
+      {Color? color}) {
+    color ??= OctopusTheme.of(context).colorTheme.primaryGrey;
 
-  //   return alternativeWidget;
-  // }
-
-  // Widget _buildModalListTile(
-  //     BuildContext context, Widget leading, String title, VoidCallback onTap,
-  //     {Color? color}) {
-  //   color ??= StreamChatTheme.of(context).colorTheme.textHighEmphasis;
-
-  //   return Material(
-  //     color: StreamChatTheme.of(context).colorTheme.barsBg,
-  //     child: InkWell(
-  //       onTap: onTap,
-  //       child: Column(
-  //         children: [
-  //           Container(
-  //             height: 1.0,
-  //             color: StreamChatTheme.of(context).colorTheme.disabled,
-  //           ),
-  //           Container(
-  //             height: 64.0,
-  //             child: Row(
-  //               children: [
-  //                 Padding(
-  //                   padding: const EdgeInsets.all(16.0),
-  //                   child: leading,
-  //                 ),
-  //                 Expanded(
-  //                   child: Text(
-  //                     title,
-  //                     style:
-  //                         TextStyle(color: color, fontWeight: FontWeight.bold),
-  //                   ),
-  //                 )
-  //               ],
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
+    return Material(
+      color: OctopusTheme.of(context).colorTheme.contentView,
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
+          children: [
+            Container(
+              height: 1.0,
+              color: OctopusTheme.of(context).colorTheme.disabled,
+            ),
+            Container(
+              height: 64.0,
+              child: Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: leading,
+                  ),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style:
+                          TextStyle(color: color, fontWeight: FontWeight.bold),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   void showOptionDialog() {
     final platform = Theme.of(context).platform;

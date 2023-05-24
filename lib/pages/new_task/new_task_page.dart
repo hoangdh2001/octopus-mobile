@@ -52,7 +52,8 @@ class _NewTaskPageState extends State<NewTaskPage> {
                   onTap: () {
                     Navigator.pop(context);
                   },
-                  child: SvgPicture.asset('assets/icons/close.svg'),
+                  child: SvgPicture.asset('assets/icons/close.svg',
+                      color: OctopusTheme.of(context).colorTheme.icon),
                 ),
               ],
             ),
@@ -200,7 +201,8 @@ class _NewTaskPageState extends State<NewTaskPage> {
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: SvgPicture.asset('assets/icons/double_square.svg'),
+                  child: SvgPicture.asset('assets/icons/double_square.svg',
+                      color: OctopusTheme.of(context).colorTheme.icon),
                 ),
                 GestureDetector(
                   onTap: () {
@@ -299,8 +301,9 @@ class _NewTaskPageState extends State<NewTaskPage> {
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 8),
-                        child:
-                            SvgPicture.asset('assets/icons/calendar_plus.svg'),
+                        child: SvgPicture.asset(
+                            'assets/icons/calendar_plus.svg',
+                            color: OctopusTheme.of(context).colorTheme.icon),
                       ),
                       Text(
                         state.startDate != null || state.dueDate != null
@@ -447,7 +450,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                     height: 10.h,
                   ),
                   BetterStreamBuilder(
-                    stream: workspace.state!.projectsStream,
+                    stream: workspace.state!.projectsMapStream,
                     builder: (context, data) {
                       return ListView.builder(
                         physics: const NeverScrollableScrollPhysics(),
@@ -460,7 +463,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                             title: Row(
                               children: [
                                 SpaceAvatar(
-                                  name: project.name,
+                                  name: project.state!.projectState.name,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 SizedBox(
@@ -468,7 +471,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                                 ),
                                 Expanded(
                                   child: Text(
-                                    project.name,
+                                    project.state!.projectState.name,
                                     style: theme.textTheme.primaryGreyBody,
                                   ),
                                 ),
@@ -493,10 +496,11 @@ class _NewTaskPageState extends State<NewTaskPage> {
                                 ),
                               );
                             },
-                            children: project.spaces != null
-                                ? List.generate(project.spaces!.length,
-                                    (index) {
-                                    final space = project.spaces![index];
+                            children: project.state!.spacesState != null
+                                ? List.generate(
+                                    project.state!.spacesState.length, (index) {
+                                    final space =
+                                        project.state!.spacesState[index];
                                     return ListTile(
                                       leading: SizedBox(
                                         height: double.infinity,

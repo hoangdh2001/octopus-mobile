@@ -743,6 +743,10 @@ class Channel {
     return uuid;
   }
 
+  Future<EmptyResponse> removeMember(String memberID, String removeType) async {
+    return _channelRepository.removeMembers(id!, memberID, removeType);
+  }
+
   Future<ChannelState> update(Map<String, Object?> channelData,
       [Message? updatedMessgage]) {
     _checkInitialized();

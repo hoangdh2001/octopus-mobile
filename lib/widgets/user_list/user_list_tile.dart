@@ -21,6 +21,7 @@ class UserListTile extends StatelessWidget {
     this.showSelectWidget = false,
     this.showSubtitle = false,
     this.showOnlineStatus = false,
+    this.shape,
   });
 
   final User user;
@@ -50,6 +51,8 @@ class UserListTile extends StatelessWidget {
   final bool showSubtitle;
 
   final bool showOnlineStatus;
+
+  final ShapeBorder? shape;
 
   UserListTile copyWith({
     Key? key,
@@ -128,6 +131,7 @@ class UserListTile extends StatelessWidget {
       title: title,
       subtitle: showSubtitle ? subtitle : null,
       contentPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+      shape: shape,
     );
   }
 }

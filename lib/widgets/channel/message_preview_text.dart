@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:octopus/core/data/models/enums/message_type.dart';
 import 'package:octopus/core/data/models/message.dart';
-import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/octopus.dart';
 
 class MessagePreviewText extends StatelessWidget {
@@ -100,9 +99,10 @@ class MessagePreviewText extends StatelessWidget {
   Widget _buildSystemMessage(BuildContext context) {
     return Text(
       _buildActionText(context),
-      textAlign: TextAlign.center,
       softWrap: true,
       style: textStyle,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
     );
   }
 

@@ -23,8 +23,7 @@ mixin _$NewTaskEvent {
     required TResult Function(List<User> assignees) assigneesChanged,
     required TResult Function(DateTime? startDate) startDateChanged,
     required TResult Function(DateTime? dueDate) dueDateChanged,
-    required TResult Function(ProjectState project, SpaceState space)
-        selectList,
+    required TResult Function(Project project, SpaceState space) selectList,
     required TResult Function(TaskStatus status) statusChanged,
     required TResult Function() submitted,
   }) =>
@@ -36,7 +35,7 @@ mixin _$NewTaskEvent {
     TResult? Function(List<User> assignees)? assigneesChanged,
     TResult? Function(DateTime? startDate)? startDateChanged,
     TResult? Function(DateTime? dueDate)? dueDateChanged,
-    TResult? Function(ProjectState project, SpaceState space)? selectList,
+    TResult? Function(Project project, SpaceState space)? selectList,
     TResult? Function(TaskStatus status)? statusChanged,
     TResult? Function()? submitted,
   }) =>
@@ -48,7 +47,7 @@ mixin _$NewTaskEvent {
     TResult Function(List<User> assignees)? assigneesChanged,
     TResult Function(DateTime? startDate)? startDateChanged,
     TResult Function(DateTime? dueDate)? dueDateChanged,
-    TResult Function(ProjectState project, SpaceState space)? selectList,
+    TResult Function(Project project, SpaceState space)? selectList,
     TResult Function(TaskStatus status)? statusChanged,
     TResult Function()? submitted,
     required TResult orElse(),
@@ -180,8 +179,7 @@ class _$NameChanged implements NameChanged {
     required TResult Function(List<User> assignees) assigneesChanged,
     required TResult Function(DateTime? startDate) startDateChanged,
     required TResult Function(DateTime? dueDate) dueDateChanged,
-    required TResult Function(ProjectState project, SpaceState space)
-        selectList,
+    required TResult Function(Project project, SpaceState space) selectList,
     required TResult Function(TaskStatus status) statusChanged,
     required TResult Function() submitted,
   }) {
@@ -196,7 +194,7 @@ class _$NameChanged implements NameChanged {
     TResult? Function(List<User> assignees)? assigneesChanged,
     TResult? Function(DateTime? startDate)? startDateChanged,
     TResult? Function(DateTime? dueDate)? dueDateChanged,
-    TResult? Function(ProjectState project, SpaceState space)? selectList,
+    TResult? Function(Project project, SpaceState space)? selectList,
     TResult? Function(TaskStatus status)? statusChanged,
     TResult? Function()? submitted,
   }) {
@@ -211,7 +209,7 @@ class _$NameChanged implements NameChanged {
     TResult Function(List<User> assignees)? assigneesChanged,
     TResult Function(DateTime? startDate)? startDateChanged,
     TResult Function(DateTime? dueDate)? dueDateChanged,
-    TResult Function(ProjectState project, SpaceState space)? selectList,
+    TResult Function(Project project, SpaceState space)? selectList,
     TResult Function(TaskStatus status)? statusChanged,
     TResult Function()? submitted,
     required TResult orElse(),
@@ -352,8 +350,7 @@ class _$DescriptionChanged implements DescriptionChanged {
     required TResult Function(List<User> assignees) assigneesChanged,
     required TResult Function(DateTime? startDate) startDateChanged,
     required TResult Function(DateTime? dueDate) dueDateChanged,
-    required TResult Function(ProjectState project, SpaceState space)
-        selectList,
+    required TResult Function(Project project, SpaceState space) selectList,
     required TResult Function(TaskStatus status) statusChanged,
     required TResult Function() submitted,
   }) {
@@ -368,7 +365,7 @@ class _$DescriptionChanged implements DescriptionChanged {
     TResult? Function(List<User> assignees)? assigneesChanged,
     TResult? Function(DateTime? startDate)? startDateChanged,
     TResult? Function(DateTime? dueDate)? dueDateChanged,
-    TResult? Function(ProjectState project, SpaceState space)? selectList,
+    TResult? Function(Project project, SpaceState space)? selectList,
     TResult? Function(TaskStatus status)? statusChanged,
     TResult? Function()? submitted,
   }) {
@@ -383,7 +380,7 @@ class _$DescriptionChanged implements DescriptionChanged {
     TResult Function(List<User> assignees)? assigneesChanged,
     TResult Function(DateTime? startDate)? startDateChanged,
     TResult Function(DateTime? dueDate)? dueDateChanged,
-    TResult Function(ProjectState project, SpaceState space)? selectList,
+    TResult Function(Project project, SpaceState space)? selectList,
     TResult Function(TaskStatus status)? statusChanged,
     TResult Function()? submitted,
     required TResult orElse(),
@@ -530,8 +527,7 @@ class _$AssigneesChanged implements AssigneesChanged {
     required TResult Function(List<User> assignees) assigneesChanged,
     required TResult Function(DateTime? startDate) startDateChanged,
     required TResult Function(DateTime? dueDate) dueDateChanged,
-    required TResult Function(ProjectState project, SpaceState space)
-        selectList,
+    required TResult Function(Project project, SpaceState space) selectList,
     required TResult Function(TaskStatus status) statusChanged,
     required TResult Function() submitted,
   }) {
@@ -546,7 +542,7 @@ class _$AssigneesChanged implements AssigneesChanged {
     TResult? Function(List<User> assignees)? assigneesChanged,
     TResult? Function(DateTime? startDate)? startDateChanged,
     TResult? Function(DateTime? dueDate)? dueDateChanged,
-    TResult? Function(ProjectState project, SpaceState space)? selectList,
+    TResult? Function(Project project, SpaceState space)? selectList,
     TResult? Function(TaskStatus status)? statusChanged,
     TResult? Function()? submitted,
   }) {
@@ -561,7 +557,7 @@ class _$AssigneesChanged implements AssigneesChanged {
     TResult Function(List<User> assignees)? assigneesChanged,
     TResult Function(DateTime? startDate)? startDateChanged,
     TResult Function(DateTime? dueDate)? dueDateChanged,
-    TResult Function(ProjectState project, SpaceState space)? selectList,
+    TResult Function(Project project, SpaceState space)? selectList,
     TResult Function(TaskStatus status)? statusChanged,
     TResult Function()? submitted,
     required TResult orElse(),
@@ -702,8 +698,7 @@ class _$StartDateChanged implements StartDateChanged {
     required TResult Function(List<User> assignees) assigneesChanged,
     required TResult Function(DateTime? startDate) startDateChanged,
     required TResult Function(DateTime? dueDate) dueDateChanged,
-    required TResult Function(ProjectState project, SpaceState space)
-        selectList,
+    required TResult Function(Project project, SpaceState space) selectList,
     required TResult Function(TaskStatus status) statusChanged,
     required TResult Function() submitted,
   }) {
@@ -718,7 +713,7 @@ class _$StartDateChanged implements StartDateChanged {
     TResult? Function(List<User> assignees)? assigneesChanged,
     TResult? Function(DateTime? startDate)? startDateChanged,
     TResult? Function(DateTime? dueDate)? dueDateChanged,
-    TResult? Function(ProjectState project, SpaceState space)? selectList,
+    TResult? Function(Project project, SpaceState space)? selectList,
     TResult? Function(TaskStatus status)? statusChanged,
     TResult? Function()? submitted,
   }) {
@@ -733,7 +728,7 @@ class _$StartDateChanged implements StartDateChanged {
     TResult Function(List<User> assignees)? assigneesChanged,
     TResult Function(DateTime? startDate)? startDateChanged,
     TResult Function(DateTime? dueDate)? dueDateChanged,
-    TResult Function(ProjectState project, SpaceState space)? selectList,
+    TResult Function(Project project, SpaceState space)? selectList,
     TResult Function(TaskStatus status)? statusChanged,
     TResult Function()? submitted,
     required TResult orElse(),
@@ -873,8 +868,7 @@ class _$DueDateChanged implements DueDateChanged {
     required TResult Function(List<User> assignees) assigneesChanged,
     required TResult Function(DateTime? startDate) startDateChanged,
     required TResult Function(DateTime? dueDate) dueDateChanged,
-    required TResult Function(ProjectState project, SpaceState space)
-        selectList,
+    required TResult Function(Project project, SpaceState space) selectList,
     required TResult Function(TaskStatus status) statusChanged,
     required TResult Function() submitted,
   }) {
@@ -889,7 +883,7 @@ class _$DueDateChanged implements DueDateChanged {
     TResult? Function(List<User> assignees)? assigneesChanged,
     TResult? Function(DateTime? startDate)? startDateChanged,
     TResult? Function(DateTime? dueDate)? dueDateChanged,
-    TResult? Function(ProjectState project, SpaceState space)? selectList,
+    TResult? Function(Project project, SpaceState space)? selectList,
     TResult? Function(TaskStatus status)? statusChanged,
     TResult? Function()? submitted,
   }) {
@@ -904,7 +898,7 @@ class _$DueDateChanged implements DueDateChanged {
     TResult Function(List<User> assignees)? assigneesChanged,
     TResult Function(DateTime? startDate)? startDateChanged,
     TResult Function(DateTime? dueDate)? dueDateChanged,
-    TResult Function(ProjectState project, SpaceState space)? selectList,
+    TResult Function(Project project, SpaceState space)? selectList,
     TResult Function(TaskStatus status)? statusChanged,
     TResult Function()? submitted,
     required TResult orElse(),
@@ -980,7 +974,7 @@ abstract class _$$SelectListCopyWith<$Res> {
           _$SelectList value, $Res Function(_$SelectList) then) =
       __$$SelectListCopyWithImpl<$Res>;
   @useResult
-  $Res call({ProjectState project, SpaceState space});
+  $Res call({Project project, SpaceState space});
 }
 
 /// @nodoc
@@ -1001,7 +995,7 @@ class __$$SelectListCopyWithImpl<$Res>
       null == project
           ? _value.project
           : project // ignore: cast_nullable_to_non_nullable
-              as ProjectState,
+              as Project,
       null == space
           ? _value.space
           : space // ignore: cast_nullable_to_non_nullable
@@ -1016,7 +1010,7 @@ class _$SelectList implements SelectList {
   const _$SelectList(this.project, this.space);
 
   @override
-  final ProjectState project;
+  final Project project;
   @override
   final SpaceState space;
 
@@ -1051,8 +1045,7 @@ class _$SelectList implements SelectList {
     required TResult Function(List<User> assignees) assigneesChanged,
     required TResult Function(DateTime? startDate) startDateChanged,
     required TResult Function(DateTime? dueDate) dueDateChanged,
-    required TResult Function(ProjectState project, SpaceState space)
-        selectList,
+    required TResult Function(Project project, SpaceState space) selectList,
     required TResult Function(TaskStatus status) statusChanged,
     required TResult Function() submitted,
   }) {
@@ -1067,7 +1060,7 @@ class _$SelectList implements SelectList {
     TResult? Function(List<User> assignees)? assigneesChanged,
     TResult? Function(DateTime? startDate)? startDateChanged,
     TResult? Function(DateTime? dueDate)? dueDateChanged,
-    TResult? Function(ProjectState project, SpaceState space)? selectList,
+    TResult? Function(Project project, SpaceState space)? selectList,
     TResult? Function(TaskStatus status)? statusChanged,
     TResult? Function()? submitted,
   }) {
@@ -1082,7 +1075,7 @@ class _$SelectList implements SelectList {
     TResult Function(List<User> assignees)? assigneesChanged,
     TResult Function(DateTime? startDate)? startDateChanged,
     TResult Function(DateTime? dueDate)? dueDateChanged,
-    TResult Function(ProjectState project, SpaceState space)? selectList,
+    TResult Function(Project project, SpaceState space)? selectList,
     TResult Function(TaskStatus status)? statusChanged,
     TResult Function()? submitted,
     required TResult orElse(),
@@ -1144,10 +1137,10 @@ class _$SelectList implements SelectList {
 }
 
 abstract class SelectList implements NewTaskEvent {
-  const factory SelectList(final ProjectState project, final SpaceState space) =
+  const factory SelectList(final Project project, final SpaceState space) =
       _$SelectList;
 
-  ProjectState get project;
+  Project get project;
   SpaceState get space;
   @JsonKey(ignore: true)
   _$$SelectListCopyWith<_$SelectList> get copyWith =>
@@ -1223,8 +1216,7 @@ class _$StatusChanged implements StatusChanged {
     required TResult Function(List<User> assignees) assigneesChanged,
     required TResult Function(DateTime? startDate) startDateChanged,
     required TResult Function(DateTime? dueDate) dueDateChanged,
-    required TResult Function(ProjectState project, SpaceState space)
-        selectList,
+    required TResult Function(Project project, SpaceState space) selectList,
     required TResult Function(TaskStatus status) statusChanged,
     required TResult Function() submitted,
   }) {
@@ -1239,7 +1231,7 @@ class _$StatusChanged implements StatusChanged {
     TResult? Function(List<User> assignees)? assigneesChanged,
     TResult? Function(DateTime? startDate)? startDateChanged,
     TResult? Function(DateTime? dueDate)? dueDateChanged,
-    TResult? Function(ProjectState project, SpaceState space)? selectList,
+    TResult? Function(Project project, SpaceState space)? selectList,
     TResult? Function(TaskStatus status)? statusChanged,
     TResult? Function()? submitted,
   }) {
@@ -1254,7 +1246,7 @@ class _$StatusChanged implements StatusChanged {
     TResult Function(List<User> assignees)? assigneesChanged,
     TResult Function(DateTime? startDate)? startDateChanged,
     TResult Function(DateTime? dueDate)? dueDateChanged,
-    TResult Function(ProjectState project, SpaceState space)? selectList,
+    TResult Function(Project project, SpaceState space)? selectList,
     TResult Function(TaskStatus status)? statusChanged,
     TResult Function()? submitted,
     required TResult orElse(),
@@ -1367,8 +1359,7 @@ class _$Submitted implements Submitted {
     required TResult Function(List<User> assignees) assigneesChanged,
     required TResult Function(DateTime? startDate) startDateChanged,
     required TResult Function(DateTime? dueDate) dueDateChanged,
-    required TResult Function(ProjectState project, SpaceState space)
-        selectList,
+    required TResult Function(Project project, SpaceState space) selectList,
     required TResult Function(TaskStatus status) statusChanged,
     required TResult Function() submitted,
   }) {
@@ -1383,7 +1374,7 @@ class _$Submitted implements Submitted {
     TResult? Function(List<User> assignees)? assigneesChanged,
     TResult? Function(DateTime? startDate)? startDateChanged,
     TResult? Function(DateTime? dueDate)? dueDateChanged,
-    TResult? Function(ProjectState project, SpaceState space)? selectList,
+    TResult? Function(Project project, SpaceState space)? selectList,
     TResult? Function(TaskStatus status)? statusChanged,
     TResult? Function()? submitted,
   }) {
@@ -1398,7 +1389,7 @@ class _$Submitted implements Submitted {
     TResult Function(List<User> assignees)? assigneesChanged,
     TResult Function(DateTime? startDate)? startDateChanged,
     TResult Function(DateTime? dueDate)? dueDateChanged,
-    TResult Function(ProjectState project, SpaceState space)? selectList,
+    TResult Function(Project project, SpaceState space)? selectList,
     TResult Function(TaskStatus status)? statusChanged,
     TResult Function()? submitted,
     required TResult orElse(),
@@ -1467,7 +1458,7 @@ abstract class Submitted implements NewTaskEvent {
 mixin _$NewTaskState {
   String get name => throw _privateConstructorUsedError;
   SpaceState? get space => throw _privateConstructorUsedError;
-  ProjectState? get project => throw _privateConstructorUsedError;
+  Project? get project => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
   DateTime? get startDate => throw _privateConstructorUsedError;
   DateTime? get dueDate => throw _privateConstructorUsedError;
@@ -1491,7 +1482,7 @@ abstract class $NewTaskStateCopyWith<$Res> {
   $Res call(
       {String name,
       SpaceState? space,
-      ProjectState? project,
+      Project? project,
       String? description,
       DateTime? startDate,
       DateTime? dueDate,
@@ -1537,7 +1528,7 @@ class _$NewTaskStateCopyWithImpl<$Res, $Val extends NewTaskState>
       project: freezed == project
           ? _value.project
           : project // ignore: cast_nullable_to_non_nullable
-              as ProjectState?,
+              as Project?,
       description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
@@ -1581,7 +1572,7 @@ abstract class _$$_NewTaskStateCopyWith<$Res>
   $Res call(
       {String name,
       SpaceState? space,
-      ProjectState? project,
+      Project? project,
       String? description,
       DateTime? startDate,
       DateTime? dueDate,
@@ -1625,7 +1616,7 @@ class __$$_NewTaskStateCopyWithImpl<$Res>
       project: freezed == project
           ? _value.project
           : project // ignore: cast_nullable_to_non_nullable
-              as ProjectState?,
+              as Project?,
       description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
@@ -1679,7 +1670,7 @@ class _$_NewTaskState implements _NewTaskState {
   @override
   final SpaceState? space;
   @override
-  final ProjectState? project;
+  final Project? project;
   @override
   final String? description;
   @override
@@ -1756,7 +1747,7 @@ abstract class _NewTaskState implements NewTaskState {
   const factory _NewTaskState(
           {required final String name,
           final SpaceState? space,
-          final ProjectState? project,
+          final Project? project,
           final String? description,
           final DateTime? startDate,
           final DateTime? dueDate,
@@ -1771,7 +1762,7 @@ abstract class _NewTaskState implements NewTaskState {
   @override
   SpaceState? get space;
   @override
-  ProjectState? get project;
+  Project? get project;
   @override
   String? get description;
   @override

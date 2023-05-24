@@ -86,6 +86,8 @@ class WorkspaceListTile extends StatelessWidget {
     final title = this.title ??
         Text(
           workspace.name,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
           style: chatThemeData.textTheme.primaryGreyBodyBold,
         );
 

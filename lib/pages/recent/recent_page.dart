@@ -1,8 +1,12 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart' show CupertinoSlidingSegmentedControl;
 import 'package:flutter/material.dart' hide ExpansionTile;
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:octopus/core/config/routes.dart';
+import 'package:octopus/core/extensions/extension_color.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
+import 'package:octopus/octopus_workspace.dart';
 import 'package:octopus/pages/new_task/new_task_page.dart';
 import 'package:octopus/widgets/custom_expansion_tile/expansion_tile.dart';
 
@@ -24,6 +28,7 @@ class _RecentPageState extends State<RecentPage> {
   bool get isSelectMyWork => _selectedSegment == RecentSegment.mywork;
   @override
   Widget build(BuildContext context) {
+    final workspace = OctopusWorkspace.of(context).workspace;
     final theme = OctopusTheme.of(context);
     return DefaultTabController(
       length: 3,
@@ -111,603 +116,582 @@ class _RecentPageState extends State<RecentPage> {
               ),
             ];
           },
-          body: RefreshIndicator(
-            color: theme.colorTheme.brandPrimary,
-            onRefresh: () {
-              return Future.delayed(const Duration(seconds: 1));
-            },
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  ExpansionTile(
-                    childrenPadding: EdgeInsets.zero,
-                    title: Row(
-                      children: [
-                        Expanded(
-                          child: Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: 'Today',
-                                  style: OctopusTheme.of(context)
-                                      .textTheme
-                                      .primaryGreyBodyBold,
-                                ),
-                                TextSpan(
-                                  text: ' (5)',
-                                  style: OctopusTheme.of(context)
-                                      .textTheme
-                                      .primaryGreyBody
-                                      .copyWith(
-                                        color: OctopusTheme.of(context)
-                                            .colorTheme
-                                            .primaryGrey
-                                            .withOpacity(.5),
+          body: TabBarView(
+            children: [
+              RefreshIndicator(
+                color: theme.colorTheme.brandPrimary,
+                onRefresh: () {
+                  setState(() {});
+                  return Future.delayed(const Duration(seconds: 1));
+                },
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      FutureBuilder(
+                          future: workspace.getTodayTasks(),
+                          builder: (context, snapshot) {
+                            return ExpansionTile(
+                              childrenPadding: EdgeInsets.zero,
+                              title: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: 'Today',
+                                            style: OctopusTheme.of(context)
+                                                .textTheme
+                                                .primaryGreyBodyBold,
+                                          ),
+                                          TextSpan(
+                                            text:
+                                                ' (${snapshot.data?.tasks.length ?? 0})',
+                                            style: OctopusTheme.of(context)
+                                                .textTheme
+                                                .primaryGreyBody
+                                                .copyWith(
+                                                  color:
+                                                      OctopusTheme.of(context)
+                                                          .colorTheme
+                                                          .primaryGrey
+                                                          .withOpacity(.5),
+                                                ),
+                                          ),
+                                        ],
                                       ),
+                                      textAlign: TextAlign.start,
+                                      softWrap: true,
+                                      style: OctopusTheme.of(context)
+                                          .textTheme
+                                          .primaryGreyBodyBold,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      showNewTaskModal();
+                                    },
+                                    child: SvgPicture.asset(
+                                      'assets/icons/plus.svg',
+                                      color: OctopusTheme.of(context)
+                                          .colorTheme
+                                          .icon,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              leading: (context, animation) {
+                                return RotationTransition(
+                                  turns: animation.drive(
+                                    Tween<double>(begin: 0.0, end: 0.37).chain(
+                                      CurveTween(curve: Curves.easeOut),
+                                    ),
+                                  ),
+                                  child: SvgPicture.asset(
+                                      'assets/icons/arrow_right.svg',
+                                      color: OctopusTheme.of(context)
+                                          .colorTheme
+                                          .icon),
+                                );
+                              },
+                              children: snapshot.hasData
+                                  ? List.generate(
+                                      snapshot.data!.tasks.length,
+                                      (index) {
+                                        final task =
+                                            snapshot.data!.tasks[index];
+                                        return ListTile(
+                                          title: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              if (task.startDate != null)
+                                                Text(
+                                                  'Started ${Jiffy(task.startDate).fromNow()}',
+                                                  style: OctopusTheme.of(
+                                                          context)
+                                                      .textTheme
+                                                      .secondaryGreyCaption2,
+                                                ),
+                                              Text(task.name ?? '')
+                                            ],
+                                          ),
+                                          leading: SizedBox(
+                                            height: double.infinity,
+                                            child: SvgPicture.asset(
+                                              'assets/icons/rounded_square.svg',
+                                              color: HexColor.fromHex(
+                                                task.taskStatus?.color ??
+                                                    '#000000',
+                                              ),
+                                            ),
+                                          ),
+                                          subtitle: Text(
+                                            snapshot.data!.workspace.name,
+                                            style: OctopusTheme.of(context)
+                                                .textTheme
+                                                .secondaryGreyCaption2,
+                                          ),
+                                          trailing: task.dueDate != null
+                                              ? Text(DateFormat('d MMM')
+                                                  .format(task.dueDate!))
+                                              : null,
+                                          dense: true,
+                                          onTap: () {},
+                                          horizontalTitleGap: 0,
+                                        );
+                                      },
+                                    )
+                                  : [],
+                            );
+                          }),
+                      FutureBuilder(
+                          future: workspace.getTasksOverdue(),
+                          builder: (context, snapshot) {
+                            return ExpansionTile(
+                              title: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: 'Overdue',
+                                            style: OctopusTheme.of(context)
+                                                .textTheme
+                                                .primaryGreyBodyBold,
+                                          ),
+                                          TextSpan(
+                                            text:
+                                                ' (${snapshot.data?.tasks.length ?? 0})',
+                                            style: OctopusTheme.of(context)
+                                                .textTheme
+                                                .primaryGreyBody
+                                                .copyWith(
+                                                  color:
+                                                      OctopusTheme.of(context)
+                                                          .colorTheme
+                                                          .primaryGrey
+                                                          .withOpacity(.5),
+                                                ),
+                                          ),
+                                        ],
+                                      ),
+                                      textAlign: TextAlign.start,
+                                      softWrap: true,
+                                      style: OctopusTheme.of(context)
+                                          .textTheme
+                                          .primaryGreyBodyBold,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      showNewTaskModal();
+                                    },
+                                    child: SvgPicture.asset(
+                                      'assets/icons/plus.svg',
+                                      color: OctopusTheme.of(context)
+                                          .colorTheme
+                                          .icon,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              leading: (context, animation) {
+                                return RotationTransition(
+                                  turns: animation.drive(
+                                    Tween<double>(begin: 0.0, end: 0.37).chain(
+                                      CurveTween(curve: Curves.easeOut),
+                                    ),
+                                  ),
+                                  child: SvgPicture.asset(
+                                      'assets/icons/arrow_right.svg',
+                                      color: OctopusTheme.of(context)
+                                          .colorTheme
+                                          .icon),
+                                );
+                              },
+                              children: snapshot.hasData
+                                  ? List.generate(
+                                      snapshot.data!.tasks.length,
+                                      (index) {
+                                        final task =
+                                            snapshot.data!.tasks[index];
+                                        return ListTile(
+                                          title: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              if (task.startDate != null)
+                                                Text(
+                                                  'Started ${Jiffy(task.startDate).fromNow()}',
+                                                  style: OctopusTheme.of(
+                                                          context)
+                                                      .textTheme
+                                                      .secondaryGreyCaption2,
+                                                ),
+                                              Text(task.name ?? '')
+                                            ],
+                                          ),
+                                          leading: SizedBox(
+                                            height: double.infinity,
+                                            child: SvgPicture.asset(
+                                              'assets/icons/rounded_square.svg',
+                                              color: HexColor.fromHex(
+                                                task.taskStatus?.color ??
+                                                    '#000000',
+                                              ),
+                                            ),
+                                          ),
+                                          subtitle: Text(
+                                            snapshot.data!.workspace.name,
+                                            style: OctopusTheme.of(context)
+                                                .textTheme
+                                                .secondaryGreyCaption2,
+                                          ),
+                                          trailing: task.dueDate != null
+                                              ? Text(DateFormat('d MMM')
+                                                  .format(task.dueDate!))
+                                              : null,
+                                          dense: true,
+                                          onTap: () {},
+                                          horizontalTitleGap: 0,
+                                        );
+                                      },
+                                    )
+                                  : [],
+                            );
+                          }),
+                      FutureBuilder(
+                          future: workspace.getTasksNotDueDate(),
+                          builder: (context, snapshot) {
+                            return ExpansionTile(
+                              title: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: 'Next',
+                                            style: OctopusTheme.of(context)
+                                                .textTheme
+                                                .primaryGreyBodyBold,
+                                          ),
+                                          TextSpan(
+                                            text:
+                                                ' (${snapshot.data?.tasks.length ?? 0})',
+                                            style: OctopusTheme.of(context)
+                                                .textTheme
+                                                .primaryGreyBody
+                                                .copyWith(
+                                                  color:
+                                                      OctopusTheme.of(context)
+                                                          .colorTheme
+                                                          .primaryGrey
+                                                          .withOpacity(.5),
+                                                ),
+                                          ),
+                                        ],
+                                      ),
+                                      textAlign: TextAlign.start,
+                                      softWrap: true,
+                                      style: OctopusTheme.of(context)
+                                          .textTheme
+                                          .primaryGreyBodyBold,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      showNewTaskModal();
+                                    },
+                                    child: SvgPicture.asset(
+                                      'assets/icons/plus.svg',
+                                      color: OctopusTheme.of(context)
+                                          .colorTheme
+                                          .icon,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              leading: (context, animation) {
+                                return RotationTransition(
+                                  turns: animation.drive(
+                                    Tween<double>(begin: 0.0, end: 0.37).chain(
+                                      CurveTween(curve: Curves.easeOut),
+                                    ),
+                                  ),
+                                  child: SvgPicture.asset(
+                                      'assets/icons/arrow_right.svg',
+                                      color: OctopusTheme.of(context)
+                                          .colorTheme
+                                          .icon),
+                                );
+                              },
+                              children: snapshot.hasData
+                                  ? List.generate(
+                                      snapshot.data!.tasks.length,
+                                      (index) {
+                                        final task =
+                                            snapshot.data!.tasks[index];
+                                        return ListTile(
+                                          title: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              if (task.startDate != null)
+                                                Text(
+                                                  'Started ${Jiffy(task.startDate).fromNow()}',
+                                                  style: OctopusTheme.of(
+                                                          context)
+                                                      .textTheme
+                                                      .secondaryGreyCaption2,
+                                                ),
+                                              Text(task.name ?? '')
+                                            ],
+                                          ),
+                                          leading: SizedBox(
+                                            height: double.infinity,
+                                            child: SvgPicture.asset(
+                                              'assets/icons/rounded_square.svg',
+                                              color: HexColor.fromHex(
+                                                task.taskStatus?.color ??
+                                                    '#000000',
+                                              ),
+                                            ),
+                                          ),
+                                          subtitle: Text(
+                                            snapshot.data!.workspace.name,
+                                            style: OctopusTheme.of(context)
+                                                .textTheme
+                                                .secondaryGreyCaption2,
+                                          ),
+                                          trailing: task.dueDate != null
+                                              ? Text(DateFormat('d MMM')
+                                                  .format(task.dueDate!))
+                                              : null,
+                                          dense: true,
+                                          onTap: () {},
+                                          horizontalTitleGap: 0,
+                                        );
+                                      },
+                                    )
+                                  : [],
+                            );
+                          }),
+                      FutureBuilder(
+                        future: workspace.getTasksNotDueDate(),
+                        builder: (context, snapshot) {
+                          return ExpansionTile(
+                            title: Row(
+                              children: [
+                                Expanded(
+                                  child: Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: 'No due date',
+                                          style: OctopusTheme.of(context)
+                                              .textTheme
+                                              .primaryGreyBodyBold,
+                                        ),
+                                        TextSpan(
+                                          text:
+                                              ' (${snapshot.data?.tasks.length ?? 0})',
+                                          style: OctopusTheme.of(context)
+                                              .textTheme
+                                              .primaryGreyBody
+                                              .copyWith(
+                                                color: OctopusTheme.of(context)
+                                                    .colorTheme
+                                                    .primaryGrey
+                                                    .withOpacity(.5),
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                    textAlign: TextAlign.start,
+                                    softWrap: true,
+                                    style: OctopusTheme.of(context)
+                                        .textTheme
+                                        .primaryGreyBodyBold,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    showNewTaskModal();
+                                  },
+                                  child: SvgPicture.asset(
+                                    'assets/icons/plus.svg',
+                                    color: OctopusTheme.of(context)
+                                        .colorTheme
+                                        .icon,
+                                  ),
                                 ),
                               ],
                             ),
-                            textAlign: TextAlign.start,
-                            softWrap: true,
-                            style: OctopusTheme.of(context)
-                                .textTheme
-                                .primaryGreyBodyBold,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            showNewTaskModal();
-                          },
-                          child: SvgPicture.asset(
-                            'assets/icons/plus.svg',
-                            color: OctopusTheme.of(context).colorTheme.icon,
-                          ),
-                        ),
-                      ],
-                    ),
-                    leading: (context, animation) {
-                      return RotationTransition(
-                        turns: animation.drive(
-                          Tween<double>(begin: 0.0, end: 0.37).chain(
-                            CurveTween(curve: Curves.easeOut),
-                          ),
-                        ),
-                        child: SvgPicture.asset('assets/icons/arrow_right.svg'),
-                      );
-                    },
-                    children: <Widget>[
-                      ListTile(
-                        title: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Started 9 months ago',
-                              style: OctopusTheme.of(context)
-                                  .textTheme
-                                  .secondaryGreyCaption2,
-                            ),
-                            const Text('Meeting planning')
-                          ],
-                        ),
-                        horizontalTitleGap: 0,
-                        leading: SizedBox(
-                          height: double.infinity,
-                          child: SvgPicture.asset(
-                            'assets/icons/rounded_square.svg',
-                            color: OctopusTheme.of(context)
-                                .colorTheme
-                                .brandPrimary,
-                          ),
-                        ),
-                        subtitle: Text(
-                          "Khoá luận tốt nghiệp",
-                          style: OctopusTheme.of(context)
-                              .textTheme
-                              .secondaryGreyCaption2,
-                        ),
-                        trailing: const Text('4 Sep'),
-                        dense: true,
-                        visualDensity: VisualDensity.compact,
-                        onTap: () {
-                          // Navigator.of(context).pushNamed(Routes.TASK_DETAIL, );
+                            leading: (context, animation) {
+                              return RotationTransition(
+                                turns: animation.drive(
+                                  Tween<double>(begin: 0.0, end: 0.37).chain(
+                                    CurveTween(curve: Curves.easeOut),
+                                  ),
+                                ),
+                                child: SvgPicture.asset(
+                                    'assets/icons/arrow_right.svg',
+                                    color: OctopusTheme.of(context)
+                                        .colorTheme
+                                        .icon),
+                              );
+                            },
+                            children: snapshot.hasData
+                                ? List.generate(
+                                    snapshot.data!.tasks.length,
+                                    (index) {
+                                      final task = snapshot.data!.tasks[index];
+                                      return ListTile(
+                                        title: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            if (task.startDate != null)
+                                              Text(
+                                                'Started ${Jiffy(task.startDate).fromNow()}',
+                                                style: OctopusTheme.of(context)
+                                                    .textTheme
+                                                    .secondaryGreyCaption2,
+                                              ),
+                                            Text(task.name ?? '')
+                                          ],
+                                        ),
+                                        leading: SizedBox(
+                                          height: double.infinity,
+                                          child: SvgPicture.asset(
+                                            'assets/icons/rounded_square.svg',
+                                            color: HexColor.fromHex(
+                                              task.taskStatus?.color ??
+                                                  '#000000',
+                                            ),
+                                          ),
+                                        ),
+                                        subtitle: Text(
+                                          snapshot.data!.workspace.name,
+                                          style: OctopusTheme.of(context)
+                                              .textTheme
+                                              .secondaryGreyCaption2,
+                                        ),
+                                        trailing: task.dueDate != null
+                                            ? Text(DateFormat('d MMM')
+                                                .format(task.dueDate!))
+                                            : null,
+                                        dense: true,
+                                        onTap: () {},
+                                        horizontalTitleGap: 0,
+                                      );
+                                    },
+                                  )
+                                : [],
+                          );
                         },
                       ),
-                      ListTile(
-                        title: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Started 9 months ago',
-                              style: OctopusTheme.of(context)
-                                  .textTheme
-                                  .secondaryGreyCaption2,
-                            ),
-                            Text('Meeting planning')
-                          ],
-                        ),
-                        horizontalTitleGap: 0,
-                        leading: SizedBox(
-                          height: double.infinity,
-                          child: SvgPicture.asset(
-                            'assets/icons/rounded_square.svg',
-                            color: OctopusTheme.of(context)
-                                .colorTheme
-                                .brandPrimary,
-                          ),
-                        ),
-                        subtitle: Text(
-                          "Khoá luận tốt nghiệp",
-                          style: OctopusTheme.of(context)
-                              .textTheme
-                              .secondaryGreyCaption2,
-                        ),
-                        trailing: const Text('4 Sep'),
-                        dense: true,
-                        onTap: () {},
-                      ),
-                      ListTile(
-                        title: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Started 9 months ago',
-                              style: OctopusTheme.of(context)
-                                  .textTheme
-                                  .secondaryGreyCaption2,
-                            ),
-                            Text('Meeting planning')
-                          ],
-                        ),
-                        leading: SizedBox(
-                          height: double.infinity,
-                          child: SvgPicture.asset(
-                            'assets/icons/rounded_square.svg',
-                            color: OctopusTheme.of(context)
-                                .colorTheme
-                                .brandPrimary,
-                          ),
-                        ),
-                        subtitle: Text(
-                          "Khoá luận tốt nghiệp",
-                          style: OctopusTheme.of(context)
-                              .textTheme
-                              .secondaryGreyCaption2,
-                        ),
-                        horizontalTitleGap: 0,
-                        trailing: const Text('4 Sep'),
-                        dense: true,
-                        onTap: () {},
-                      ),
-                      ListTile(
-                        title: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Started 9 months ago',
-                              style: OctopusTheme.of(context)
-                                  .textTheme
-                                  .secondaryGreyCaption2,
-                            ),
-                            Text('Meeting planning')
-                          ],
-                        ),
-                        horizontalTitleGap: 0,
-                        leading: SizedBox(
-                          height: double.infinity,
-                          child: SvgPicture.asset(
-                            'assets/icons/rounded_square.svg',
-                            color: OctopusTheme.of(context)
-                                .colorTheme
-                                .brandPrimary,
-                          ),
-                        ),
-                        subtitle: Text(
-                          "Khoá luận tốt nghiệp",
-                          style: OctopusTheme.of(context)
-                              .textTheme
-                              .secondaryGreyCaption2,
-                        ),
-                        trailing: const Text('4 Sep'),
-                        dense: true,
-                        onTap: () {},
-                      ),
-                      ListTile(
-                        title: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Started 9 months ago',
-                              style: OctopusTheme.of(context)
-                                  .textTheme
-                                  .secondaryGreyCaption2,
-                            ),
-                            Text('Meeting planning')
-                          ],
-                        ),
-                        leading: SizedBox(
-                          height: double.infinity,
-                          child: SvgPicture.asset(
-                            'assets/icons/rounded_square.svg',
-                            color: OctopusTheme.of(context)
-                                .colorTheme
-                                .brandPrimary,
-                          ),
-                        ),
-                        subtitle: Text(
-                          "Khoá luận tốt nghiệp",
-                          style: OctopusTheme.of(context)
-                              .textTheme
-                              .secondaryGreyCaption2,
-                        ),
-                        trailing: const Text('4 Sep'),
-                        dense: true,
-                        onTap: () {},
-                        horizontalTitleGap: 0,
-                      ),
                     ],
                   ),
-                  ExpansionTile(
-                    title: Row(
-                      children: [
-                        Expanded(
-                          child: Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: 'Overdue',
-                                  style: OctopusTheme.of(context)
-                                      .textTheme
-                                      .primaryGreyBodyBold,
-                                ),
-                                TextSpan(
-                                  text: ' (2)',
-                                  style: OctopusTheme.of(context)
-                                      .textTheme
-                                      .primaryGreyBody
-                                      .copyWith(
-                                        color: OctopusTheme.of(context)
-                                            .colorTheme
-                                            .primaryGrey
-                                            .withOpacity(.5),
-                                      ),
-                                ),
-                              ],
-                            ),
-                            textAlign: TextAlign.start,
-                            softWrap: true,
-                            style: OctopusTheme.of(context)
-                                .textTheme
-                                .primaryGreyBodyBold,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            showNewTaskModal();
-                          },
-                          child: SvgPicture.asset(
-                            'assets/icons/plus.svg',
-                            color: OctopusTheme.of(context).colorTheme.icon,
-                          ),
-                        ),
-                      ],
-                    ),
-                    leading: (context, animation) {
-                      return RotationTransition(
-                        turns: animation.drive(
-                          Tween<double>(begin: 0.0, end: 0.37).chain(
-                            CurveTween(curve: Curves.easeOut),
-                          ),
-                        ),
-                        child: SvgPicture.asset('assets/icons/arrow_right.svg'),
-                      );
-                    },
-                    children: <Widget>[
-                      ListTile(
-                        title: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Started 9 months ago',
-                              style: OctopusTheme.of(context)
-                                  .textTheme
-                                  .secondaryGreyCaption2,
-                            ),
-                            Text('Meeting planning')
-                          ],
-                        ),
-                        horizontalTitleGap: 0,
-                        leading: SizedBox(
-                          height: double.infinity,
-                          child: SvgPicture.asset(
-                            'assets/icons/rounded_square.svg',
-                            color: OctopusTheme.of(context)
-                                .colorTheme
-                                .brandPrimary,
-                          ),
-                        ),
-                        subtitle: Text(
-                          "Khoá luận tốt nghiệp",
-                          style: OctopusTheme.of(context)
-                              .textTheme
-                              .secondaryGreyCaption2,
-                        ),
-                        trailing: const Text('4 Sep'),
-                        dense: true,
-                        onTap: () {},
-                      ),
-                      ListTile(
-                        title: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Started 9 months ago',
-                              style: OctopusTheme.of(context)
-                                  .textTheme
-                                  .secondaryGreyCaption2,
-                            ),
-                            Text('Meeting planning')
-                          ],
-                        ),
-                        horizontalTitleGap: 0,
-                        leading: SizedBox(
-                          height: double.infinity,
-                          child: SvgPicture.asset(
-                            'assets/icons/rounded_square.svg',
-                            color: OctopusTheme.of(context)
-                                .colorTheme
-                                .brandPrimary,
-                          ),
-                        ),
-                        subtitle: Text(
-                          "Khoá luận tốt nghiệp",
-                          style: OctopusTheme.of(context)
-                              .textTheme
-                              .secondaryGreyCaption2,
-                        ),
-                        trailing: const Text('4 Sep'),
-                        dense: true,
-                        onTap: () {},
-                      ),
-                    ],
-                  ),
-                  ExpansionTile(
-                    title: Row(
-                      children: [
-                        Expanded(
-                          child: Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: 'Next',
-                                  style: OctopusTheme.of(context)
-                                      .textTheme
-                                      .primaryGreyBodyBold,
-                                ),
-                                TextSpan(
-                                  text: ' (2)',
-                                  style: OctopusTheme.of(context)
-                                      .textTheme
-                                      .primaryGreyBody
-                                      .copyWith(
-                                        color: OctopusTheme.of(context)
-                                            .colorTheme
-                                            .primaryGrey
-                                            .withOpacity(.5),
-                                      ),
-                                ),
-                              ],
-                            ),
-                            textAlign: TextAlign.start,
-                            softWrap: true,
-                            style: OctopusTheme.of(context)
-                                .textTheme
-                                .primaryGreyBodyBold,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            showNewTaskModal();
-                          },
-                          child: SvgPicture.asset(
-                            'assets/icons/plus.svg',
-                            color: OctopusTheme.of(context).colorTheme.icon,
-                          ),
-                        ),
-                      ],
-                    ),
-                    leading: (context, animation) {
-                      return RotationTransition(
-                        turns: animation.drive(
-                          Tween<double>(begin: 0.0, end: 0.37).chain(
-                            CurveTween(curve: Curves.easeOut),
-                          ),
-                        ),
-                        child: SvgPicture.asset('assets/icons/arrow_right.svg'),
-                      );
-                    },
-                    children: <Widget>[
-                      ListTile(
-                        title: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Started 9 months ago',
-                              style: OctopusTheme.of(context)
-                                  .textTheme
-                                  .secondaryGreyCaption2,
-                            ),
-                            Text('Meeting planning')
-                          ],
-                        ),
-                        horizontalTitleGap: 0,
-                        leading: SizedBox(
-                          height: double.infinity,
-                          child: SvgPicture.asset(
-                            'assets/icons/rounded_square.svg',
-                            color: OctopusTheme.of(context)
-                                .colorTheme
-                                .brandPrimary,
-                          ),
-                        ),
-                        subtitle: Text(
-                          "Khoá luận tốt nghiệp",
-                          style: OctopusTheme.of(context)
-                              .textTheme
-                              .secondaryGreyCaption2,
-                        ),
-                        trailing: const Text('4 Sep'),
-                        dense: true,
-                        onTap: () {},
-                      ),
-                      ListTile(
-                        title: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Started 9 months ago',
-                              style: OctopusTheme.of(context)
-                                  .textTheme
-                                  .secondaryGreyCaption2,
-                            ),
-                            Text('Meeting planning')
-                          ],
-                        ),
-                        horizontalTitleGap: 0,
-                        leading: SizedBox(
-                          height: double.infinity,
-                          child: SvgPicture.asset(
-                            'assets/icons/rounded_square.svg',
-                            color: OctopusTheme.of(context)
-                                .colorTheme
-                                .brandPrimary,
-                          ),
-                        ),
-                        subtitle: Text(
-                          "Khoá luận tốt nghiệp",
-                          style: OctopusTheme.of(context)
-                              .textTheme
-                              .secondaryGreyCaption2,
-                        ),
-                        trailing: const Text('4 Sep'),
-                        dense: true,
-                        onTap: () {},
-                      ),
-                    ],
-                  ),
-                  ExpansionTile(
-                    title: Row(
-                      children: [
-                        Expanded(
-                          child: Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: 'No due date',
-                                  style: OctopusTheme.of(context)
-                                      .textTheme
-                                      .primaryGreyBodyBold,
-                                ),
-                                TextSpan(
-                                  text: ' (1)',
-                                  style: OctopusTheme.of(context)
-                                      .textTheme
-                                      .primaryGreyBody
-                                      .copyWith(
-                                        color: OctopusTheme.of(context)
-                                            .colorTheme
-                                            .primaryGrey
-                                            .withOpacity(.5),
-                                      ),
-                                ),
-                              ],
-                            ),
-                            textAlign: TextAlign.start,
-                            softWrap: true,
-                            style: OctopusTheme.of(context)
-                                .textTheme
-                                .primaryGreyBodyBold,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            showNewTaskModal();
-                          },
-                          child: SvgPicture.asset(
-                            'assets/icons/plus.svg',
-                            color: OctopusTheme.of(context).colorTheme.icon,
-                          ),
-                        ),
-                      ],
-                    ),
-                    leading: (context, animation) {
-                      return RotationTransition(
-                        turns: animation.drive(
-                          Tween<double>(begin: 0.0, end: 0.37).chain(
-                            CurveTween(curve: Curves.easeOut),
-                          ),
-                        ),
-                        child: SvgPicture.asset('assets/icons/arrow_right.svg'),
-                      );
-                    },
-                    children: <Widget>[
-                      ListTile(
-                        title: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Started 9 months ago',
-                              style: OctopusTheme.of(context)
-                                  .textTheme
-                                  .secondaryGreyCaption2,
-                            ),
-                            Text('Meeting planning')
-                          ],
-                        ),
-                        horizontalTitleGap: 0,
-                        leading: SizedBox(
-                          height: double.infinity,
-                          child: SvgPicture.asset(
-                            'assets/icons/rounded_square.svg',
-                            color: OctopusTheme.of(context)
-                                .colorTheme
-                                .brandPrimary,
-                          ),
-                        ),
-                        subtitle: Text(
-                          "Khoá luận tốt nghiệp",
-                          style: OctopusTheme.of(context)
-                              .textTheme
-                              .secondaryGreyCaption2,
-                        ),
-                        trailing: const Text('4 Sep'),
-                        dense: true,
-                        onTap: () {},
-                      ),
-                    ],
-                  ),
-                ],
+                ),
               ),
-            ),
+              Center(
+                child: Text('Comment'),
+              ),
+              RefreshIndicator(
+                child: FutureBuilder(
+                  future: workspace.getTaskDone(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Column(
+                        children: List.generate(
+                          snapshot.data!.tasks.length,
+                          (index) {
+                            final task = snapshot.data!.tasks[index];
+                            return ListTile(
+                              title: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Started 9 months ago',
+                                    style: OctopusTheme.of(context)
+                                        .textTheme
+                                        .secondaryGreyCaption2,
+                                  ),
+                                  Text(task.name ?? '')
+                                ],
+                              ),
+                              leading: SizedBox(
+                                height: double.infinity,
+                                child: SvgPicture.asset(
+                                  'assets/icons/rounded_square.svg',
+                                  color: HexColor.fromHex(
+                                    task.taskStatus?.color ?? '#000000',
+                                  ),
+                                ),
+                              ),
+                              subtitle: Text(
+                                snapshot.data!.workspace.name,
+                                style: OctopusTheme.of(context)
+                                    .textTheme
+                                    .secondaryGreyCaption2,
+                              ),
+                              trailing: task.dueDate != null
+                                  ? Text(
+                                      DateFormat('d MMM').format(task.dueDate!))
+                                  : null,
+                              dense: true,
+                              onTap: () {},
+                              horizontalTitleGap: 0,
+                            );
+                          },
+                        ),
+                      );
+                    }
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/nothing_found.svg',
+                            width: 100,
+                            height: 100,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No task done',
+                            style: OctopusTheme.of(context)
+                                .textTheme
+                                .primaryGreyBodyBold,
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+                onRefresh: () {
+                  setState(() {});
+                  return Future.delayed(const Duration(seconds: 1));
+                },
+              )
+            ],
           ),
         ),
       ),

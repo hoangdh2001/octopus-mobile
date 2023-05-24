@@ -47,8 +47,14 @@ class SpaceAvatar extends StatelessWidget {
 
   final Widget Function(BuildContext, String)? placeholder;
 
-  _getInitials(String fullName) =>
-      fullName.split(' ').sublist(0, 2).map((name) => name.charAt(0)).join(' ');
+  _getInitials(String fullName) {
+    final names = fullName.split(' ');
+    if (names.length == 1) {
+      return names[0].charAt(0);
+    } else {
+      return names.sublist(0, 2).map((name) => name.charAt(0)).join(' ');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

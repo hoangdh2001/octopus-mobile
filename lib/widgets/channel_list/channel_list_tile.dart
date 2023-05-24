@@ -273,7 +273,7 @@ class ChannelLastMessageText extends StatelessWidget {
 
           if (lastMessage == null) {
             return Text(
-              'Empty',
+              'No recent messages',
               style: textStyle,
             );
           }
