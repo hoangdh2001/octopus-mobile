@@ -20,7 +20,7 @@ class OctopusWorkspace extends StatefulWidget {
 
     if (octopusState == null) {
       throw Exception(
-        'You must have a Octopus widget at the top of your widget tree',
+        'You must have a OctopusWorkspace widget at the top of your widget tree',
       );
     }
 

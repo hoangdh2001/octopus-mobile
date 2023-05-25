@@ -1,5 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:octopus/core/config/app_routes.dart';
 import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/data/client/client.dart';
@@ -56,21 +57,56 @@ class _HomePageState extends State<HomePage> {
             builder: (context, data) {
               return OctopusWorkspace(
                 worspace: data,
-                child: const Navigator(
+                child: Navigator(
                   onGenerateRoute: AppRoutes.generateRoute,
+                  onGenerateInitialRoutes: (navigator, initialRoute) {
+                    if (initialRoute == Routes.HOME) {
+                      return [
+                        AppRoutes.generateRoute(
+                          RouteSettings(
+                            name: Routes.HOME,
+                            arguments: HomePageArgs(
+                              widget.chatClient,
+                              widget.workspaceState,
+                            ),
+                          ),
+                        )!
+                      ];
+                    }
+                    return [
+                      AppRoutes.generateRoute(
+                        RouteSettings(name: initRoute),
+                      )!,
+                    ];
+                  },
                   initialRoute: Routes.MAIN,
                 ),
               );
             },
             noDataBuilder: (context) {
-              return Navigator(
-                onGenerateRoute: AppRoutes.generateRoute,
-                initialRoute: initRoute,
+              return Scaffold(
+                body: Center(
+                  child: _getIndicatorWidget(Theme.of(context).platform),
+                ),
               );
             },
           ),
         );
       },
     );
+  }
+
+  Widget _getIndicatorWidget(TargetPlatform platform) {
+    switch (platform) {
+      case TargetPlatform.iOS:
+        return const CupertinoActivityIndicator(
+          color: Colors.grey,
+        );
+      case TargetPlatform.android:
+      default:
+        return const CircularProgressIndicator(
+          color: Colors.grey,
+        );
+    }
   }
 }

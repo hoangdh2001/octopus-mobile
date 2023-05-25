@@ -55,16 +55,15 @@ class SocketIOManager with TimerHelper {
 
   void _initWebSocketChannel(Uri uri) {
     _logger?.info('Initiating connection with $baseUrl');
-    if (_socketio != null) {
-      _closeWebSocketChannel();
-    }
     _socketio = io(
         uri.toString(),
         OptionBuilder()
             .setTransports(['websocket'])
             .setTimeout(10000)
-            .enableForceNew()
+            .disableAutoConnect()
+            .enableReconnection()
             .build());
+    _socketio?.connect();
     _subscribeToWebSocketChannel();
   }
 
@@ -87,6 +86,8 @@ class SocketIOManager with TimerHelper {
     _socketio?.onConnecting((data) {
       _logger?.info('connecting');
     });
+    _socketio?.onConnectTimeout(_onConnectionClosed);
+    // _socketio?.onclose(_onConnectionClosed);
   }
 
   void _onConnectionClosed(dynamic data) {
@@ -94,6 +95,9 @@ class SocketIOManager with TimerHelper {
 
     // resetting connect, reconnect request flag
     _resetRequestFlags();
+
+    // resetting connection
+    _connectionId = null;
 
     // check if we manually closed the connection
     if (_manuallyClosed) return;
@@ -179,7 +183,8 @@ class SocketIOManager with TimerHelper {
     bool includeUserDetails = false,
   }) async {
     if (_connectRequestInProgress) {
-      throw const SocketError('''
+      throw const SocketError(
+          '''
         You've called connect twice,
         can only attempt 1 connection at the time,
         ''');

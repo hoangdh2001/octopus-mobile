@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart' show CupertinoSlidingSegmentedControl;
 import 'package:flutter/material.dart' hide ExpansionTile;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/extensions/extension_color.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/octopus_workspace.dart';

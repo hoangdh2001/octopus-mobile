@@ -73,6 +73,8 @@ class OctopusCoreState extends State<OctopusCore> with WidgetsBindingObserver {
 
   StreamSubscription? _subscription;
 
+  bool _ifFirst = true;
+
   var _isInForeground = true;
   var _isConnectionAvailable = true;
 
@@ -123,9 +125,11 @@ class OctopusCoreState extends State<OctopusCore> with WidgetsBindingObserver {
       connectivityStream ??= Connectivity().onConnectivityChanged;
       _connectivitySubscription =
           connectivityStream.distinct().listen((result) {
+        print(result);
+
         _isConnectionAvailable = result != ConnectivityResult.none;
         if (!_isInForeground) return;
-        if (_isConnectionAvailable) {
+        if (_isConnectionAvailable || _ifFirst) {
           if (client.ioConnectionStatus == ConnectionStatus.disconnected &&
               currentUser != null) {
             client.openConnection();
@@ -135,6 +139,7 @@ class OctopusCoreState extends State<OctopusCore> with WidgetsBindingObserver {
             client.closeConnection();
           }
         }
+        _ifFirst = false;
       });
     }
   }

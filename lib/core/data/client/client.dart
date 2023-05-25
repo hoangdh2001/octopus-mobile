@@ -118,17 +118,19 @@ class Client {
 
     try {
       final connectedUser = await openConnection();
+
+      state.currentUser = connectedUser;
     } catch (e, stk) {
       // if (e is SocketError && e.isRetriable) {
-      //   final event = await _chatPersistenceClient?.getConnectionInfo();
-      //   if (event != null) return ownUser.merge(event.me);
+      // final event = await _chatPersistenceClient?.getConnectionInfo();
+      // if (event != null) return ownUser.merge(event.me);
       // }
       logger.severe('error connecting user : ${user.id}', e, stk);
       rethrow;
     }
   }
 
-  Future<void> openConnection() async {
+  Future<OwnUser> openConnection() async {
     assert(
       state.currentUser != null,
       'User is not set on client, '
@@ -157,7 +159,7 @@ class Client {
 
       state.subscribeToEvents();
 
-      user.merge(event.me);
+      return user.merge(event.me);
     } catch (e, stk) {
       logger.severe('error connecting ws', e, stk);
       rethrow;
@@ -367,7 +369,8 @@ class Client {
     );
 
     if (page.data.isEmpty && paginationParams.offset == 0) {
-      logger.warning('''
+      logger.warning(
+          '''
         We could not find any channel for this query.
         Please make sure to take a look at the Flutter tutorial: https://getstream.io/chat/flutter/tutorial
         If your application already has users and channels, you might need to adjust your query channel as explained in the docs https://getstream.io/chat/docs/query_channels/?language=dart
