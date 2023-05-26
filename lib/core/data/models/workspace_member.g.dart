@@ -15,10 +15,9 @@ WorkspaceMember _$WorkspaceMemberFromJson(Map<String, dynamic> json) =>
       updatedDate: json['updatedDate'] == null
           ? null
           : DateTime.parse(json['updatedDate'] as String),
-      workspaceRole: json['workspaceRole'] == null
+      role: json['role'] == null
           ? null
-          : WorkspaceRole.fromJson(
-              json['workspaceRole'] as Map<String, dynamic>),
+          : WorkspaceRole.fromJson(json['role'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$WorkspaceMemberToJson(WorkspaceMember instance) =>
@@ -26,5 +25,5 @@ Map<String, dynamic> _$WorkspaceMemberToJson(WorkspaceMember instance) =>
       'user': instance.user,
       'createdDate': instance.createdDate?.toIso8601String(),
       'updatedDate': instance.updatedDate?.toIso8601String(),
-      'workspaceRole': instance.workspaceRole,
+      'role': instance.role,
     };

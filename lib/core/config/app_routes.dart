@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:octopus/app.dart';
 import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/data/client/client.dart';
@@ -133,7 +134,7 @@ class AppRoutes {
               return const NewGroupPage();
             });
       case Routes.MAIN:
-        return MaterialPageRoute(
+        return MaterialWithModalsPageRoute(
             settings: RouteSettings(arguments: args, name: Routes.MAIN),
             builder: (_) {
               final mainPageArgs = args as MainPageArgs?;

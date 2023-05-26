@@ -8,7 +8,6 @@ import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:octopus/core/ui/better_stream_builder.dart';
 import 'package:octopus/octopus.dart';
-import 'package:octopus/octopus_workspace.dart';
 import 'package:octopus/pages/create_project/create_project_page.dart';
 import 'package:octopus/pages/new_task/new_task_page.dart';
 import 'package:octopus/pages/new_workspace/new_workspace_page.dart';

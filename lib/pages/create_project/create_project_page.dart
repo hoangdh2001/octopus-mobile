@@ -9,7 +9,6 @@ import 'package:octopus/octopus.dart';
 import 'package:octopus/octopus_workspace.dart';
 import 'package:octopus/pages/create_project/bloc/create_project_bloc.dart';
 import 'package:octopus/pages/statuses/statuses_page.dart';
-import 'package:octopus/widgets/avatars/workspace_avatar.dart';
 import 'package:octopus/core/extensions/extension_color.dart';
 
 class CreateProjectPage extends StatefulWidget {
@@ -20,6 +19,7 @@ class CreateProjectPage extends StatefulWidget {
 }
 
 class _CreateProjectPageState extends State<CreateProjectPage> {
+  bool? _showChannelSetting = false;
   @override
   Widget build(BuildContext context) {
     final theme = OctopusTheme.of(context);
@@ -206,6 +206,37 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                     );
                   },
                 ),
+                Row(
+                  children: [
+                    Checkbox(
+                      fillColor: MaterialStatePropertyAll(
+                          OctopusTheme.of(context).colorTheme.brandPrimary),
+                      value: _showChannelSetting,
+                      onChanged: (value) {
+                        setState(() {
+                          _showChannelSetting = value;
+                        });
+                      },
+                    ),
+                    Text(
+                      'Create channel for project',
+                      style: theme.textTheme.primaryGreyBody,
+                    ),
+                  ],
+                ),
+                AnimatedOpacity(
+                    opacity: _showChannelSetting ?? false ? 1.0 : 0.0,
+                    duration: const Duration(milliseconds: 200),
+                    child: Column(
+                      children: [
+                        Text(
+                          'Channel Settings',
+                          style: OctopusTheme.of(context)
+                              .textTheme
+                              .primaryGreyBodyBold,
+                        )
+                      ],
+                    )),
               ],
             ),
           ),

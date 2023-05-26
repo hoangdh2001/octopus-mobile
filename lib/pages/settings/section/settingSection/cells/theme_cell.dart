@@ -19,15 +19,15 @@ class ThemeCell extends StatefulWidget {
 class _ThemeCellState extends State<ThemeCell> {
   @override
   Widget build(BuildContext context) {
-    final currentUser = SettingsPage.of(context).currentUser;
     return Container(
       height: 42.h,
+      width: double.infinity,
       margin: const EdgeInsets.symmetric(vertical: 5).h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: OctopusTheme.of(context).colorTheme.cardBackgroundSecondary,
       ),
-      padding: const EdgeInsets.all(6).r,
+      padding: const EdgeInsets.all(5).r,
       child: PreferenceBuilder(
           preference: getIt<StreamingSharedPreferences>().getInt(
             'theme',

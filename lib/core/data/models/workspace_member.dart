@@ -10,13 +10,13 @@ class WorkspaceMember extends Equatable {
   final User user;
   final DateTime? createdDate;
   final DateTime? updatedDate;
-  final WorkspaceRole? workspaceRole;
+  final WorkspaceRole? role;
 
   const WorkspaceMember({
     required this.user,
     this.createdDate,
     this.updatedDate,
-    this.workspaceRole,
+    this.role,
   });
 
   factory WorkspaceMember.fromJson(Map<String, dynamic> json) =>
@@ -29,6 +29,6 @@ class WorkspaceMember extends Equatable {
         user,
         createdDate,
         updatedDate,
-        workspaceRole,
+        role,
       ];
 }

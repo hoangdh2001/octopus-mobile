@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/octopus.dart';
@@ -90,21 +91,11 @@ class _MainPageState extends State<MainPage> {
             splashColor: Colors.transparent,
             onPressed: () {
               final workspace = OctopusWorkspace.of(context).workspace;
-              showDialog(
+              showCupertinoModalBottomSheet(
                 context: context,
-                useSafeArea: true,
                 builder: (context) {
-                  return Dialog(
-                    clipBehavior: Clip.antiAlias,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(20),
-                      ),
-                    ),
-                    insetPadding: const EdgeInsets.all(16),
-                    child: WorkspaceSetting(
-                      workspace: workspace,
-                    ),
+                  return WorkspaceSetting(
+                    workspace: workspace,
                   );
                 },
               );
