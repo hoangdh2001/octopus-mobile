@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:octopus/core/data/models/add_group_request.dart';
 import 'package:octopus/core/data/models/add_members_with_email.dart';
+import 'package:octopus/core/data/models/add_role_request.dart';
 import 'package:octopus/core/data/models/add_task_request.dart';
 import 'package:octopus/core/data/models/create_project_request.dart';
 import 'package:octopus/core/data/models/create_space_request.dart';
@@ -8,6 +10,7 @@ import 'package:octopus/core/data/models/get_task_response.dart';
 import 'package:octopus/core/data/models/project_state.dart';
 import 'package:octopus/core/data/models/task.dart';
 import 'package:octopus/core/data/models/user.dart';
+import 'package:octopus/core/data/models/workspace_member.dart';
 import 'package:octopus/core/data/models/workspace_state.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -86,8 +89,16 @@ abstract class WorkspaceService {
   );
 
   @POST('/workspaces/{id}/members')
-  Future<List<User>> addMembers(
+  Future<WorkspaceMember> addMembers(
     @Path('id') String id,
     @Body() AddMemberWithEmail addMemberWithEmail,
   );
+
+  @POST('/workspaces/{id}/groups')
+  Future<WorkspaceState> addGroup(
+      @Path('id') String id, @Body() AddGroupRequest request);
+
+  @POST('/workspaces/{id}/roles')
+  Future<WorkspaceState> addRole(
+      @Path('id') String id, @Body() AddRoleRequest request);
 }

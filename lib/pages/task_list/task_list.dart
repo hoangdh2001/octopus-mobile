@@ -260,7 +260,8 @@ class _TaskListPageState extends State<TaskListPage> {
                               final assignees = workspace
                                   .state!.workspaceState.members
                                   ?.where((member) =>
-                                      task.assignees?.contains(member.id) ??
+                                      task.assignees
+                                          ?.contains(member.user.id) ??
                                       false)
                                   .toList();
                               return Stack(
@@ -273,7 +274,7 @@ class _TaskListPageState extends State<TaskListPage> {
                                     return Positioned(
                                       right: index * 20,
                                       child: UserAvatar(
-                                        user: user,
+                                        user: user.user,
                                         showOnlineStatus: false,
                                       ),
                                     );

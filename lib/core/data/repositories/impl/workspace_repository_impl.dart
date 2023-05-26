@@ -14,6 +14,7 @@ import 'package:octopus/core/data/models/filter.dart';
 import 'package:octopus/core/data/models/task.dart';
 import 'package:octopus/core/data/models/task_status.dart';
 import 'package:octopus/core/data/models/user.dart';
+import 'package:octopus/core/data/models/workspace_member.dart';
 import 'package:octopus/core/data/models/workspace_state.dart';
 import 'package:octopus/core/data/networks/services/workspace_service.dart';
 import 'package:octopus/core/data/repositories/workspace_repository.dart';
@@ -177,9 +178,10 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
   }
 
   @override
-  Future<User> addMember(String workspaceID, String email) async {
+  Future<WorkspaceMember> addMember(
+      String workspaceID, String email, String role) async {
     final user = await _workspaceService.addMembers(
-        workspaceID, AddMemberWithEmail(email: email));
-    return user.first;
+        workspaceID, AddMemberWithEmail(email: email, role: role));
+    return user;
   }
 }

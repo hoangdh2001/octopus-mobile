@@ -291,7 +291,8 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                                   final assignees = workspace
                                       .state!.workspaceState.members
                                       ?.where((member) =>
-                                          task.assignees?.contains(member.id) ??
+                                          task.assignees
+                                              ?.contains(member.user.id) ??
                                           false)
                                       .toList();
                                   return Row(
@@ -332,7 +333,9 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                                                         ),
                                                       );
                                                     },
-                                                    users: assignees,
+                                                    users: assignees
+                                                        .map((e) => e.user)
+                                                        .toList(),
                                                   ),
                                                 );
                                               },
@@ -351,7 +354,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                                                       return Positioned(
                                                         right: index * 20,
                                                         child: UserAvatar(
-                                                          user: user,
+                                                          user: user.user,
                                                           showOnlineStatus:
                                                               false,
                                                         ),

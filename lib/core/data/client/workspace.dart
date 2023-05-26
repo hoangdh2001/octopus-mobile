@@ -9,6 +9,8 @@ import 'package:octopus/core/data/models/setting.dart';
 import 'package:octopus/core/data/models/task.dart';
 import 'package:octopus/core/data/models/task_status.dart';
 import 'package:octopus/core/data/models/user.dart';
+import 'package:octopus/core/data/models/workspace_member.dart';
+import 'package:octopus/core/data/models/workspace_role.dart';
 import 'package:octopus/core/data/models/workspace_state.dart';
 import 'package:octopus/core/data/repositories/workspace_repository.dart';
 import 'package:rxdart/rxdart.dart';
@@ -144,9 +146,9 @@ class Workspace {
     state?.updateProject(project);
   }
 
-  Future<void> addMember(String email) async {
+  Future<void> addMember(String email, WorkspaceRole role) async {
     _checkInitialized();
-    final user = await _workspaceRepository.addMember(id!, email);
+    final user = await _workspaceRepository.addMember(id!, email, role.id);
     state?.updateMember(user);
   }
 
@@ -248,9 +250,9 @@ class WorkspaceClientState {
     return projects;
   }
 
-  void updateMember(User user) {
-    final newMembers = [..._workspaceState.members ?? <User>[]];
-    final oldIndex = newMembers.indexWhere((p) => p.id == user.id);
+  void updateMember(WorkspaceMember user) {
+    final newMembers = [..._workspaceState.members ?? <WorkspaceMember>[]];
+    final oldIndex = newMembers.indexWhere((p) => p.user.id == user.user.id);
     if (oldIndex != -1) {
       newMembers[oldIndex] = user;
     } else {

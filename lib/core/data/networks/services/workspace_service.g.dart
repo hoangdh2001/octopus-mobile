@@ -423,7 +423,7 @@ class _WorkspaceService implements WorkspaceService {
   }
 
   @override
-  Future<List<User>> addMembers(
+  Future<WorkspaceMember> addMembers(
     String id,
     AddMemberWithEmail addMemberWithEmail,
   ) async {
@@ -432,8 +432,8 @@ class _WorkspaceService implements WorkspaceService {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(addMemberWithEmail.toJson());
-    final _result =
-        await _dio.fetch<List<dynamic>>(_setStreamType<List<User>>(Options(
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<WorkspaceMember>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -445,9 +445,61 @@ class _WorkspaceService implements WorkspaceService {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    var value = _result.data!
-        .map((dynamic i) => User.fromJson(i as Map<String, dynamic>))
-        .toList();
+    final value = WorkspaceMember.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<WorkspaceState> addGroup(
+    String id,
+    AddGroupRequest request,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<WorkspaceState>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/workspaces/${id}/groups',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = WorkspaceState.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<WorkspaceState> addRole(
+    String id,
+    AddRoleRequest request,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<WorkspaceState>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/workspaces/${id}/roles',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = WorkspaceState.fromJson(_result.data!);
     return value;
   }
 

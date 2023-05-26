@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:octopus/core/data/models/project_state.dart';
-import 'package:octopus/core/data/models/user.dart';
+import 'package:octopus/core/data/models/workspace_member.dart';
 
 part 'workspace_state.g.dart';
 
@@ -16,7 +16,7 @@ class WorkspaceState extends Equatable {
   final DateTime? updatedAt;
   final DateTime? deletedAt;
   final List<ProjectState>? projects;
-  final List<User>? members;
+  final List<WorkspaceMember>? members;
 
   const WorkspaceState({
     required this.id,
@@ -44,7 +44,7 @@ class WorkspaceState extends Equatable {
     DateTime? updatedAt,
     DateTime? deletedAt,
     List<ProjectState>? projects,
-    List<User>? members,
+    List<WorkspaceMember>? members,
   }) =>
       WorkspaceState(
         id: id ?? this.id,

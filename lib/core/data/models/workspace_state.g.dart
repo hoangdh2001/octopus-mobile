@@ -25,7 +25,7 @@ WorkspaceState _$WorkspaceStateFromJson(Map<String, dynamic> json) =>
           ?.map((e) => ProjectState.fromJson(e as Map<String, dynamic>))
           .toList(),
       members: (json['members'] as List<dynamic>?)
-          ?.map((e) => User.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => WorkspaceMember.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 

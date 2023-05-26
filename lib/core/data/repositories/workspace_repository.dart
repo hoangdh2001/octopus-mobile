@@ -7,6 +7,7 @@ import 'package:octopus/core/data/models/sort_option.dart';
 import 'package:octopus/core/data/models/task.dart';
 import 'package:octopus/core/data/models/task_status.dart';
 import 'package:octopus/core/data/models/user.dart';
+import 'package:octopus/core/data/models/workspace_member.dart';
 import 'package:octopus/core/data/models/workspace_state.dart';
 
 abstract class WorkspaceRepository {
@@ -63,5 +64,6 @@ abstract class WorkspaceRepository {
   Future<ProjectState> deleteSpace(
       String workspaceID, String projectID, String spaceID);
 
-  Future<User> addMember(String workspaceID, String email);
+  Future<WorkspaceMember> addMember(
+      String workspaceID, String email, String role);
 }

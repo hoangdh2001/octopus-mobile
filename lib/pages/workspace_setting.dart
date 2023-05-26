@@ -118,8 +118,8 @@ class _WorkspaceSettingState extends State<WorkspaceSetting> {
                           (index) {
                             return UserListTile(
                               visualDensity: VisualDensity.compact,
-                              user: data.members![index],
-                              subtitle: Text(data.members![index].email),
+                              user: data.members![index].user,
+                              subtitle: Text(data.members![index].user.email),
                               showSubtitle: true,
                               shape: RoundedRectangleBorder(
                                 borderRadius:
