@@ -94,7 +94,7 @@ class _MainPageState extends State<MainPage> {
               showCupertinoModalBottomSheet(
                 context: context,
                 builder: (context) {
-                  return WorkspaceSetting(
+                  return WorkspaceSettingPage(
                     workspace: workspace,
                   );
                 },

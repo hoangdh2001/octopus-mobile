@@ -27,6 +27,12 @@ WorkspaceState _$WorkspaceStateFromJson(Map<String, dynamic> json) =>
       members: (json['members'] as List<dynamic>?)
           ?.map((e) => WorkspaceMember.fromJson(e as Map<String, dynamic>))
           .toList(),
+      workspaceRoles: (json['workspaceRoles'] as List<dynamic>?)
+          ?.map((e) => WorkspaceRole.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      workspaceGroups: (json['workspaceGroups'] as List<dynamic>?)
+          ?.map((e) => WorkspaceGroup.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$WorkspaceStateToJson(WorkspaceState instance) =>
@@ -40,4 +46,6 @@ Map<String, dynamic> _$WorkspaceStateToJson(WorkspaceState instance) =>
       'deletedAt': instance.deletedAt?.toIso8601String(),
       'projects': instance.projects,
       'members': instance.members,
+      'workspaceRoles': instance.workspaceRoles,
+      'workspaceGroups': instance.workspaceGroups,
     };
