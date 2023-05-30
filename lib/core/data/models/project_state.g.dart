@@ -23,6 +23,10 @@ ProjectState _$ProjectStateFromJson(Map<String, dynamic> json) => ProjectState(
           ?.map((e) => SpaceState.fromJson(e as Map<String, dynamic>))
           .toList(),
       setting: Setting.fromJson(json['setting'] as Map<String, dynamic>),
+      workspaceAccess: json['workspaceAccess'] as bool?,
+      members: (json['members'] as List<dynamic>?)
+          ?.map((e) => ProjectMember.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$ProjectStateToJson(ProjectState instance) =>
@@ -34,5 +38,7 @@ Map<String, dynamic> _$ProjectStateToJson(ProjectState instance) =>
       'deletedDate': instance.deletedDate?.toIso8601String(),
       'spaces': instance.spaces,
       'setting': instance.setting,
+      'members': instance.members,
+      'workspaceAccess': instance.workspaceAccess,
       'createdDate': instance.createdDate.toIso8601String(),
     };

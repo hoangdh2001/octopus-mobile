@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:octopus/core/data/models/project_member.dart';
 import 'package:octopus/core/data/models/setting.dart';
 import 'package:octopus/core/data/models/space_state.dart';
 part 'project_state.g.dart';
@@ -14,6 +15,8 @@ class ProjectState extends Equatable {
   final DateTime? deletedDate;
   final List<SpaceState>? spaces;
   final Setting setting;
+  final List<ProjectMember> members;
+  final bool workspaceAccess;
 
   const ProjectState({
     required this.id,
@@ -24,7 +27,11 @@ class ProjectState extends Equatable {
     this.deletedDate,
     this.spaces,
     required this.setting,
-  }) : _createdDate = createdDate;
+    bool? workspaceAccess,
+    List<ProjectMember>? members,
+  })  : _createdDate = createdDate,
+        members = members ?? const [],
+        workspaceAccess = workspaceAccess ?? false;
 
   DateTime get createdDate => _createdDate ?? DateTime.now();
 
@@ -42,6 +49,7 @@ class ProjectState extends Equatable {
     DateTime? deletedDate,
     List<SpaceState>? spaces,
     Setting? setting,
+    List<ProjectMember>? members,
   }) =>
       ProjectState(
         id: id ?? this.id,
@@ -52,6 +60,7 @@ class ProjectState extends Equatable {
         deletedDate: deletedDate ?? this.deletedDate,
         spaces: spaces ?? this.spaces,
         setting: setting ?? this.setting,
+        members: members ?? this.members,
       );
 
   @override
@@ -64,5 +73,7 @@ class ProjectState extends Equatable {
         deletedDate,
         spaces,
         setting,
+        members,
+        workspaceAccess,
       ];
 }

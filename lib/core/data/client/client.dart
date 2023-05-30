@@ -602,6 +602,8 @@ class ClientState {
 
     _listenChannelHidden();
 
+    _listenMemberRemove();
+
     // _listenUserUpdated();
 
     // _listenAllChannelsRead();
@@ -686,8 +688,23 @@ class ClientState {
         EventType.notificationChannelDeleted,
       )
           .listen((Event event) async {
-        final eventChannel = event.channel!.channel!;
-        channels[eventChannel.id]?.dispose();
+        final eventChannel = event.channelID;
+        channels[eventChannel]?.dispose();
+        channels = channels..remove(eventChannel);
+      }),
+    );
+  }
+
+  void _listenMemberRemove() {
+    _eventsSubscription?.add(
+      _client.on(EventType.memberRemoved).listen((event) async {
+        final eventChannel = event.channelID!;
+        final eventUser = event.user;
+        final me = currentUser!.id == eventUser!.id;
+        if (me) {
+          channels[eventChannel]?.dispose();
+          removeChannel(eventChannel);
+        }
       }),
     );
   }

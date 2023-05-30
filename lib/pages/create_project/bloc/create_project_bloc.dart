@@ -69,7 +69,7 @@ class CreateProjectBloc extends Bloc<CreateProjectEvent, CreateProjectState> {
       final workspace = await _workspace.createProject(
         state.name,
         state.statusList,
-        state.workspaceAccess && state.users.length <= 2
+        state.workspaceAccess || state.users.length <= 2
             ? false
             : state.createChannelForProject,
         state.workspaceAccess,

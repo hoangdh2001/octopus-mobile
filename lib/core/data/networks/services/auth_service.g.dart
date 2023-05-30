@@ -19,7 +19,7 @@ class _AuthService implements AuthService {
   String? baseUrl;
 
   @override
-  Future<VerifyEmail> sendEmail(VerifyEmailRequest email) async {
+  Future<VerifyEmail> sendEmail(email) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -43,7 +43,7 @@ class _AuthService implements AuthService {
   }
 
   @override
-  Future<Token> login(LoginRequest loginRequest) async {
+  Future<Token> login(loginRequest) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -67,7 +67,7 @@ class _AuthService implements AuthService {
   }
 
   @override
-  Future<User> signup(SignUpRequest signUpRequest) async {
+  Future<User> signup(signUpRequest) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};

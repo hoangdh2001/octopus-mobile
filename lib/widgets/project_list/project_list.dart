@@ -1,12 +1,17 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart' hide ExpansionTile;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/data/client/project.dart';
+import 'package:octopus/core/data/models/enums/project_role.dart';
+import 'package:octopus/core/data/models/enums/workspace_own_capability.dart';
 import 'package:octopus/core/data/models/project_state.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/core/ui/better_stream_builder.dart';
+import 'package:octopus/octopus.dart';
 import 'package:octopus/octopus_workspace.dart';
 import 'package:octopus/pages/create_list/create_list_page.dart';
 import 'package:octopus/pages/task_list/task_list.dart';
@@ -76,7 +81,40 @@ class ProjectList extends StatelessWidget {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        showListModal(context, project);
+                        final workspace =
+                            OctopusWorkspace.of(context).workspace;
+                        final currentUser =
+                            Octopus.of(context).client.state.currentUser;
+                        final currentMember = project
+                            .state!.projectState.members
+                            .firstWhereOrNull(
+                                (member) => member.user.id == currentUser!.id);
+                        final currentMember2 = workspace
+                            .state!.workspaceState.members
+                            ?.firstWhereOrNull(
+                          (member) => member.user.id == currentUser!.id,
+                        );
+                        if (currentMember != null &&
+                                (currentMember.role == ProjectRole.OWNER ||
+                                    currentMember.role == ProjectRole.MEMBER) &&
+                                (currentMember2!.role?.ownCapabilities
+                                        ?.contains(WorkspaceOwnCapability
+                                            .createList) ??
+                                    false) ||
+                            (currentMember2!.role?.ownCapabilities?.contains(
+                                    WorkspaceOwnCapability.allCapabilities) ??
+                                false)) {
+                          showListModal(context, project);
+                        } else {
+                          Fluttertoast.showToast(
+                              msg: "You don't have permission to access",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.black87,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                        }
                       },
                       child: SvgPicture.asset(
                         'assets/icons/plus.svg',
@@ -113,10 +151,42 @@ class ProjectList extends StatelessWidget {
                     ),
                   ),
                   onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, Routes.TASK_LIST,
-                        arguments: TaskListPageArgs(
-                            spaces: [space], project: project));
+                    final workspace = OctopusWorkspace.of(context).workspace;
+                    final currentUser =
+                        Octopus.of(context).client.state.currentUser;
+                    final currentMember = project.state!.projectState.members
+                        .firstWhereOrNull(
+                            (member) => member.user.id == currentUser!.id);
+                    final currentMember2 = workspace
+                        .state!.workspaceState.members
+                        ?.firstWhereOrNull(
+                      (member) => member.user.id == currentUser!.id,
+                    );
+                    if (currentMember != null &&
+                        ((currentMember.role == ProjectRole.OWNER ||
+                                currentMember.role == ProjectRole.MEMBER ||
+                                currentMember.role == ProjectRole.VIEWER) ||
+                            (currentMember2!.role?.ownCapabilities?.contains(
+                                    WorkspaceOwnCapability.viewOtherProject) ??
+                                false) ||
+                            (currentMember2.role?.ownCapabilities?.contains(
+                                    WorkspaceOwnCapability.allCapabilities) ??
+                                false) ||
+                            project.state!.projectState.workspaceAccess)) {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, Routes.TASK_LIST,
+                          arguments: TaskListPageArgs(
+                              spaces: [space], project: project));
+                    } else {
+                      Fluttertoast.showToast(
+                          msg: "You don't have permission to access",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.black87,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+                    }
                   },
                   horizontalTitleGap: 0,
                   contentPadding: const EdgeInsets.only(left: 50).r,

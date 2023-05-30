@@ -19,7 +19,7 @@ class _UserService implements UserService {
   String? baseUrl;
 
   @override
-  Future<List<User>> getUsers(String payload) async {
+  Future<List<User>> getUsers(payload) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'payload': payload};
     final _headers = <String, dynamic>{};
@@ -44,7 +44,7 @@ class _UserService implements UserService {
   }
 
   @override
-  Future<User> getUserByID(String id) async {
+  Future<User> getUserByID(id) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -67,7 +67,7 @@ class _UserService implements UserService {
   }
 
   @override
-  Future<List<Device>> getDevices(String id) async {
+  Future<List<Device>> getDevices(id) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -93,8 +93,8 @@ class _UserService implements UserService {
 
   @override
   Future<EmptyResponse> addDevice(
-    String id,
-    Device device,
+    id,
+    device,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -120,8 +120,8 @@ class _UserService implements UserService {
 
   @override
   Future<EmptyResponse> removeDevice(
-    String id,
-    String deviceID,
+    id,
+    deviceID,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'id': deviceID};

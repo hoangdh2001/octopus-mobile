@@ -52,95 +52,77 @@ class _AddRolesState extends State<AddRoles> {
         centerTitle: true,
         backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text.rich(
-                style: OctopusTheme.of(context).textTheme.primaryGreyBodyBold,
-                const TextSpan(
-                  children: [
-                    TextSpan(text: "Role name"),
-                    TextSpan(text: " (*)", style: TextStyle(color: Colors.red))
-                  ],
+      body: Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text.rich(
+                  style: OctopusTheme.of(context).textTheme.primaryGreyBodyBold,
+                  const TextSpan(
+                    children: [
+                      TextSpan(text: "Role name"),
+                      TextSpan(
+                          text: " (*)", style: TextStyle(color: Colors.red))
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                child: TextField(
-                  controller: _controller,
-                  decoration: InputDecoration(
-                    hintText: 'Enter role name',
-                    hintStyle: OctopusTheme.of(context).textTheme.hint,
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(
-                        width: 2,
-                        color: OctopusTheme.of(context).colorTheme.brandPrimary,
+                const SizedBox(height: 10),
+                SizedBox(
+                  child: TextField(
+                    controller: _controller,
+                    decoration: InputDecoration(
+                      hintText: 'Enter role name',
+                      hintStyle: OctopusTheme.of(context).textTheme.hint,
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          width: 2,
+                          color:
+                              OctopusTheme.of(context).colorTheme.brandPrimary,
+                        ),
                       ),
                     ),
+                    autofocus: true,
+                    cursorColor:
+                        OctopusTheme.of(context).colorTheme.brandPrimary,
+                    enableSuggestions: true,
+                    autocorrect: false,
+                    style: OctopusTheme.of(context).textTheme.primaryGreyBody,
+                    onChanged: (value) {},
                   ),
-                  autofocus: true,
-                  cursorColor: OctopusTheme.of(context).colorTheme.brandPrimary,
-                  enableSuggestions: true,
-                  autocorrect: false,
-                  style: OctopusTheme.of(context).textTheme.primaryGreyBody,
-                  onChanged: (value) {},
                 ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Text(
-                'Role settings',
-                style: OctopusTheme.of(context).textTheme.primaryGreyBodyBold,
-              ),
-              CheckboxListTile(
-                value: ownCapabilities
-                    .contains(WorkspaceOwnCapability.allCapabilities),
-                onChanged: (value) {
-                  setState(() {
-                    if (value ?? false) {
-                      ownCapabilities
-                          .add(WorkspaceOwnCapability.allCapabilities);
-                    } else {
-                      ownCapabilities
-                          .remove(WorkspaceOwnCapability.allCapabilities);
-                      ownCapabilities
-                          .remove(WorkspaceOwnCapability.createProject);
-                      ownCapabilities.remove(WorkspaceOwnCapability.addMember);
-                    }
-                  });
-                },
-                title: Text('Admintrator',
-                    style: OctopusTheme.of(context).textTheme.primaryGreyBody),
-                controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.zero,
-                visualDensity: VisualDensity.compact,
-                dense: true,
-                activeColor: OctopusTheme.of(context).colorTheme.brandPrimary,
-              ),
-              if (!ownCapabilities
-                  .contains(WorkspaceOwnCapability.allCapabilities))
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'Role settings',
+                  style: OctopusTheme.of(context).textTheme.primaryGreyBodyBold,
+                ),
                 CheckboxListTile(
                   value: ownCapabilities
-                      .contains(WorkspaceOwnCapability.createProject),
+                      .contains(WorkspaceOwnCapability.allCapabilities),
                   onChanged: (value) {
                     setState(() {
                       if (value ?? false) {
                         ownCapabilities
-                            .add(WorkspaceOwnCapability.createProject);
+                            .add(WorkspaceOwnCapability.allCapabilities);
                       } else {
                         ownCapabilities
+                            .remove(WorkspaceOwnCapability.allCapabilities);
+                        ownCapabilities
                             .remove(WorkspaceOwnCapability.createProject);
+                        ownCapabilities
+                            .remove(WorkspaceOwnCapability.addMember);
                       }
                     });
                   },
-                  title: Text('Can create project',
+                  title: Text('Admintrator',
                       style:
                           OctopusTheme.of(context).textTheme.primaryGreyBody),
                   controlAffinity: ListTileControlAffinity.leading,
@@ -149,21 +131,143 @@ class _AddRolesState extends State<AddRoles> {
                   dense: true,
                   activeColor: OctopusTheme.of(context).colorTheme.brandPrimary,
                 ),
-              if (!ownCapabilities
-                  .contains(WorkspaceOwnCapability.allCapabilities))
+                if (!ownCapabilities
+                    .contains(WorkspaceOwnCapability.allCapabilities))
+                  CheckboxListTile(
+                    value: ownCapabilities
+                        .contains(WorkspaceOwnCapability.createProject),
+                    onChanged: (value) {
+                      setState(() {
+                        if (value ?? false) {
+                          ownCapabilities
+                              .add(WorkspaceOwnCapability.createProject);
+                        } else {
+                          ownCapabilities
+                              .remove(WorkspaceOwnCapability.createProject);
+                        }
+                      });
+                    },
+                    title: Text('Can create project',
+                        style:
+                            OctopusTheme.of(context).textTheme.primaryGreyBody),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                    visualDensity: VisualDensity.compact,
+                    dense: true,
+                    activeColor:
+                        OctopusTheme.of(context).colorTheme.brandPrimary,
+                  ),
+                if (!ownCapabilities
+                    .contains(WorkspaceOwnCapability.allCapabilities))
+                  CheckboxListTile(
+                    value: ownCapabilities
+                        .contains(WorkspaceOwnCapability.addMember),
+                    onChanged: (value) {
+                      setState(() {
+                        if (value ?? false) {
+                          ownCapabilities.add(WorkspaceOwnCapability.addMember);
+                        } else {
+                          ownCapabilities
+                              .remove(WorkspaceOwnCapability.addMember);
+                        }
+                      });
+                    },
+                    title: Text('Can add member',
+                        style:
+                            OctopusTheme.of(context).textTheme.primaryGreyBody),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                    visualDensity: VisualDensity.compact,
+                    dense: true,
+                    activeColor:
+                        OctopusTheme.of(context).colorTheme.brandPrimary,
+                  ),
+                if (!ownCapabilities
+                    .contains(WorkspaceOwnCapability.allCapabilities))
+                  CheckboxListTile(
+                    value: ownCapabilities
+                        .contains(WorkspaceOwnCapability.addMember),
+                    onChanged: (value) {
+                      setState(() {
+                        if (value ?? false) {
+                          ownCapabilities
+                              .add(WorkspaceOwnCapability.viewOtherProject);
+                        } else {
+                          ownCapabilities
+                              .remove(WorkspaceOwnCapability.viewOtherProject);
+                        }
+                      });
+                    },
+                    title: Text('Can view other project',
+                        style:
+                            OctopusTheme.of(context).textTheme.primaryGreyBody),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                    visualDensity: VisualDensity.compact,
+                    dense: true,
+                    activeColor:
+                        OctopusTheme.of(context).colorTheme.brandPrimary,
+                  ),
+                if (!ownCapabilities
+                    .contains(WorkspaceOwnCapability.allCapabilities))
+                  CheckboxListTile(
+                    value: ownCapabilities
+                        .contains(WorkspaceOwnCapability.addMember),
+                    onChanged: (value) {
+                      setState(() {
+                        if (value ?? false) {
+                          ownCapabilities
+                              .add(WorkspaceOwnCapability.createList);
+                        } else {
+                          ownCapabilities
+                              .remove(WorkspaceOwnCapability.createList);
+                        }
+                      });
+                    },
+                    title: Text('Can create list',
+                        style:
+                            OctopusTheme.of(context).textTheme.primaryGreyBody),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                    visualDensity: VisualDensity.compact,
+                    dense: true,
+                    activeColor:
+                        OctopusTheme.of(context).colorTheme.brandPrimary,
+                  ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'Channel settings default',
+                  style: OctopusTheme.of(context).textTheme.primaryGreyBodyBold,
+                ),
                 CheckboxListTile(
-                  value: ownCapabilities
-                      .contains(WorkspaceOwnCapability.addMember),
-                  onChanged: (value) {
-                    setState(() {
-                      if (value ?? false) {
-                        ownCapabilities.add(WorkspaceOwnCapability.addMember);
-                      } else {
-                        ownCapabilities
-                            .remove(WorkspaceOwnCapability.addMember);
-                      }
-                    });
-                  },
+                  value: true,
+                  onChanged: (value) {},
+                  title: Text('Can send message',
+                      style:
+                          OctopusTheme.of(context).textTheme.primaryGreyBody),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
+                  dense: true,
+                  activeColor: OctopusTheme.of(context).colorTheme.brandPrimary,
+                ),
+                CheckboxListTile(
+                  value: true,
+                  onChanged: (value) {},
+                  title: Text('Can send photo, video, file, voice message',
+                      style:
+                          OctopusTheme.of(context).textTheme.primaryGreyBody),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
+                  dense: true,
+                  activeColor: OctopusTheme.of(context).colorTheme.brandPrimary,
+                ),
+                CheckboxListTile(
+                  value: true,
+                  onChanged: (value) {},
                   title: Text('Can add member',
                       style:
                           OctopusTheme.of(context).textTheme.primaryGreyBody),
@@ -173,132 +277,100 @@ class _AddRolesState extends State<AddRoles> {
                   dense: true,
                   activeColor: OctopusTheme.of(context).colorTheme.brandPrimary,
                 ),
-              Text(
-                'Channel settings',
-                style: OctopusTheme.of(context).textTheme.primaryGreyBodyBold,
-              ),
-              CheckboxListTile(
-                value: true,
-                onChanged: (value) {},
-                title: Text('Can send message',
-                    style: OctopusTheme.of(context).textTheme.primaryGreyBody),
-                controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.zero,
-                visualDensity: VisualDensity.compact,
-                dense: true,
-                activeColor: OctopusTheme.of(context).colorTheme.brandPrimary,
-              ),
-              CheckboxListTile(
-                value: true,
-                onChanged: (value) {},
-                title: Text('Can send photo, video, file, voice message',
-                    style: OctopusTheme.of(context).textTheme.primaryGreyBody),
-                controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.zero,
-                visualDensity: VisualDensity.compact,
-                dense: true,
-                activeColor: OctopusTheme.of(context).colorTheme.brandPrimary,
-              ),
-              CheckboxListTile(
-                value: true,
-                onChanged: (value) {},
-                title: Text('Can add member',
-                    style: OctopusTheme.of(context).textTheme.primaryGreyBody),
-                controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.zero,
-                visualDensity: VisualDensity.compact,
-                dense: true,
-                activeColor: OctopusTheme.of(context).colorTheme.brandPrimary,
-              ),
-              CheckboxListTile(
-                value: true,
-                onChanged: (value) {},
-                title: Text('Can delete messages',
-                    style: OctopusTheme.of(context).textTheme.primaryGreyBody),
-                controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.zero,
-                visualDensity: VisualDensity.compact,
-                dense: true,
-                activeColor: OctopusTheme.of(context).colorTheme.brandPrimary,
-              ),
-              CheckboxListTile(
-                value: true,
-                onChanged: (value) {},
-                title: Text('Can pin messages',
-                    style: OctopusTheme.of(context).textTheme.primaryGreyBody),
-                controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.zero,
-                visualDensity: VisualDensity.compact,
-                dense: true,
-                activeColor: OctopusTheme.of(context).colorTheme.brandPrimary,
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Text(
-                'Description',
-                style: OctopusTheme.of(context).textTheme.primaryGreyBodyBold,
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                child: TextField(
-                  controller: _descriptionController,
-                  decoration: InputDecoration(
-                    hintText: 'Enter description will appear in group list',
-                    hintStyle: OctopusTheme.of(context).textTheme.hint,
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(
-                        width: 2,
-                        color: OctopusTheme.of(context).colorTheme.brandPrimary,
+                CheckboxListTile(
+                  value: true,
+                  onChanged: (value) {},
+                  title: Text('Can delete messages',
+                      style:
+                          OctopusTheme.of(context).textTheme.primaryGreyBody),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
+                  dense: true,
+                  activeColor: OctopusTheme.of(context).colorTheme.brandPrimary,
+                ),
+                CheckboxListTile(
+                  value: true,
+                  onChanged: (value) {},
+                  title: Text('Can pin messages',
+                      style:
+                          OctopusTheme.of(context).textTheme.primaryGreyBody),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
+                  dense: true,
+                  activeColor: OctopusTheme.of(context).colorTheme.brandPrimary,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'Description',
+                  style: OctopusTheme.of(context).textTheme.primaryGreyBodyBold,
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  child: TextField(
+                    controller: _descriptionController,
+                    decoration: InputDecoration(
+                      hintText: 'Enter description will appear in group list',
+                      hintStyle: OctopusTheme.of(context).textTheme.hint,
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          width: 2,
+                          color:
+                              OctopusTheme.of(context).colorTheme.brandPrimary,
+                        ),
                       ),
                     ),
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    minLines: 3,
+                    autofocus: true,
+                    cursorColor:
+                        OctopusTheme.of(context).colorTheme.brandPrimary,
+                    enableSuggestions: true,
+                    autocorrect: false,
+                    style: OctopusTheme.of(context).textTheme.primaryGreyBody,
+                    onChanged: (value) {},
                   ),
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
-                  minLines: 3,
-                  autofocus: true,
-                  cursorColor: OctopusTheme.of(context).colorTheme.brandPrimary,
-                  enableSuggestions: true,
-                  autocorrect: false,
-                  style: OctopusTheme.of(context).textTheme.primaryGreyBody,
-                  onChanged: (value) {},
                 ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Container(
-                height: 40.h,
-                margin: const EdgeInsets.symmetric(vertical: 20),
-                child: TextButton(
-                  style:
-                      OctopusTheme.of(context).buttonTheme.brandPrimaryButton,
-                  onPressed: () {
-                    Octopus.of(context).showLoadingOverlay(context);
-                    workspace
-                        .addRole(_controller.text,
-                            description: _descriptionController.text,
-                            capabilities: ownCapabilities)
-                        .then((value) {
-                      Fluttertoast.showToast(
-                          msg: "Invite email successfully",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Colors.black87,
-                          textColor: Colors.white,
-                          fontSize: 16.0);
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pop();
-                    });
-                  },
-                  child: const Text('Add role'),
+                const SizedBox(
+                  height: 10,
                 ),
-              ),
-            ],
+                Container(
+                  height: 40.h,
+                  margin: const EdgeInsets.symmetric(vertical: 20),
+                  child: TextButton(
+                    style:
+                        OctopusTheme.of(context).buttonTheme.brandPrimaryButton,
+                    onPressed: () {
+                      Octopus.of(context).showLoadingOverlay(context);
+                      workspace
+                          .addRole(_controller.text,
+                              description: _descriptionController.text,
+                              capabilities: ownCapabilities)
+                          .then((value) {
+                        Fluttertoast.showToast(
+                            msg: "Invite email successfully",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.black87,
+                            textColor: Colors.white,
+                            fontSize: 16.0);
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                      });
+                    },
+                    child: const Text('Add role'),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

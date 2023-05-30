@@ -1,11 +1,15 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:collection/collection.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart' hide ExpansionTile;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:octopus/core/data/models/enums/project_role.dart';
+import 'package:octopus/core/data/models/enums/workspace_own_capability.dart';
 import 'package:octopus/core/data/models/task_status.dart';
 import 'package:octopus/core/extensions/extension_color.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
@@ -512,8 +516,48 @@ class _NewTaskPageState extends State<NewTaskPage> {
                                         ),
                                       ),
                                       onTap: () {
-                                        bloc.add(SelectList(project, space));
-                                        Navigator.pop(context);
+                                        final workspace =
+                                            OctopusWorkspace.of(context)
+                                                .workspace;
+                                        final currentUser = Octopus.of(context)
+                                            .client
+                                            .state
+                                            .currentUser;
+                                        final currentMember = project
+                                            .state!.projectState.members
+                                            .firstWhereOrNull((member) =>
+                                                member.user.id ==
+                                                currentUser!.id);
+                                        final currentMember2 = workspace
+                                            .state!.workspaceState.members
+                                            ?.firstWhereOrNull(
+                                          (member) =>
+                                              member.user.id == currentUser!.id,
+                                        );
+                                        if (currentMember != null &&
+                                            ((currentMember.role ==
+                                                        ProjectRole.OWNER ||
+                                                    currentMember.role ==
+                                                        ProjectRole.MEMBER) ||
+                                                (currentMember2!
+                                                        .role?.ownCapabilities
+                                                        ?.contains(
+                                                            WorkspaceOwnCapability
+                                                                .allCapabilities) ??
+                                                    false))) {
+                                          bloc.add(SelectList(project, space));
+                                          Navigator.pop(context);
+                                        } else {
+                                          Fluttertoast.showToast(
+                                              msg:
+                                                  "You don't have permission to access",
+                                              toastLength: Toast.LENGTH_SHORT,
+                                              gravity: ToastGravity.CENTER,
+                                              timeInSecForIosWeb: 1,
+                                              backgroundColor: Colors.black87,
+                                              textColor: Colors.white,
+                                              fontSize: 16.0);
+                                        }
                                       },
                                       horizontalTitleGap: 0,
                                       contentPadding:

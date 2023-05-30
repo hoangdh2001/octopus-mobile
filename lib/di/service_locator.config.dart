@@ -60,16 +60,16 @@ extension GetItInjectableX on _i1.GetIt {
     gh.singleton<_i5.FirebaseMessaging>(appModule.prepareFirebaseMessaging);
     gh.singleton<_i3.IOSOptions>(appModule.getIOSOptions());
     gh.singleton<_i6.Logger>(
+      networkModule.prepareAppLogger,
+      instanceName: 'app-logger',
+    );
+    gh.singleton<_i6.Logger>(
       networkModule.prepareLogger,
       instanceName: 'api-logger',
     );
     gh.singleton<_i6.Logger>(
       networkModule.prepareSocketLogger,
       instanceName: 'socket-logger',
-    );
-    gh.singleton<_i6.Logger>(
-      networkModule.prepareAppLogger,
-      instanceName: 'app-logger',
     );
     gh.singleton<_i7.SettingsSectionFactory>(_i7.SettingsSectionFactory());
     await gh.singletonAsync<_i8.SharedPreferences>(

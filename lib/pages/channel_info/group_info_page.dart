@@ -714,7 +714,6 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                   channel, Octopus.of(context).currentUser!.id);
               Navigator.pop(context);
               Navigator.pop(context);
-              Navigator.pop(context);
             }
           },
         ),

@@ -44,7 +44,7 @@ class _WorkspaceService implements WorkspaceService {
   }
 
   @override
-  Future<WorkspaceState> getWorkspaceByID(String id) async {
+  Future<WorkspaceState> getWorkspaceByID(id) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -67,7 +67,7 @@ class _WorkspaceService implements WorkspaceService {
   }
 
   @override
-  Future<List<WorkspaceState>> searchWorkspace(String payload) async {
+  Future<List<WorkspaceState>> searchWorkspace(payload) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{r'payload': payload};
     final _headers = <String, dynamic>{};
@@ -92,8 +92,7 @@ class _WorkspaceService implements WorkspaceService {
   }
 
   @override
-  Future<WorkspaceState> createWorkspace(
-      CreateWorkspaceRequest createWorkspaceRequest) async {
+  Future<WorkspaceState> createWorkspace(createWorkspaceRequest) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -143,8 +142,8 @@ class _WorkspaceService implements WorkspaceService {
 
   @override
   Future<WorkspaceState> createProject(
-    String id,
-    CreateProjectRequest project,
+    id,
+    project,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -170,9 +169,9 @@ class _WorkspaceService implements WorkspaceService {
 
   @override
   Future<ProjectState> createSpace(
-    String id,
-    String projectID,
-    CreateSpaceRequest project,
+    id,
+    projectID,
+    project,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -198,10 +197,10 @@ class _WorkspaceService implements WorkspaceService {
 
   @override
   Future<ProjectState> createTask(
-    String id,
-    String projectID,
-    String spaceID,
-    AddTaskRequest addTaskRequest,
+    id,
+    projectID,
+    spaceID,
+    addTaskRequest,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -227,9 +226,9 @@ class _WorkspaceService implements WorkspaceService {
 
   @override
   Future<ProjectState> updateTask(
-    String id,
-    String taskID,
-    Task data,
+    id,
+    taskID,
+    data,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -254,7 +253,7 @@ class _WorkspaceService implements WorkspaceService {
   }
 
   @override
-  Future<GetTaskResponse> getTodayTasks(String id) async {
+  Future<GetTaskResponse> getTodayTasks(id) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -277,7 +276,7 @@ class _WorkspaceService implements WorkspaceService {
   }
 
   @override
-  Future<GetTaskResponse> getTasksOverdue(String id) async {
+  Future<GetTaskResponse> getTasksOverdue(id) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -300,7 +299,7 @@ class _WorkspaceService implements WorkspaceService {
   }
 
   @override
-  Future<GetTaskResponse> getTasksNotDueDate(String id) async {
+  Future<GetTaskResponse> getTasksNotDueDate(id) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -323,7 +322,7 @@ class _WorkspaceService implements WorkspaceService {
   }
 
   @override
-  Future<GetTaskResponse> getTasksByDateInterm(String id) async {
+  Future<GetTaskResponse> getTasksByDateInterm(id) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -346,7 +345,7 @@ class _WorkspaceService implements WorkspaceService {
   }
 
   @override
-  Future<GetTaskResponse> getTaskDone(String id) async {
+  Future<GetTaskResponse> getTaskDone(id) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -370,9 +369,9 @@ class _WorkspaceService implements WorkspaceService {
 
   @override
   Future<ProjectState> deleteTask(
-    String id,
-    String projectID,
-    String taskID,
+    id,
+    projectID,
+    taskID,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -397,9 +396,9 @@ class _WorkspaceService implements WorkspaceService {
 
   @override
   Future<ProjectState> deleteSpace(
-    String id,
-    String projectID,
-    String spaceID,
+    id,
+    projectID,
+    spaceID,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -424,8 +423,8 @@ class _WorkspaceService implements WorkspaceService {
 
   @override
   Future<WorkspaceMember> addMembers(
-    String id,
-    AddMemberWithEmail addMemberWithEmail,
+    id,
+    addMemberWithEmail,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -451,8 +450,8 @@ class _WorkspaceService implements WorkspaceService {
 
   @override
   Future<WorkspaceState> addGroup(
-    String id,
-    AddGroupRequest request,
+    id,
+    request,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -478,8 +477,8 @@ class _WorkspaceService implements WorkspaceService {
 
   @override
   Future<WorkspaceState> addRole(
-    String id,
-    AddRoleRequest request,
+    id,
+    request,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
