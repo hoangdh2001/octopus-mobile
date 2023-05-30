@@ -2,7 +2,6 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:octopus/core/data/models/enums/verification_type.dart';
 import 'package:octopus/core/data/models/error.dart';
 import 'package:octopus/core/data/models/verify_email.dart';
 import 'package:octopus/core/data/repositories/auth_repository.dart';

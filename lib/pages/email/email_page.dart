@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/di/service_locator.dart';
 import 'package:octopus/pages/email/bloc/email_bloc.dart';
+import 'package:octopus/pages/verify/login_page.dart';
 import 'package:octopus/widgets/screen_header.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 
 class EmailPage extends StatefulWidget {
   const EmailPage({super.key});
@@ -27,7 +28,7 @@ class _EmailPageState extends State<EmailPage> {
         leading: IconButton(
           splashColor: Colors.transparent,
           onPressed: () {
-            context.pop();
+            Navigator.pop(context);
           },
           icon: SvgPicture.asset(
             'assets/icons/arrow-left.svg',
@@ -40,8 +41,13 @@ class _EmailPageState extends State<EmailPage> {
             listener: (context, state) {
               state.successOrFail.fold(() => null, (result) {
                 result.fold((verifyEmail) {
-                  context.push(
-                    '/login/verify?email=${verifyEmail.email}&type=${verifyEmail.verificationType.name}',
+                  Navigator.pushNamed(
+                    context,
+                    Routes.VERIFY_LOGIN,
+                    arguments: LoginPageArgs(
+                      email: verifyEmail.email,
+                      verificationType: verifyEmail.verificationType,
+                    ),
                   );
                 }, (error) => null);
               });

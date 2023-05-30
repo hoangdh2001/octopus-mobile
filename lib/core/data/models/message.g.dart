@@ -6,13 +6,15 @@ part of 'message.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$_Message _$$_MessageFromJson(Map<String, dynamic> json) => _$_Message(
-      id: json['_id'] as String,
+Message _$MessageFromJson(Map<String, dynamic> json) => Message(
+      id: json['_id'] as String?,
       updated: json['updated'] as bool?,
-      status: $enumDecodeNullable(_$MessageStatusEnumMap, json['status']),
-      text: json['text'] as String,
-      type: $enumDecodeNullable(_$MessageTypeEnumMap, json['type']),
-      channelId: json['channelId'] as String?,
+      channelID: json['channelID'] as String?,
+      status: $enumDecodeNullable(_$MessageStatusEnumMap, json['status']) ??
+          MessageStatus.sending,
+      text: json['text'] as String?,
+      type: $enumDecodeNullable(_$MessageTypeEnumMap, json['type']) ??
+          MessageType.normal,
       createdAt: json['createdAt'] == null
           ? null
           : DateTime.parse(json['createdAt'] as String),
@@ -23,29 +25,82 @@ _$_Message _$$_MessageFromJson(Map<String, dynamic> json) => _$_Message(
           ? null
           : User.fromJson(json['sender'] as Map<String, dynamic>),
       senderID: json['senderID'] as String?,
+      attachments: (json['attachments'] as List<dynamic>?)
+              ?.map((e) => Attachment.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
+      quotedMessage: json['quotedMessage'] == null
+          ? null
+          : Message.fromJson(json['quotedMessage'] as Map<String, dynamic>),
+      reactions: (json['reactions'] as List<dynamic>?)
+          ?.map((e) => Reaction.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      ownReactions: (json['ownReactions'] as List<dynamic>?)
+          ?.map((e) => Reaction.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      reactionCounts: (json['reactionCounts'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(k, e as int),
+      ),
+      deletedAt: json['deletedAt'] == null
+          ? null
+          : DateTime.parse(json['deletedAt'] as String),
+      ignoreUser: (json['ignoreUser'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      pinned: json['pinned'] as bool?,
+      pinnedBy: json['pinnedBy'] == null
+          ? null
+          : User.fromJson(json['pinnedBy'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$$_MessageToJson(_$_Message instance) =>
-    <String, dynamic>{
-      '_id': instance.id,
-      'updated': instance.updated,
-      'status': _$MessageStatusEnumMap[instance.status],
-      'text': instance.text,
-      'type': _$MessageTypeEnumMap[instance.type],
-      'channelId': instance.channelId,
-      'createdAt': instance.createdAt?.toIso8601String(),
-      'updatedAt': instance.updatedAt?.toIso8601String(),
-      'sender': instance.sender,
-      'senderID': instance.senderID,
-    };
+Map<String, dynamic> _$MessageToJson(Message instance) {
+  final val = <String, dynamic>{
+    '_id': instance.id,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('updated', instance.updated);
+  writeNotNull('channelID', instance.channelID);
+  writeNotNull('text', instance.text);
+  val['type'] = _$MessageTypeEnumMap[instance.type]!;
+  val['createdAt'] = instance.createdAt.toIso8601String();
+  val['updatedAt'] = instance.updatedAt.toIso8601String();
+  writeNotNull('sender', instance.sender);
+  writeNotNull('senderID', instance.senderID);
+  val['attachments'] = instance.attachments;
+  val['quotedMessage'] = instance.quotedMessage;
+  val['quotedMessageID'] = instance.quotedMessageID;
+  val['reactions'] = instance.reactions;
+  val['ownReactions'] = instance.ownReactions;
+  val['reactionCounts'] = instance.reactionCounts;
+  val['deletedAt'] = instance.deletedAt?.toIso8601String();
+  val['ignoreUser'] = instance.ignoreUser;
+  val['pinned'] = instance.pinned;
+  val['pinnedBy'] = instance.pinnedBy;
+  return val;
+}
 
 const _$MessageStatusEnumMap = {
-  MessageStatus.deleted: 'DELETED',
   MessageStatus.error: 'ERROR',
   MessageStatus.ready: 'READY',
+  MessageStatus.sending: 'sending',
+  MessageStatus.updating: 'updating',
+  MessageStatus.deleting: 'deleting',
 };
 
 const _$MessageTypeEnumMap = {
   MessageType.systemNotification: 'SYSTEM_NOTIFICATION',
+  MessageType.systemAddMember: 'SYSTEM_ADDED_MEMBER',
+  MessageType.systemMemberLeft: 'SYSTEM_MEMBER_LEFT',
+  MessageType.systemRemovedMember: 'SYSTEM_REMOVED_MEMBER',
+  MessageType.systemCreatedChannel: 'SYSTEM_CREATED_CHANNEL',
+  MessageType.systemChangedName: 'SYSTEM_CHANGED_NAME',
+  MessageType.systemChangedAvatar: 'SYSTEM_CHANGED_AVATAR',
   MessageType.normal: 'NORMAL',
+  MessageType.deleted: 'DELETED',
 };

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/pages/settings/bloc/settings_bloc.dart';
+import 'package:octopus/pages/settings/section/settingSection/cells/app_ver_cell.dart';
 import 'package:octopus/pages/settings/section/settingSection/cells/general_cell.dart';
 import 'package:octopus/pages/settings/section/settingSection/cells/logout_cell.dart';
+import 'package:octopus/pages/settings/section/settingSection/cells/theme_cell.dart';
 
 class SettingsSection extends StatelessWidget {
   const SettingsSection({super.key, required this.section});
@@ -14,8 +16,12 @@ class SettingsSection extends StatelessWidget {
     switch (section) {
       case SettingSection.general:
         return 'General';
+      case SettingSection.theme:
+        return 'Dark Mode';
       case SettingSection.logout:
         return null;
+      case SettingSection.appVer:
+        return 'More';
     }
   }
 
@@ -23,8 +29,12 @@ class SettingsSection extends StatelessWidget {
     switch (section) {
       case SettingSection.general:
         return [const GeneralCell()];
+      case SettingSection.theme:
+        return [const ThemeCell()];
       case SettingSection.logout:
         return [const LogoutCell()];
+      case SettingSection.appVer:
+        return [const AppVerCell()];
     }
   }
 

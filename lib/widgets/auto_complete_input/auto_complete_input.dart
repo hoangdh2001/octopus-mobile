@@ -1,6 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:octopus/core/data/models/message.dart';
+import 'package:octopus/widgets/message_input/message_input_controller.dart';
 
 class AutoCompleteInput extends StatefulWidget {
   const AutoCompleteInput({
@@ -59,6 +61,7 @@ class AutoCompleteInput extends StatefulWidget {
     this.autofillHints,
     this.restorationId,
     this.enableIMEPersonalizedLearning = true,
+    this.controller,
   })  : assert(obscuringCharacter.length == 1,
             '`obscuringCharacter.length` must be 1'),
         smartDashesType = smartDashesType ??
@@ -111,6 +114,8 @@ class AutoCompleteInput extends StatefulWidget {
                     selectAll: true,
                     paste: true,
                   ));
+
+  final MessageInputController? controller;
 
   final FocusNode? focusNode;
 
@@ -223,12 +228,59 @@ class AutoCompleteInput extends StatefulWidget {
   State<AutoCompleteInput> createState() => _AutoCompleteInputState();
 }
 
-class _AutoCompleteInputState extends State<AutoCompleteInput> {
+class _AutoCompleteInputState extends State<AutoCompleteInput>
+    with RestorationMixin<AutoCompleteInput> {
+  RestorableMessageInputController? _controller;
+
+  MessageInputController get _effectiveController =>
+      widget.controller ?? _controller!.value;
+
   @override
   String? get restorationId => widget.restorationId;
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.controller == null) {
+      _createLocalController();
+    }
+  }
+
+  void _createLocalController([Message? message]) {
+    assert(_controller == null, '');
+    _controller = RestorableMessageInputController(message: message);
+  }
+
+  @override
+  void didUpdateWidget(covariant AutoCompleteInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.controller == null && oldWidget.controller != null) {
+      _createLocalController(oldWidget.controller!.value);
+    } else if (widget.controller != null && oldWidget.controller == null) {
+      unregisterFromRestoration(_controller!);
+      _controller!.dispose();
+      _controller = null;
+    }
+  }
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    if (_controller != null) {
+      _registerController();
+    }
+  }
+
+  void _registerController() {
+    assert(_controller != null, '');
+    registerForRestoration(_controller!, restorationId ?? 'controller');
+  }
+
+  @override
   Widget build(BuildContext context) => TextField(
+        controller: _effectiveController.textEditingController,
+        onChanged: (newText) {
+          _effectiveController.text = newText;
+        },
         focusNode: widget.focusNode,
         decoration: widget.decoration,
         keyboardType: widget.keyboardType,
@@ -277,4 +329,10 @@ class _AutoCompleteInputState extends State<AutoCompleteInput> {
         restorationId: widget.restorationId,
         enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
       );
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
 }

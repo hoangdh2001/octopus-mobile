@@ -1,17 +1,27 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
+import 'package:octopus/core/config/routes.dart';
+import 'package:octopus/core/data/client/client.dart';
+import 'package:octopus/core/data/models/token.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/di/service_locator.dart';
+import 'package:octopus/pages/home_page.dart';
 import 'package:octopus/pages/sign_up/bloc/sign_up_bloc.dart';
 import 'package:octopus/widgets/screen_header.dart';
 
-class SignUpPage extends StatefulWidget {
-  const SignUpPage({super.key, required this.email});
+class SignUpPageArgs {
+  const SignUpPageArgs({required this.token});
 
-  final String email;
+  final Token token;
+}
+
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key, required this.token});
+
+  final Token token;
 
   @override
   State<SignUpPage> createState() => _SignUpPageState();
@@ -22,7 +32,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   void initState() {
-    getIt<SignUpBloc>().add(Init(widget.email));
+    getIt<SignUpBloc>().add(Init(widget.token.user.email));
     super.initState();
   }
 
@@ -288,7 +298,16 @@ class _SignUpPageState extends State<SignUpPage> {
                   listener: (context, state) {
                     state.successOrFail.fold(() => null, (result) {
                       result.fold((user) {
-                        context.go('/');
+                        _connectUser(widget.token).then((value) {
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            Routes.HOME,
+                            ModalRoute.withName(Routes.HOME),
+                            arguments: HomePageArgs(value, null),
+                          );
+                        }).catchError((e) {
+                          print(e);
+                        });
                       }, (error) => null);
                     });
                   },
@@ -307,5 +326,37 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
       ),
     );
+  }
+
+  Future<Client> _connectUser(Token token) async {
+    final client = getIt<Client>();
+
+    await client.connectUser(token);
+    await getIt<SignUpBloc>().handleStorageToken(token);
+    final status = await _requestPermission();
+
+    final isEnabled = status == AuthorizationStatus.authorized ||
+        status == AuthorizationStatus.provisional;
+    if (isEnabled) {
+      final fbToken = await getIt<FirebaseMessaging>().getToken();
+      if (fbToken != null) {
+        await getIt<SignUpBloc>().handleAddDevice(token.user.id, fbToken);
+      }
+    }
+    return client;
+  }
+
+  Future<AuthorizationStatus> _requestPermission() async {
+    final firebaseMessaging = getIt<FirebaseMessaging>();
+    NotificationSettings settings = await firebaseMessaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+    return settings.authorizationStatus;
   }
 }

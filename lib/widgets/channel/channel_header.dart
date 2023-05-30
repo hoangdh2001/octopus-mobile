@@ -1,7 +1,11 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide BackButton;
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
+import 'package:octopus/octopus_channel.dart';
 import 'package:octopus/utils.dart';
-import 'package:octopus/widgets/back_button.dart';
+import 'package:octopus/widgets/channel/channel_back_button.dart';
+import 'package:octopus/widgets/channel/channel_info.dart';
+import 'package:octopus/widgets/channel/channel_name.dart';
 import 'package:octopus/widgets/channel_preview/channel_avatar.dart';
 
 class ChannelHeader extends StatelessWidget implements PreferredSizeWidget {
@@ -10,7 +14,6 @@ class ChannelHeader extends StatelessWidget implements PreferredSizeWidget {
     this.showBackButton = false,
     this.onBackPressed,
     this.onTitleTap,
-    this.onImageTap,
     this.title,
     this.subtitle,
     this.centerTitle,
@@ -18,6 +21,7 @@ class ChannelHeader extends StatelessWidget implements PreferredSizeWidget {
     this.actions,
     this.backgroundColor,
     this.elevation = 1,
+    this.showTypingIndicator = true,
   }) : preferredSize = const Size.fromHeight(kToolbarHeight);
 
   final bool showBackButton;
@@ -25,8 +29,6 @@ class ChannelHeader extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onBackPressed;
 
   final VoidCallback? onTitleTap;
-
-  final VoidCallback? onImageTap;
 
   final Widget? title;
 
@@ -42,6 +44,8 @@ class ChannelHeader extends StatelessWidget implements PreferredSizeWidget {
 
   final double elevation;
 
+  final bool showTypingIndicator;
+
   @override
   final Size preferredSize;
 
@@ -52,9 +56,12 @@ class ChannelHeader extends StatelessWidget implements PreferredSizeWidget {
       actions: actions,
       centerTitle: centerTitle,
     );
+    final channel = OctopusChannel.of(context).channel;
+    final channelHeaderTheme = OctopusTheme.of(context).channelHeaderTheme;
+
     final leadingWidget = leading ??
         (showBackButton
-            ? OCBackButton(
+            ? BackButton(
                 onPressed: onBackPressed,
                 showUnreads: true,
               )
@@ -67,39 +74,49 @@ class ChannelHeader extends StatelessWidget implements PreferredSizeWidget {
       actions: actions ?? [],
       centerTitle: centerTitle,
       titleSpacing: 0,
-      title: InkWell(
-        onTap: () {},
+      title: GestureDetector(
+        onTap: onTitleTap,
         child: SizedBox(
           child: Row(
             children: [
-              const Padding(
-                padding: EdgeInsets.only(right: 10),
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
                 child: Center(
                   child: ChannelAvatar(
-                    size: 40,
+                    constraints: OctopusTheme.of(context)
+                        .channelHeaderTheme
+                        .avatarTheme
+                        ?.constraints,
+                    channel: channel,
+                    borderRadius: OctopusTheme.of(context)
+                        .channelHeaderTheme
+                        .avatarTheme
+                        ?.borderRadius,
                   ),
                 ),
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  title ??
-                      Text(
-                        "Hoang Do",
-                        style: OctopusTheme.of(context)
-                            .textTheme
-                            .primaryGreyBodyBold,
-                      ),
-                  const SizedBox(height: 2),
-                  subtitle ??
-                      Text(
-                        "Active now",
-                        style: OctopusTheme.of(context)
-                            .textTheme
-                            .secondaryGreyCaption2,
-                      ),
-                ],
+              Expanded(
+                child: SizedBox(
+                  height: preferredSize.height,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      title ??
+                          ChannelName(
+                            channel: channel,
+                            textStyle: channelHeaderTheme.titleStyle,
+                          ),
+                      const SizedBox(height: 2),
+                      subtitle ??
+                          ChannelInfo(
+                            channel: channel,
+                            showTypingIndicator: showTypingIndicator,
+                            textStyle: channelHeaderTheme.subtitleStyle,
+                          ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),

@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:octopus/core/data/models/error.dart';
+import 'package:octopus/core/data/socketio/chat_error.dart';
 
 part 'paged_value_bloc.freezed.dart';
 
@@ -10,6 +11,9 @@ const defaultInitialPagedLimitMultiplier = 3;
 abstract class PagedValueBloc<K, V>
     extends Bloc<PagedValueEvent<K, V>, PagedValueState<K, V>> {
   final PagedValueState<K, V> _initialState;
+
+  List<V> get currentItems => state.asSuccess.items;
+
   PagedValueBloc(this._initialState) : super(_initialState) {
     on<PagedValueEvent<K, V>>((event, emit) async {
       await event.map(appendPage: (value) async {
@@ -24,6 +28,8 @@ abstract class PagedValueBloc<K, V>
         await doInitialLoad(state, emit);
       }, loadMore: (value) async {
         await loadMore(value.nextPageKey, state, emit);
+      }, updateState: (value) async {
+        emit(value.state);
       });
     });
   }
@@ -86,6 +92,8 @@ class PagedValueEvent<K, V> with _$PagedValueEvent<K, V> {
   const factory PagedValueEvent.refresh({bool? resetValue}) = Refresh;
   const factory PagedValueEvent.doInitialLoad() = DoInitialLoad;
   const factory PagedValueEvent.loadMore(K nextPageKey) = LoadMore;
+  const factory PagedValueEvent.updateState(PagedValueState<K, V> state) =
+      UpdateState;
 }
 
 @freezed
@@ -93,13 +101,13 @@ class PagedValueState<K, V> with _$PagedValueState<K, V> {
   const factory PagedValueState({
     K? nextPageKey,
     required List<V> items,
-    Error? error,
+    OCError? error,
   }) = Success<K, V>;
 
   const PagedValueState._();
 
   const factory PagedValueState.loading() = Loading;
-  const factory PagedValueState.error(Error error) = PagedValueError;
+  const factory PagedValueState.error(OCError error) = PagedValueError;
 
   bool get isSuccess => this is Success<K, V>;
 

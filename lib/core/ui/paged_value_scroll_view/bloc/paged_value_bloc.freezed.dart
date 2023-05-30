@@ -24,6 +24,7 @@ mixin _$PagedValueEvent<K, V> {
     required TResult Function(bool? resetValue) refresh,
     required TResult Function() doInitialLoad,
     required TResult Function(K nextPageKey) loadMore,
+    required TResult Function(PagedValueState<K, V> state) updateState,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -34,6 +35,7 @@ mixin _$PagedValueEvent<K, V> {
     TResult? Function(bool? resetValue)? refresh,
     TResult? Function()? doInitialLoad,
     TResult? Function(K nextPageKey)? loadMore,
+    TResult? Function(PagedValueState<K, V> state)? updateState,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -44,6 +46,7 @@ mixin _$PagedValueEvent<K, V> {
     TResult Function(bool? resetValue)? refresh,
     TResult Function()? doInitialLoad,
     TResult Function(K nextPageKey)? loadMore,
+    TResult Function(PagedValueState<K, V> state)? updateState,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -55,6 +58,7 @@ mixin _$PagedValueEvent<K, V> {
     required TResult Function(Refresh<K, V> value) refresh,
     required TResult Function(DoInitialLoad<K, V> value) doInitialLoad,
     required TResult Function(LoadMore<K, V> value) loadMore,
+    required TResult Function(UpdateState<K, V> value) updateState,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -65,6 +69,7 @@ mixin _$PagedValueEvent<K, V> {
     TResult? Function(Refresh<K, V> value)? refresh,
     TResult? Function(DoInitialLoad<K, V> value)? doInitialLoad,
     TResult? Function(LoadMore<K, V> value)? loadMore,
+    TResult? Function(UpdateState<K, V> value)? updateState,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -75,6 +80,7 @@ mixin _$PagedValueEvent<K, V> {
     TResult Function(Refresh<K, V> value)? refresh,
     TResult Function(DoInitialLoad<K, V> value)? doInitialLoad,
     TResult Function(LoadMore<K, V> value)? loadMore,
+    TResult Function(UpdateState<K, V> value)? updateState,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -190,6 +196,7 @@ class _$AppendPage<K, V> extends AppendPage<K, V> {
     required TResult Function(bool? resetValue) refresh,
     required TResult Function() doInitialLoad,
     required TResult Function(K nextPageKey) loadMore,
+    required TResult Function(PagedValueState<K, V> state) updateState,
   }) {
     return appendPage(newItems, nextPageKey);
   }
@@ -203,6 +210,7 @@ class _$AppendPage<K, V> extends AppendPage<K, V> {
     TResult? Function(bool? resetValue)? refresh,
     TResult? Function()? doInitialLoad,
     TResult? Function(K nextPageKey)? loadMore,
+    TResult? Function(PagedValueState<K, V> state)? updateState,
   }) {
     return appendPage?.call(newItems, nextPageKey);
   }
@@ -216,6 +224,7 @@ class _$AppendPage<K, V> extends AppendPage<K, V> {
     TResult Function(bool? resetValue)? refresh,
     TResult Function()? doInitialLoad,
     TResult Function(K nextPageKey)? loadMore,
+    TResult Function(PagedValueState<K, V> state)? updateState,
     required TResult orElse(),
   }) {
     if (appendPage != null) {
@@ -233,6 +242,7 @@ class _$AppendPage<K, V> extends AppendPage<K, V> {
     required TResult Function(Refresh<K, V> value) refresh,
     required TResult Function(DoInitialLoad<K, V> value) doInitialLoad,
     required TResult Function(LoadMore<K, V> value) loadMore,
+    required TResult Function(UpdateState<K, V> value) updateState,
   }) {
     return appendPage(this);
   }
@@ -246,6 +256,7 @@ class _$AppendPage<K, V> extends AppendPage<K, V> {
     TResult? Function(Refresh<K, V> value)? refresh,
     TResult? Function(DoInitialLoad<K, V> value)? doInitialLoad,
     TResult? Function(LoadMore<K, V> value)? loadMore,
+    TResult? Function(UpdateState<K, V> value)? updateState,
   }) {
     return appendPage?.call(this);
   }
@@ -259,6 +270,7 @@ class _$AppendPage<K, V> extends AppendPage<K, V> {
     TResult Function(Refresh<K, V> value)? refresh,
     TResult Function(DoInitialLoad<K, V> value)? doInitialLoad,
     TResult Function(LoadMore<K, V> value)? loadMore,
+    TResult Function(UpdateState<K, V> value)? updateState,
     required TResult orElse(),
   }) {
     if (appendPage != null) {
@@ -360,6 +372,7 @@ class _$AppendLastPage<K, V> extends AppendLastPage<K, V> {
     required TResult Function(bool? resetValue) refresh,
     required TResult Function() doInitialLoad,
     required TResult Function(K nextPageKey) loadMore,
+    required TResult Function(PagedValueState<K, V> state) updateState,
   }) {
     return appendLastPage(newItems);
   }
@@ -373,6 +386,7 @@ class _$AppendLastPage<K, V> extends AppendLastPage<K, V> {
     TResult? Function(bool? resetValue)? refresh,
     TResult? Function()? doInitialLoad,
     TResult? Function(K nextPageKey)? loadMore,
+    TResult? Function(PagedValueState<K, V> state)? updateState,
   }) {
     return appendLastPage?.call(newItems);
   }
@@ -386,6 +400,7 @@ class _$AppendLastPage<K, V> extends AppendLastPage<K, V> {
     TResult Function(bool? resetValue)? refresh,
     TResult Function()? doInitialLoad,
     TResult Function(K nextPageKey)? loadMore,
+    TResult Function(PagedValueState<K, V> state)? updateState,
     required TResult orElse(),
   }) {
     if (appendLastPage != null) {
@@ -403,6 +418,7 @@ class _$AppendLastPage<K, V> extends AppendLastPage<K, V> {
     required TResult Function(Refresh<K, V> value) refresh,
     required TResult Function(DoInitialLoad<K, V> value) doInitialLoad,
     required TResult Function(LoadMore<K, V> value) loadMore,
+    required TResult Function(UpdateState<K, V> value) updateState,
   }) {
     return appendLastPage(this);
   }
@@ -416,6 +432,7 @@ class _$AppendLastPage<K, V> extends AppendLastPage<K, V> {
     TResult? Function(Refresh<K, V> value)? refresh,
     TResult? Function(DoInitialLoad<K, V> value)? doInitialLoad,
     TResult? Function(LoadMore<K, V> value)? loadMore,
+    TResult? Function(UpdateState<K, V> value)? updateState,
   }) {
     return appendLastPage?.call(this);
   }
@@ -429,6 +446,7 @@ class _$AppendLastPage<K, V> extends AppendLastPage<K, V> {
     TResult Function(Refresh<K, V> value)? refresh,
     TResult Function(DoInitialLoad<K, V> value)? doInitialLoad,
     TResult Function(LoadMore<K, V> value)? loadMore,
+    TResult Function(UpdateState<K, V> value)? updateState,
     required TResult orElse(),
   }) {
     if (appendLastPage != null) {
@@ -492,6 +510,7 @@ class _$Retry<K, V> extends Retry<K, V> {
     required TResult Function(bool? resetValue) refresh,
     required TResult Function() doInitialLoad,
     required TResult Function(K nextPageKey) loadMore,
+    required TResult Function(PagedValueState<K, V> state) updateState,
   }) {
     return retry();
   }
@@ -505,6 +524,7 @@ class _$Retry<K, V> extends Retry<K, V> {
     TResult? Function(bool? resetValue)? refresh,
     TResult? Function()? doInitialLoad,
     TResult? Function(K nextPageKey)? loadMore,
+    TResult? Function(PagedValueState<K, V> state)? updateState,
   }) {
     return retry?.call();
   }
@@ -518,6 +538,7 @@ class _$Retry<K, V> extends Retry<K, V> {
     TResult Function(bool? resetValue)? refresh,
     TResult Function()? doInitialLoad,
     TResult Function(K nextPageKey)? loadMore,
+    TResult Function(PagedValueState<K, V> state)? updateState,
     required TResult orElse(),
   }) {
     if (retry != null) {
@@ -535,6 +556,7 @@ class _$Retry<K, V> extends Retry<K, V> {
     required TResult Function(Refresh<K, V> value) refresh,
     required TResult Function(DoInitialLoad<K, V> value) doInitialLoad,
     required TResult Function(LoadMore<K, V> value) loadMore,
+    required TResult Function(UpdateState<K, V> value) updateState,
   }) {
     return retry(this);
   }
@@ -548,6 +570,7 @@ class _$Retry<K, V> extends Retry<K, V> {
     TResult? Function(Refresh<K, V> value)? refresh,
     TResult? Function(DoInitialLoad<K, V> value)? doInitialLoad,
     TResult? Function(LoadMore<K, V> value)? loadMore,
+    TResult? Function(UpdateState<K, V> value)? updateState,
   }) {
     return retry?.call(this);
   }
@@ -561,6 +584,7 @@ class _$Retry<K, V> extends Retry<K, V> {
     TResult Function(Refresh<K, V> value)? refresh,
     TResult Function(DoInitialLoad<K, V> value)? doInitialLoad,
     TResult Function(LoadMore<K, V> value)? loadMore,
+    TResult Function(UpdateState<K, V> value)? updateState,
     required TResult orElse(),
   }) {
     if (retry != null) {
@@ -646,6 +670,7 @@ class _$Refresh<K, V> extends Refresh<K, V> {
     required TResult Function(bool? resetValue) refresh,
     required TResult Function() doInitialLoad,
     required TResult Function(K nextPageKey) loadMore,
+    required TResult Function(PagedValueState<K, V> state) updateState,
   }) {
     return refresh(resetValue);
   }
@@ -659,6 +684,7 @@ class _$Refresh<K, V> extends Refresh<K, V> {
     TResult? Function(bool? resetValue)? refresh,
     TResult? Function()? doInitialLoad,
     TResult? Function(K nextPageKey)? loadMore,
+    TResult? Function(PagedValueState<K, V> state)? updateState,
   }) {
     return refresh?.call(resetValue);
   }
@@ -672,6 +698,7 @@ class _$Refresh<K, V> extends Refresh<K, V> {
     TResult Function(bool? resetValue)? refresh,
     TResult Function()? doInitialLoad,
     TResult Function(K nextPageKey)? loadMore,
+    TResult Function(PagedValueState<K, V> state)? updateState,
     required TResult orElse(),
   }) {
     if (refresh != null) {
@@ -689,6 +716,7 @@ class _$Refresh<K, V> extends Refresh<K, V> {
     required TResult Function(Refresh<K, V> value) refresh,
     required TResult Function(DoInitialLoad<K, V> value) doInitialLoad,
     required TResult Function(LoadMore<K, V> value) loadMore,
+    required TResult Function(UpdateState<K, V> value) updateState,
   }) {
     return refresh(this);
   }
@@ -702,6 +730,7 @@ class _$Refresh<K, V> extends Refresh<K, V> {
     TResult? Function(Refresh<K, V> value)? refresh,
     TResult? Function(DoInitialLoad<K, V> value)? doInitialLoad,
     TResult? Function(LoadMore<K, V> value)? loadMore,
+    TResult? Function(UpdateState<K, V> value)? updateState,
   }) {
     return refresh?.call(this);
   }
@@ -715,6 +744,7 @@ class _$Refresh<K, V> extends Refresh<K, V> {
     TResult Function(Refresh<K, V> value)? refresh,
     TResult Function(DoInitialLoad<K, V> value)? doInitialLoad,
     TResult Function(LoadMore<K, V> value)? loadMore,
+    TResult Function(UpdateState<K, V> value)? updateState,
     required TResult orElse(),
   }) {
     if (refresh != null) {
@@ -778,6 +808,7 @@ class _$DoInitialLoad<K, V> extends DoInitialLoad<K, V> {
     required TResult Function(bool? resetValue) refresh,
     required TResult Function() doInitialLoad,
     required TResult Function(K nextPageKey) loadMore,
+    required TResult Function(PagedValueState<K, V> state) updateState,
   }) {
     return doInitialLoad();
   }
@@ -791,6 +822,7 @@ class _$DoInitialLoad<K, V> extends DoInitialLoad<K, V> {
     TResult? Function(bool? resetValue)? refresh,
     TResult? Function()? doInitialLoad,
     TResult? Function(K nextPageKey)? loadMore,
+    TResult? Function(PagedValueState<K, V> state)? updateState,
   }) {
     return doInitialLoad?.call();
   }
@@ -804,6 +836,7 @@ class _$DoInitialLoad<K, V> extends DoInitialLoad<K, V> {
     TResult Function(bool? resetValue)? refresh,
     TResult Function()? doInitialLoad,
     TResult Function(K nextPageKey)? loadMore,
+    TResult Function(PagedValueState<K, V> state)? updateState,
     required TResult orElse(),
   }) {
     if (doInitialLoad != null) {
@@ -821,6 +854,7 @@ class _$DoInitialLoad<K, V> extends DoInitialLoad<K, V> {
     required TResult Function(Refresh<K, V> value) refresh,
     required TResult Function(DoInitialLoad<K, V> value) doInitialLoad,
     required TResult Function(LoadMore<K, V> value) loadMore,
+    required TResult Function(UpdateState<K, V> value) updateState,
   }) {
     return doInitialLoad(this);
   }
@@ -834,6 +868,7 @@ class _$DoInitialLoad<K, V> extends DoInitialLoad<K, V> {
     TResult? Function(Refresh<K, V> value)? refresh,
     TResult? Function(DoInitialLoad<K, V> value)? doInitialLoad,
     TResult? Function(LoadMore<K, V> value)? loadMore,
+    TResult? Function(UpdateState<K, V> value)? updateState,
   }) {
     return doInitialLoad?.call(this);
   }
@@ -847,6 +882,7 @@ class _$DoInitialLoad<K, V> extends DoInitialLoad<K, V> {
     TResult Function(Refresh<K, V> value)? refresh,
     TResult Function(DoInitialLoad<K, V> value)? doInitialLoad,
     TResult Function(LoadMore<K, V> value)? loadMore,
+    TResult Function(UpdateState<K, V> value)? updateState,
     required TResult orElse(),
   }) {
     if (doInitialLoad != null) {
@@ -933,6 +969,7 @@ class _$LoadMore<K, V> extends LoadMore<K, V> {
     required TResult Function(bool? resetValue) refresh,
     required TResult Function() doInitialLoad,
     required TResult Function(K nextPageKey) loadMore,
+    required TResult Function(PagedValueState<K, V> state) updateState,
   }) {
     return loadMore(nextPageKey);
   }
@@ -946,6 +983,7 @@ class _$LoadMore<K, V> extends LoadMore<K, V> {
     TResult? Function(bool? resetValue)? refresh,
     TResult? Function()? doInitialLoad,
     TResult? Function(K nextPageKey)? loadMore,
+    TResult? Function(PagedValueState<K, V> state)? updateState,
   }) {
     return loadMore?.call(nextPageKey);
   }
@@ -959,6 +997,7 @@ class _$LoadMore<K, V> extends LoadMore<K, V> {
     TResult Function(bool? resetValue)? refresh,
     TResult Function()? doInitialLoad,
     TResult Function(K nextPageKey)? loadMore,
+    TResult Function(PagedValueState<K, V> state)? updateState,
     required TResult orElse(),
   }) {
     if (loadMore != null) {
@@ -976,6 +1015,7 @@ class _$LoadMore<K, V> extends LoadMore<K, V> {
     required TResult Function(Refresh<K, V> value) refresh,
     required TResult Function(DoInitialLoad<K, V> value) doInitialLoad,
     required TResult Function(LoadMore<K, V> value) loadMore,
+    required TResult Function(UpdateState<K, V> value) updateState,
   }) {
     return loadMore(this);
   }
@@ -989,6 +1029,7 @@ class _$LoadMore<K, V> extends LoadMore<K, V> {
     TResult? Function(Refresh<K, V> value)? refresh,
     TResult? Function(DoInitialLoad<K, V> value)? doInitialLoad,
     TResult? Function(LoadMore<K, V> value)? loadMore,
+    TResult? Function(UpdateState<K, V> value)? updateState,
   }) {
     return loadMore?.call(this);
   }
@@ -1002,6 +1043,7 @@ class _$LoadMore<K, V> extends LoadMore<K, V> {
     TResult Function(Refresh<K, V> value)? refresh,
     TResult Function(DoInitialLoad<K, V> value)? doInitialLoad,
     TResult Function(LoadMore<K, V> value)? loadMore,
+    TResult Function(UpdateState<K, V> value)? updateState,
     required TResult orElse(),
   }) {
     if (loadMore != null) {
@@ -1022,26 +1064,202 @@ abstract class LoadMore<K, V> extends PagedValueEvent<K, V> {
 }
 
 /// @nodoc
+abstract class _$$UpdateStateCopyWith<K, V, $Res> {
+  factory _$$UpdateStateCopyWith(
+          _$UpdateState<K, V> value, $Res Function(_$UpdateState<K, V>) then) =
+      __$$UpdateStateCopyWithImpl<K, V, $Res>;
+  @useResult
+  $Res call({PagedValueState<K, V> state});
+
+  $PagedValueStateCopyWith<K, V, $Res> get state;
+}
+
+/// @nodoc
+class __$$UpdateStateCopyWithImpl<K, V, $Res>
+    extends _$PagedValueEventCopyWithImpl<K, V, $Res, _$UpdateState<K, V>>
+    implements _$$UpdateStateCopyWith<K, V, $Res> {
+  __$$UpdateStateCopyWithImpl(
+      _$UpdateState<K, V> _value, $Res Function(_$UpdateState<K, V>) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? state = null,
+  }) {
+    return _then(_$UpdateState<K, V>(
+      null == state
+          ? _value.state
+          : state // ignore: cast_nullable_to_non_nullable
+              as PagedValueState<K, V>,
+    ));
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $PagedValueStateCopyWith<K, V, $Res> get state {
+    return $PagedValueStateCopyWith<K, V, $Res>(_value.state, (value) {
+      return _then(_value.copyWith(state: value));
+    });
+  }
+}
+
+/// @nodoc
+
+class _$UpdateState<K, V> extends UpdateState<K, V> {
+  const _$UpdateState(this.state) : super._();
+
+  @override
+  final PagedValueState<K, V> state;
+
+  @override
+  String toString() {
+    return 'PagedValueEvent<$K, $V>.updateState(state: $state)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UpdateState<K, V> &&
+            (identical(other.state, state) || other.state == state));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, state);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UpdateStateCopyWith<K, V, _$UpdateState<K, V>> get copyWith =>
+      __$$UpdateStateCopyWithImpl<K, V, _$UpdateState<K, V>>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(List<V> newItems, K nextPageKey) appendPage,
+    required TResult Function(List<V> newItems) appendLastPage,
+    required TResult Function() retry,
+    required TResult Function(bool? resetValue) refresh,
+    required TResult Function() doInitialLoad,
+    required TResult Function(K nextPageKey) loadMore,
+    required TResult Function(PagedValueState<K, V> state) updateState,
+  }) {
+    return updateState(state);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(List<V> newItems, K nextPageKey)? appendPage,
+    TResult? Function(List<V> newItems)? appendLastPage,
+    TResult? Function()? retry,
+    TResult? Function(bool? resetValue)? refresh,
+    TResult? Function()? doInitialLoad,
+    TResult? Function(K nextPageKey)? loadMore,
+    TResult? Function(PagedValueState<K, V> state)? updateState,
+  }) {
+    return updateState?.call(state);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(List<V> newItems, K nextPageKey)? appendPage,
+    TResult Function(List<V> newItems)? appendLastPage,
+    TResult Function()? retry,
+    TResult Function(bool? resetValue)? refresh,
+    TResult Function()? doInitialLoad,
+    TResult Function(K nextPageKey)? loadMore,
+    TResult Function(PagedValueState<K, V> state)? updateState,
+    required TResult orElse(),
+  }) {
+    if (updateState != null) {
+      return updateState(state);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(AppendPage<K, V> value) appendPage,
+    required TResult Function(AppendLastPage<K, V> value) appendLastPage,
+    required TResult Function(Retry<K, V> value) retry,
+    required TResult Function(Refresh<K, V> value) refresh,
+    required TResult Function(DoInitialLoad<K, V> value) doInitialLoad,
+    required TResult Function(LoadMore<K, V> value) loadMore,
+    required TResult Function(UpdateState<K, V> value) updateState,
+  }) {
+    return updateState(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(AppendPage<K, V> value)? appendPage,
+    TResult? Function(AppendLastPage<K, V> value)? appendLastPage,
+    TResult? Function(Retry<K, V> value)? retry,
+    TResult? Function(Refresh<K, V> value)? refresh,
+    TResult? Function(DoInitialLoad<K, V> value)? doInitialLoad,
+    TResult? Function(LoadMore<K, V> value)? loadMore,
+    TResult? Function(UpdateState<K, V> value)? updateState,
+  }) {
+    return updateState?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(AppendPage<K, V> value)? appendPage,
+    TResult Function(AppendLastPage<K, V> value)? appendLastPage,
+    TResult Function(Retry<K, V> value)? retry,
+    TResult Function(Refresh<K, V> value)? refresh,
+    TResult Function(DoInitialLoad<K, V> value)? doInitialLoad,
+    TResult Function(LoadMore<K, V> value)? loadMore,
+    TResult Function(UpdateState<K, V> value)? updateState,
+    required TResult orElse(),
+  }) {
+    if (updateState != null) {
+      return updateState(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class UpdateState<K, V> extends PagedValueEvent<K, V> {
+  const factory UpdateState(final PagedValueState<K, V> state) =
+      _$UpdateState<K, V>;
+  const UpdateState._() : super._();
+
+  PagedValueState<K, V> get state;
+  @JsonKey(ignore: true)
+  _$$UpdateStateCopyWith<K, V, _$UpdateState<K, V>> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
 mixin _$PagedValueState<K, V> {
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(K? nextPageKey, List<V> items, Error? error) $default, {
+    TResult Function(K? nextPageKey, List<V> items, OCError? error) $default, {
     required TResult Function() loading,
-    required TResult Function(Error error) error,
+    required TResult Function(OCError error) error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(K? nextPageKey, List<V> items, Error? error)? $default, {
+    TResult? Function(K? nextPageKey, List<V> items, OCError? error)?
+        $default, {
     TResult? Function()? loading,
-    TResult? Function(Error error)? error,
+    TResult? Function(OCError error)? error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(K? nextPageKey, List<V> items, Error? error)? $default, {
+    TResult Function(K? nextPageKey, List<V> items, OCError? error)? $default, {
     TResult Function()? loading,
-    TResult Function(Error error)? error,
+    TResult Function(OCError error)? error,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -1094,9 +1312,7 @@ abstract class _$$SuccessCopyWith<K, V, $Res> {
           _$Success<K, V> value, $Res Function(_$Success<K, V>) then) =
       __$$SuccessCopyWithImpl<K, V, $Res>;
   @useResult
-  $Res call({K? nextPageKey, List<V> items, Error? error});
-
-  $ErrorCopyWith<$Res>? get error;
+  $Res call({K? nextPageKey, List<V> items, OCError? error});
 }
 
 /// @nodoc
@@ -1126,20 +1342,8 @@ class __$$SuccessCopyWithImpl<K, V, $Res>
       error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
-              as Error?,
+              as OCError?,
     ));
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $ErrorCopyWith<$Res>? get error {
-    if (_value.error == null) {
-      return null;
-    }
-
-    return $ErrorCopyWith<$Res>(_value.error!, (value) {
-      return _then(_value.copyWith(error: value));
-    });
   }
 }
 
@@ -1161,7 +1365,7 @@ class _$Success<K, V> extends Success<K, V> {
   }
 
   @override
-  final Error? error;
+  final OCError? error;
 
   @override
   String toString() {
@@ -1195,9 +1399,9 @@ class _$Success<K, V> extends Success<K, V> {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(K? nextPageKey, List<V> items, Error? error) $default, {
+    TResult Function(K? nextPageKey, List<V> items, OCError? error) $default, {
     required TResult Function() loading,
-    required TResult Function(Error error) error,
+    required TResult Function(OCError error) error,
   }) {
     return $default(nextPageKey, items, this.error);
   }
@@ -1205,9 +1409,10 @@ class _$Success<K, V> extends Success<K, V> {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(K? nextPageKey, List<V> items, Error? error)? $default, {
+    TResult? Function(K? nextPageKey, List<V> items, OCError? error)?
+        $default, {
     TResult? Function()? loading,
-    TResult? Function(Error error)? error,
+    TResult? Function(OCError error)? error,
   }) {
     return $default?.call(nextPageKey, items, this.error);
   }
@@ -1215,9 +1420,9 @@ class _$Success<K, V> extends Success<K, V> {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(K? nextPageKey, List<V> items, Error? error)? $default, {
+    TResult Function(K? nextPageKey, List<V> items, OCError? error)? $default, {
     TResult Function()? loading,
-    TResult Function(Error error)? error,
+    TResult Function(OCError error)? error,
     required TResult orElse(),
   }) {
     if ($default != null) {
@@ -1265,12 +1470,12 @@ abstract class Success<K, V> extends PagedValueState<K, V> {
   const factory Success(
       {final K? nextPageKey,
       required final List<V> items,
-      final Error? error}) = _$Success<K, V>;
+      final OCError? error}) = _$Success<K, V>;
   const Success._() : super._();
 
   K? get nextPageKey;
   List<V> get items;
-  Error? get error;
+  OCError? get error;
   @JsonKey(ignore: true)
   _$$SuccessCopyWith<K, V, _$Success<K, V>> get copyWith =>
       throw _privateConstructorUsedError;
@@ -1314,9 +1519,9 @@ class _$Loading<K, V> extends Loading<K, V> {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(K? nextPageKey, List<V> items, Error? error) $default, {
+    TResult Function(K? nextPageKey, List<V> items, OCError? error) $default, {
     required TResult Function() loading,
-    required TResult Function(Error error) error,
+    required TResult Function(OCError error) error,
   }) {
     return loading();
   }
@@ -1324,9 +1529,10 @@ class _$Loading<K, V> extends Loading<K, V> {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(K? nextPageKey, List<V> items, Error? error)? $default, {
+    TResult? Function(K? nextPageKey, List<V> items, OCError? error)?
+        $default, {
     TResult? Function()? loading,
-    TResult? Function(Error error)? error,
+    TResult? Function(OCError error)? error,
   }) {
     return loading?.call();
   }
@@ -1334,9 +1540,9 @@ class _$Loading<K, V> extends Loading<K, V> {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(K? nextPageKey, List<V> items, Error? error)? $default, {
+    TResult Function(K? nextPageKey, List<V> items, OCError? error)? $default, {
     TResult Function()? loading,
-    TResult Function(Error error)? error,
+    TResult Function(OCError error)? error,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -1391,9 +1597,7 @@ abstract class _$$PagedValueErrorCopyWith<K, V, $Res> {
           $Res Function(_$PagedValueError<K, V>) then) =
       __$$PagedValueErrorCopyWithImpl<K, V, $Res>;
   @useResult
-  $Res call({Error error});
-
-  $ErrorCopyWith<$Res> get error;
+  $Res call({OCError error});
 }
 
 /// @nodoc
@@ -1413,16 +1617,8 @@ class __$$PagedValueErrorCopyWithImpl<K, V, $Res>
       null == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
-              as Error,
+              as OCError,
     ));
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $ErrorCopyWith<$Res> get error {
-    return $ErrorCopyWith<$Res>(_value.error, (value) {
-      return _then(_value.copyWith(error: value));
-    });
   }
 }
 
@@ -1432,7 +1628,7 @@ class _$PagedValueError<K, V> extends PagedValueError<K, V> {
   const _$PagedValueError(this.error) : super._();
 
   @override
-  final Error error;
+  final OCError error;
 
   @override
   String toString() {
@@ -1460,9 +1656,9 @@ class _$PagedValueError<K, V> extends PagedValueError<K, V> {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>(
-    TResult Function(K? nextPageKey, List<V> items, Error? error) $default, {
+    TResult Function(K? nextPageKey, List<V> items, OCError? error) $default, {
     required TResult Function() loading,
-    required TResult Function(Error error) error,
+    required TResult Function(OCError error) error,
   }) {
     return error(this.error);
   }
@@ -1470,9 +1666,10 @@ class _$PagedValueError<K, V> extends PagedValueError<K, V> {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>(
-    TResult? Function(K? nextPageKey, List<V> items, Error? error)? $default, {
+    TResult? Function(K? nextPageKey, List<V> items, OCError? error)?
+        $default, {
     TResult? Function()? loading,
-    TResult? Function(Error error)? error,
+    TResult? Function(OCError error)? error,
   }) {
     return error?.call(this.error);
   }
@@ -1480,9 +1677,9 @@ class _$PagedValueError<K, V> extends PagedValueError<K, V> {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>(
-    TResult Function(K? nextPageKey, List<V> items, Error? error)? $default, {
+    TResult Function(K? nextPageKey, List<V> items, OCError? error)? $default, {
     TResult Function()? loading,
-    TResult Function(Error error)? error,
+    TResult Function(OCError error)? error,
     required TResult orElse(),
   }) {
     if (error != null) {
@@ -1527,10 +1724,10 @@ class _$PagedValueError<K, V> extends PagedValueError<K, V> {
 }
 
 abstract class PagedValueError<K, V> extends PagedValueState<K, V> {
-  const factory PagedValueError(final Error error) = _$PagedValueError<K, V>;
+  const factory PagedValueError(final OCError error) = _$PagedValueError<K, V>;
   const PagedValueError._() : super._();
 
-  Error get error;
+  OCError get error;
   @JsonKey(ignore: true)
   _$$PagedValueErrorCopyWith<K, V, _$PagedValueError<K, V>> get copyWith =>
       throw _privateConstructorUsedError;

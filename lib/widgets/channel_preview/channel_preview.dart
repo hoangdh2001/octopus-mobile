@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:octopus/core/data/client/channel.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/widgets/channel_preview/channel_avatar.dart';
 import 'package:octopus/widgets/channel_preview/channel_preview_status.dart';
 
 class ChannelPreview extends StatelessWidget {
-  const ChannelPreview({super.key, this.onChannelTap});
+  const ChannelPreview({super.key, this.onChannelTap, required this.channel});
 
   final void Function()? onChannelTap;
+
+  final Channel channel;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +20,9 @@ class ChannelPreview extends StatelessWidget {
       onTap: onTap == null ? null : () => onTap(),
       visualDensity: VisualDensity.compact,
       contentPadding: const EdgeInsets.symmetric(horizontal: 8).r,
-      leading: const ChannelAvatar(),
+      leading: ChannelAvatar(
+        channel: channel,
+      ),
       title: Row(
         children: [
           Expanded(

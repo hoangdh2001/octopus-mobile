@@ -1,0 +1,326 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chewie/chewie.dart';
+import 'package:flutter/material.dart';
+import 'package:octopus/core/data/client/channel.dart';
+import 'package:octopus/core/data/models/attachment.dart';
+import 'package:octopus/core/data/models/message.dart';
+import 'package:octopus/core/theme/oc_theme.dart';
+import 'package:octopus/octopus_channel.dart';
+import 'package:octopus/widgets/attachment/attachment_widget.dart';
+import 'package:octopus/widgets/attachment/utils/attachment_package.dart';
+import 'package:octopus/widgets/gallary/gallery_footer.dart';
+import 'package:octopus/widgets/gallary/gallery_header.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:video_player/video_player.dart';
+
+enum ReturnActionType {
+  none,
+
+  reply,
+}
+
+typedef ShowMessageCallback = void Function(Message message, Channel channel);
+
+class FullScreenMedia extends StatefulWidget {
+  const FullScreenMedia({
+    super.key,
+    required this.mediaAttachmentPackages,
+    this.startIndex = 0,
+    String? userName,
+    this.onShowMessage,
+    this.attachmentActionsModalBuilder,
+    this.autoplayVideos = false,
+  }) : userName = userName ?? '';
+
+  final List<AttachmentPackage> mediaAttachmentPackages;
+
+  final int startIndex;
+
+  final String userName;
+
+  final ShowMessageCallback? onShowMessage;
+
+  final AttachmentActionsBuilder? attachmentActionsModalBuilder;
+
+  final bool autoplayVideos;
+
+  @override
+  _FullScreenMediaState createState() => _FullScreenMediaState();
+}
+
+class _FullScreenMediaState extends State<FullScreenMedia> {
+  late final PageController _pageController;
+
+  late final _currentPage = ValueNotifier(widget.startIndex);
+  late final _isDisplayingDetail = ValueNotifier<bool>(true);
+
+  void switchDisplayingDetail() {
+    _isDisplayingDetail.value = !_isDisplayingDetail.value;
+  }
+
+  final videoPackages = <String, VideoPackage>{};
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: widget.startIndex);
+    for (var i = 0; i < widget.mediaAttachmentPackages.length; i++) {
+      final attachment = widget.mediaAttachmentPackages[i].attachment;
+      if (attachment.type != 'video') continue;
+      final package = VideoPackage(attachment, showControls: true);
+      videoPackages[attachment.id] = package;
+    }
+    initializePlayers();
+  }
+
+  Future<void> initializePlayers() async {
+    if (videoPackages.isEmpty) {
+      return;
+    }
+
+    final currentAttachment =
+        widget.mediaAttachmentPackages[widget.startIndex].attachment;
+
+    await Future.wait(videoPackages.values.map(
+      (it) => it.initialize(),
+    ));
+
+    if (widget.autoplayVideos && currentAttachment.type == 'video') {
+      final package = videoPackages.values
+          .firstWhere((e) => e._attachment == currentAttachment);
+      package._chewieController?.play();
+    }
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: ValueListenableBuilder<int>(
+          valueListenable: _currentPage,
+          builder: (context, currentPage, child) {
+            final _currentAttachmentPackage =
+                widget.mediaAttachmentPackages[currentPage];
+            final _currentMessage = _currentAttachmentPackage.message;
+            final _currentAttachment = _currentAttachmentPackage.attachment;
+            return Stack(
+              children: [
+                Positioned.fill(child: child!),
+                ValueListenableBuilder<bool>(
+                  valueListenable: _isDisplayingDetail,
+                  builder: (context, isDisplayingDetail, child) {
+                    final mediaQuery = MediaQuery.of(context);
+                    final topPadding = mediaQuery.padding.top;
+                    return AnimatedPositionedDirectional(
+                      duration: kThemeAnimationDuration,
+                      curve: Curves.easeInOut,
+                      top: isDisplayingDetail
+                          ? 0
+                          : -(topPadding + kToolbarHeight),
+                      start: 0,
+                      end: 0,
+                      height: topPadding + kToolbarHeight,
+                      child: GalleryHeader(
+                        userName: widget.userName,
+                        sentAt: '',
+                        onBackPressed: Navigator.of(context).pop,
+                        message: _currentMessage,
+                        attachment: _currentAttachment,
+                        onShowMessage: () {
+                          widget.onShowMessage?.call(
+                            _currentMessage,
+                            OctopusChannel.of(context).channel,
+                          );
+                        },
+                        attachmentActionsModalBuilder:
+                            widget.attachmentActionsModalBuilder,
+                      ),
+                    );
+                  },
+                ),
+                ValueListenableBuilder<bool>(
+                  valueListenable: _isDisplayingDetail,
+                  builder: (context, isDisplayingDetail, child) {
+                    final mediaQuery = MediaQuery.of(context);
+                    final bottomPadding = mediaQuery.padding.bottom;
+                    return AnimatedPositionedDirectional(
+                      duration: kThemeAnimationDuration,
+                      curve: Curves.easeInOut,
+                      bottom: isDisplayingDetail
+                          ? 0
+                          : -(bottomPadding + kToolbarHeight),
+                      start: 0,
+                      end: 0,
+                      height: bottomPadding + kToolbarHeight,
+                      child: GalleryFooter(
+                        currentPage: currentPage,
+                        totalPages: widget.mediaAttachmentPackages.length,
+                        mediaAttachmentPackages: widget.mediaAttachmentPackages,
+                        mediaSelectedCallBack: (val) {
+                          _currentPage.value = val;
+                          _pageController.animateToPage(
+                            val,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                          Navigator.pop(context);
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ],
+            );
+          },
+          child: InkWell(
+            onTap: switchDisplayingDetail,
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: widget.mediaAttachmentPackages.length,
+              onPageChanged: (val) {
+                _currentPage.value = val;
+                if (videoPackages.isEmpty) return;
+                final currentAttachment =
+                    widget.mediaAttachmentPackages[val].attachment;
+                for (final e in videoPackages.values) {
+                  if (e._attachment != currentAttachment) {
+                    e._chewieController?.pause();
+                  }
+                }
+                if (widget.autoplayVideos &&
+                    currentAttachment.type == 'video') {
+                  final controller = videoPackages[currentAttachment.id]!;
+                  controller._chewieController?.play();
+                }
+              },
+              itemBuilder: (context, index) {
+                final currentAttachmentPackage =
+                    widget.mediaAttachmentPackages[index];
+                final attachment = currentAttachmentPackage.attachment;
+                if (attachment.type == 'image' || attachment.type == 'giphy') {
+                  final imageUrl = attachment.url ??
+                      attachment.secureUrl ??
+                      attachment.thumbnailUrl;
+                  return ValueListenableBuilder<bool>(
+                    valueListenable: _isDisplayingDetail,
+                    builder: (context, isDisplayingDetail, _) =>
+                        AnimatedContainer(
+                      color: isDisplayingDetail
+                          ? OctopusTheme.of(context).channelHeaderTheme.color
+                          : Colors.black,
+                      duration: kThemeAnimationDuration,
+                      child: PhotoView(
+                        imageProvider: (imageUrl == null &&
+                                attachment.localUri != null &&
+                                attachment.file?.bytes != null)
+                            ? Image.memory(attachment.file!.bytes!).image
+                            : CachedNetworkImageProvider(imageUrl!),
+                        errorBuilder: (_, __, ___) =>
+                            const AttachmentError(size: Size(50, 50)),
+                        loadingBuilder: (context, _) {
+                          final image = Image.asset(
+                            'assets/images/placeholder.png',
+                            fit: BoxFit.cover,
+                          );
+                          final colorTheme =
+                              OctopusTheme.of(context).colorTheme;
+                          return Shimmer.fromColors(
+                            baseColor: colorTheme.disabled,
+                            highlightColor: colorTheme.brandPrimary,
+                            child: image,
+                          );
+                        },
+                        maxScale: PhotoViewComputedScale.covered,
+                        minScale: PhotoViewComputedScale.contained,
+                        heroAttributes: PhotoViewHeroAttributes(
+                          tag: widget.mediaAttachmentPackages,
+                        ),
+                        backgroundDecoration: const BoxDecoration(
+                          color: Colors.transparent,
+                        ),
+                      ),
+                    ),
+                  );
+                } else if (attachment.type == 'video') {
+                  final controller = videoPackages[attachment.id]!;
+                  if (!controller.initialized) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return InkWell(
+                    onTap: switchDisplayingDetail,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 50),
+                      child: Chewie(
+                        controller: controller.chewieController!,
+                      ),
+                    ),
+                  );
+                }
+                return const SizedBox();
+              },
+            ),
+          ),
+        ),
+      );
+
+  @override
+  void dispose() {
+    _currentPage.dispose();
+    _pageController.dispose();
+    _isDisplayingDetail.dispose();
+    for (final package in videoPackages.values) {
+      package.dispose();
+    }
+    super.dispose();
+  }
+}
+
+class VideoPackage {
+  VideoPackage(
+    this._attachment, {
+    bool showControls = false,
+    bool autoInitialize = true,
+  })  : _showControls = showControls,
+        _autoInitialize = autoInitialize,
+        _videoPlayerController = _attachment.localUri != null
+            ? VideoPlayerController.file(File.fromUri(_attachment.localUri!))
+            : VideoPlayerController.network(_attachment.url!);
+
+  final Attachment _attachment;
+  final bool _showControls;
+  final bool _autoInitialize;
+  final VideoPlayerController _videoPlayerController;
+  ChewieController? _chewieController;
+
+  VideoPlayerController get videoPlayer => _videoPlayerController;
+
+  ChewieController? get chewieController => _chewieController;
+
+  bool get initialized => _videoPlayerController.value.isInitialized;
+
+  Future<void> initialize() => _videoPlayerController.initialize().then((_) {
+        _chewieController = ChewieController(
+          videoPlayerController: _videoPlayerController,
+          autoInitialize: _autoInitialize,
+          showControls: _showControls,
+          aspectRatio: _videoPlayerController.value.aspectRatio,
+        );
+      });
+
+  void addListener(VoidCallback listener) =>
+      _videoPlayerController.addListener(listener);
+
+  void removeListener(VoidCallback listener) =>
+      _videoPlayerController.removeListener(listener);
+
+  Future<void> dispose() {
+    _chewieController?.dispose();
+    return _videoPlayerController.dispose();
+  }
+}

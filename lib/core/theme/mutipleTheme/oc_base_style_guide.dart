@@ -8,13 +8,13 @@ class OCBaseStyleGuide extends OCStyleGuide {
   final OCBrandFont _brandFont = OCBrandFontFactory().base();
 
   @override
-  OCFont get h1 => _brandFont.medium(18.sp);
+  OCFont get h1 => _brandFont.bold(16.sp);
 
   @override
-  OCFont get h2 => _brandFont.bold(15.sp);
+  OCFont get h2 => _brandFont.bold(14.sp);
 
   @override
-  OCFont get title => _brandFont.medium(16.sp);
+  OCFont get title => _brandFont.medium(14.sp);
 
   @override
   OCFont get body => _brandFont.main(13.sp);
@@ -41,12 +41,25 @@ class OCBaseStyleGuide extends OCStyleGuide {
   OCFont get input => _brandFont.main(16.sp);
 
   @override
+  OCFont get footnote => _brandFont.main(10.sp);
+
+  @override
+  OCFont get footnoteBold => _brandFont.bold(10.sp);
+
+  @override
+  OCFont get hintLarge => _brandFont.bold(16.sp);
+
+  @override
   OCColor get brandPrimary => const OCColor(
       lightAppearance: Color(0xFF7C68EC), darkAppearance: Color(0xFF7C68EC));
 
   @override
   OCColor get brandPrimarySelect => const OCColor(
       lightAppearance: Color(0xFF584F89), darkAppearance: Color(0xFF584F89));
+
+  @override
+  OCColor get accentInfo => const OCColor(
+      lightAppearance: Color(0xff20E070), darkAppearance: Color(0xff20E070));
 
   @override
   OCColor get primaryGrey => const OCColor(
@@ -85,6 +98,10 @@ class OCBaseStyleGuide extends OCStyleGuide {
       lightAppearance: Colors.black, darkAppearance: Colors.white);
 
   @override
+  OCColor get iconBrandPrimary => const OCColor(
+      lightAppearance: Colors.white, darkAppearance: Colors.black);
+
+  @override
   OCColor get navigationTitle => const OCColor(
       lightAppearance: Color(0xFF404040), darkAppearance: Color(0xFFF5F5F5));
 
@@ -111,4 +128,26 @@ class OCBaseStyleGuide extends OCStyleGuide {
   @override
   OCColor get logoutColor => const OCColor(
       lightAppearance: Color(0xFFB05959), darkAppearance: Color(0xFFB05959));
+
+  @override
+  OCColor get overlay => const OCColor(
+      lightAppearance: Color.fromRGBO(0, 0, 0, 0.2),
+      darkAppearance: Color.fromRGBO(0, 0, 0, 0.4));
+
+  @override
+  OCColor get overlayDark => const OCColor(
+      lightAppearance: Color.fromRGBO(0, 0, 0, 0.6),
+      darkAppearance: Color.fromRGBO(255, 255, 255, 0.6));
+
+  @override
+  OCColor get disabled => const OCColor(
+      lightAppearance: Color(0xffdbdbdb), darkAppearance: Color(0xff2d2f2f));
+
+  @override
+  OCColor get highlight => const OCColor(
+      lightAppearance: Color(0xfffbf4dd), darkAppearance: Color(0xff302d22));
+
+  @override
+  OCColor get bgGray => const OCColor(
+      lightAppearance: Color(0xfff6f9fa), darkAppearance: Color(0xFF121212));
 }

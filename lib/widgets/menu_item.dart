@@ -3,8 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 
-class OCMenuItem extends StatelessWidget {
-  const OCMenuItem({
+class MenuItem extends StatelessWidget {
+  const MenuItem({
     Key? key,
     required this.title,
     required this.urlIcon,

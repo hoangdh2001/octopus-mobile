@@ -4,7 +4,10 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
 class GradientAvatar extends StatelessWidget {
-  const GradientAvatar({super.key});
+  const GradientAvatar({super.key, required this.name, required this.userId});
+
+  final String name;
+  final String userId;
 
   @override
   Widget build(BuildContext context) {
@@ -12,8 +15,8 @@ class GradientAvatar extends StatelessWidget {
       child: RepaintBoundary(
         child: CustomPaint(
           painter: PolygonGradientPainter(
-            '1',
-            getShortenedName('Do Huy Hoang'),
+            userId,
+            getShortenedName(name),
             DefaultTextStyle.of(context).style.fontFamily ?? 'Roboto',
           ),
           child: const SizedBox.expand(),

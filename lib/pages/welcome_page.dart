@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -30,7 +30,7 @@ class _WelcomePageState extends State<WelcomePage> {
               child: TextButton(
                 style: OctopusTheme.of(context).buttonTheme.brandPrimaryButton,
                 onPressed: () {
-                  context.push("/login");
+                  Navigator.pushNamed(context, Routes.LOGIN);
                 },
                 child: const Text('Get Started'),
               ),

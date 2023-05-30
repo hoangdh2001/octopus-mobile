@@ -7,26 +7,25 @@ part of 'user.dart';
 // **************************************************************************
 
 User _$UserFromJson(Map<String, dynamic> json) => User(
-      json['id'] as String,
-      json['email'] as String,
-      json['lastName'] as String?,
-      json['password'] as String?,
-      json['phoneNumber'] as String?,
-      json['birthDay'] == null
+      id: json['id'] as String,
+      email: json['email'] as String,
+      firstName: json['firstName'] as String?,
+      lastName: json['lastName'] as String?,
+      phoneNumber: json['phoneNumber'] as String?,
+      birthday: json['birthday'] == null
           ? null
-          : DateTime.parse(json['birthDay'] as String),
-      json['gender'] as bool?,
-      json['active'] as bool?,
-      json['lastActive'] == null
+          : DateTime.parse(json['birthday'] as String),
+      gender: json['gender'] as bool?,
+      active: json['active'] as bool?,
+      lastActive: json['lastActive'] == null
           ? null
           : DateTime.parse(json['lastActive'] as String),
-      json['avatar'] as String?,
-      json['refreshToken'] as String?,
-      json['enabled'] as bool?,
-      json['createdDate'] == null
+      avatar: json['avatar'] as String?,
+      enabled: json['enabled'] as bool?,
+      createdDate: json['createdDate'] == null
           ? null
           : DateTime.parse(json['createdDate'] as String),
-      json['updatedDate'] == null
+      updatedDate: json['updatedDate'] == null
           ? null
           : DateTime.parse(json['updatedDate'] as String),
     );
@@ -34,15 +33,14 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'id': instance.id,
       'email': instance.email,
+      'firstName': instance.firstName,
       'lastName': instance.lastName,
-      'password': instance.password,
       'phoneNumber': instance.phoneNumber,
-      'birthDay': instance.birthDay?.toIso8601String(),
+      'birthday': instance.birthday?.toIso8601String(),
       'gender': instance.gender,
       'active': instance.active,
       'lastActive': instance.lastActive?.toIso8601String(),
       'avatar': instance.avatar,
-      'refreshToken': instance.refreshToken,
       'enabled': instance.enabled,
       'createdDate': instance.createdDate?.toIso8601String(),
       'updatedDate': instance.updatedDate?.toIso8601String(),

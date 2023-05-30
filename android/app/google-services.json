@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "732295032278",
+    "project_id": "octopus-40",
+    "storage_bucket": "octopus-40.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:732295032278:android:fa4126c7ad5f84c3328877",
+        "android_client_info": {
+          "package_name": "com.example.octopus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "732295032278-kov2m5n3s0pmu125u92bic7ekpe1kklr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC70jNc4jgsVLERHp69urxvYJdzTr3Lnk4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "732295032278-kov2m5n3s0pmu125u92bic7ekpe1kklr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,11 +1,18 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:octopus/core/data/models/device.dart';
 import 'package:octopus/core/data/models/error.dart';
 import 'package:octopus/core/data/models/sign_up_request.dart';
+import 'package:octopus/core/data/models/token.dart';
 import 'package:octopus/core/data/models/user.dart';
 import 'package:octopus/core/data/repositories/auth_repository.dart';
+import 'package:octopus/core/data/repositories/user_repository.dart';
+import 'package:octopus/utils/constants.dart';
 import 'package:octopus/validations/validation_value.dart';
 
 part 'sign_up_bloc.freezed.dart';
@@ -13,8 +20,11 @@ part 'sign_up_bloc.freezed.dart';
 @singleton
 class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   final AuthRepository _authRepository;
+  final FlutterSecureStorage secureStorage;
+  final UserRepository _userRepository;
 
-  SignUpBloc(this._authRepository) : super(SignUpState.initial()) {
+  SignUpBloc(this._authRepository, this.secureStorage, this._userRepository)
+      : super(SignUpState.initial()) {
     on<SignUpEvent>((event, emit) async {
       await event.map(
         init: (value) async {
@@ -96,6 +106,16 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
         ),
       );
     }
+  }
+
+  Future<void> handleStorageToken(Token token) async {
+    await secureStorage.write(
+        key: octopusToken, value: jsonEncode(token.toJson()));
+  }
+
+  Future<void> handleAddDevice(String id, String token) async {
+    await _userRepository.addDevice(
+        id, Device(deviceID: token, pushProvider: 'firebase'));
   }
 }
 

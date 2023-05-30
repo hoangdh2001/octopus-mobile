@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
+import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
-import 'package:octopus/pages/verify/login_with_pass_screen.dart';
 import 'package:octopus/widgets/screen_header.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -52,9 +51,9 @@ class _OptionsSignInScreenState extends State<OptionsSignInScreen> {
                     .buttonTheme
                     .buttonPrimaryGreyBorder,
                 onPressed: () {
-                  context.push('/login/options/pass');
+                  Navigator.pushNamed(context, Routes.LOGIN_WITH_PASS);
                 },
-                child: const Text('Test'),
+                child: const Text('Login with password'),
               ),
             ),
           ],

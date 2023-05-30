@@ -5,9 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:logging/logging.dart';
+import 'package:octopus/core/data/models/device.dart';
 import 'package:octopus/core/data/models/error.dart';
 import 'package:octopus/core/data/models/token.dart';
 import 'package:octopus/core/data/repositories/auth_repository.dart';
+import 'package:octopus/core/data/repositories/user_repository.dart';
 import 'package:octopus/utils/constants.dart';
 
 part 'login_bloc.freezed.dart';
@@ -16,8 +19,11 @@ part 'login_bloc.freezed.dart';
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final AuthRepository _authRepository;
   final FlutterSecureStorage secureStorage;
+  final UserRepository _userRepository;
+  final Logger _logger;
 
-  LoginBloc(this._authRepository, this.secureStorage)
+  LoginBloc(this._authRepository, this.secureStorage,
+      @Named("app-logger") this._logger, this._userRepository)
       : super(LoginState.initial()) {
     on<LoginEvent>((event, emit) async {
       await event.map(
@@ -86,6 +92,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   Future<void> handleStorageToken(Token token) async {
     await secureStorage.write(
         key: octopusToken, value: jsonEncode(token.toJson()));
+  }
+
+  Future<void> handleAddDevice(String id, String token, String? name) async {
+    await _userRepository.addDevice(
+        id, Device(deviceID: token, pushProvider: 'firebase', name: name));
   }
 }
 

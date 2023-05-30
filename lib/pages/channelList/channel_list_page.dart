@@ -1,10 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:octopus/core/config/routes.dart';
+import 'package:octopus/core/data/models/filter.dart';
+import 'package:octopus/core/data/models/sort_option.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:octopus/core/ui/paged_value_scroll_view/bloc/paged_value_bloc.dart';
-import 'package:octopus/di/service_locator.dart';
+import 'package:octopus/core/ui/scroll_view/scroll_view_empty_widget.dart';
+import 'package:octopus/octopus.dart';
+import 'package:octopus/pages/channel/channel_page.dart';
 import 'package:octopus/pages/channelList/bloc/channel_list_bloc.dart';
 import 'package:octopus/widgets/channel_list/channel_list.dart';
 
@@ -18,11 +24,35 @@ class ChannelListPage extends StatefulWidget {
 class _ChannelListPageState extends State<ChannelListPage> {
   final ScrollController _scrollController = ScrollController();
   TextEditingController? _controller;
+  late final ChannelListBloc _channelListBloc = ChannelListBloc(
+    client: Octopus.of(context).client,
+    filter: Filter.in_(
+      'members.userID',
+      [Octopus.of(context).currentUser!.id],
+    ),
+    sort: [
+      const SortOption('lastMessageAt', direction: -1),
+    ],
+    limit: 30,
+  );
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    _scrollController.dispose();
+    _channelListBloc.close();
+    super.dispose();
   }
 
   @override
@@ -57,12 +87,14 @@ class _ChannelListPageState extends State<ChannelListPage> {
         body: SlidableAutoCloseBehavior(
           closeWhenOpened: true,
           child: RefreshIndicator(
+            color: OctopusTheme.of(context).colorTheme.brandPrimary,
             onRefresh: () async {
-              getIt<ChannelListBloc>().add(const Refresh());
+              _channelListBloc.add(const Refresh());
             },
             child: ChannelList(
               scrollController: _scrollController,
-              controller: getIt<ChannelListBloc>(),
+              controller: _channelListBloc,
+              separatorBuilder: (context, values, index) => const Offstage(),
               itemBuilder: (context, channels, index, defaultWidget) {
                 final chatTheme = OctopusTheme.of(context);
                 final channel = channels[index];
@@ -78,7 +110,7 @@ class _ChannelListPageState extends State<ChannelListPage> {
                       ),
                       CustomSlidableAction(
                         backgroundColor: Colors.pink,
-                        child: Icon(Icons.delete),
+                        child: SvgPicture.asset('assets/icons/trash.svg'),
                         onPressed: (_) async {},
                       ),
                     ],
@@ -86,7 +118,43 @@ class _ChannelListPageState extends State<ChannelListPage> {
                   child: defaultWidget,
                 );
               },
-              onChannelTap: (channel) {},
+              onChannelTap: (channel) {
+                Navigator.pushNamed(context, Routes.CHANNEL_PAGE,
+                    arguments: ChannelPageArgs(channel: channel));
+              },
+              errorBuilder: (context, error) {
+                return Center(child: Text(error.message));
+              },
+              emptyBuilder: (context) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: ScrollViewEmptyWidget(
+                      emptyIcon: SvgPicture.asset(
+                        'assets/icons/message.svg',
+                        width: 148,
+                        color: OctopusTheme.of(context).colorTheme.disabled,
+                      ),
+                      emptyTitle: TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, Routes.NEW_CHAT);
+                        },
+                        child: Text(
+                          'Start a chat',
+                          style: OctopusTheme.of(context)
+                              .textTheme
+                              .primaryGreyBody
+                              .copyWith(
+                                color: OctopusTheme.of(context)
+                                    .colorTheme
+                                    .brandPrimary,
+                              ),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ),
