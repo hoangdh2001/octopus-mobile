@@ -1,3 +1,4 @@
+import 'package:octopus/core/data/models/enums/workspace_own_capability.dart';
 import 'package:octopus/core/data/models/filter.dart';
 import 'package:octopus/core/data/models/get_task_response.dart';
 import 'package:octopus/core/data/models/pagination_params.dart';
@@ -28,7 +29,11 @@ abstract class WorkspaceRepository {
   Future<List<WorkspaceState>> getWorkspaceByUser();
 
   Future<WorkspaceState> createProject(
-      String workspaceID, String name, List<TaskStatus> statusList,
+      String workspaceID,
+      String name,
+      List<TaskStatus> statusList,
+      bool createChannelForProject,
+      bool workspaceAccess,
       {List<String> members = const []});
 
   Future<ProjectState> createSpace(
@@ -65,5 +70,15 @@ abstract class WorkspaceRepository {
       String workspaceID, String projectID, String spaceID);
 
   Future<WorkspaceMember> addMember(
-      String workspaceID, String email, String role);
+      String workspaceID, String email, String role, String? group);
+
+  Future<WorkspaceState> addGroup(String workspaceID, String name,
+      {String? description, List<String> members = const []});
+
+  Future<WorkspaceState> addRole(String workspaceID, String name,
+      {String? description,
+      List<WorkspaceOwnCapability> permissions = const []});
+
+  // Future<ProjectState> addMemberToProject(
+  //     String workspaceID, String projectID, List<String> members);
 }

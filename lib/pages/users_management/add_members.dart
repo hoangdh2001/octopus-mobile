@@ -1,9 +1,13 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart' hide BackButton;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:octopus/core/data/client/workspace.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
+import 'package:octopus/octopus.dart';
 import 'package:octopus/octopus_workspace.dart';
 import 'package:octopus/widgets/channel/channel_back_button.dart';
+import 'package:collection/collection.dart';
 
 class AddMembers extends StatefulWidget {
   const AddMembers({super.key});
@@ -13,19 +17,28 @@ class AddMembers extends StatefulWidget {
 }
 
 class _AddMembersState extends State<AddMembers> {
+  late TextEditingController _emailController;
+
   late TextEditingController _controller;
 
   late TextEditingController _teamController;
 
+  Workspace get workspace => OctopusWorkspace.of(context).workspace;
+
   @override
   void initState() {
-    _controller = TextEditingController();
+    _emailController = TextEditingController();
+    _controller = TextEditingController(
+        text: workspace.state!.workspaceState.workspaceRoles!
+            .firstWhere((role) => role.name == 'Guest')
+            .name);
     _teamController = TextEditingController();
     super.initState();
   }
 
   @override
   void dispose() {
+    _emailController.dispose();
     _controller.dispose();
     _teamController.dispose();
     super.dispose();
@@ -52,13 +65,19 @@ class _AddMembersState extends State<AddMembers> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                'Email Adress',
+              Text.rich(
                 style: OctopusTheme.of(context).textTheme.primaryGreyBodyBold,
+                const TextSpan(
+                  children: [
+                    TextSpan(text: "Email address"),
+                    TextSpan(text: " (*)", style: TextStyle(color: Colors.red))
+                  ],
+                ),
               ),
               const SizedBox(height: 10),
               SizedBox(
                 child: TextField(
+                  controller: _emailController,
                   decoration: InputDecoration(
                     hintText: 'Enter email address to invite',
                     hintStyle: OctopusTheme.of(context).textTheme.hint,
@@ -109,36 +128,61 @@ class _AddMembersState extends State<AddMembers> {
               const SizedBox(
                 height: 10,
               ),
-              Text(
-                'Team',
-                style: OctopusTheme.of(context).textTheme.primaryGreyBodyBold,
-              ),
-              const SizedBox(height: 10),
-              CustomDropdown(
-                hintText: 'Select team',
-                hintStyle: OctopusTheme.of(context).textTheme.hint,
-                selectedStyle:
-                    OctopusTheme.of(context).textTheme.primaryGreyBody,
-                listItemStyle:
-                    OctopusTheme.of(context).textTheme.primaryGreyBody,
-                items: workspace.state!.workspaceState.workspaceRoles
-                        ?.map((role) => role.name)
-                        .toList() ??
-                    [],
-                controller: _teamController,
-                borderSide: BorderSide(
-                  width: 1,
-                  color: OctopusTheme.of(context).colorTheme.border,
+              if (workspace.state!.workspaceState.workspaceGroups != null &&
+                  workspace.state!.workspaceState.workspaceGroups!.isNotEmpty)
+                Text(
+                  'Team',
+                  style: OctopusTheme.of(context).textTheme.primaryGreyBodyBold,
                 ),
-                borderRadius: BorderRadius.circular(8),
-              ),
+              if (workspace.state!.workspaceState.workspaceGroups != null &&
+                  workspace.state!.workspaceState.workspaceGroups!.isNotEmpty)
+                const SizedBox(height: 10),
+              if (workspace.state!.workspaceState.workspaceGroups != null &&
+                  workspace.state!.workspaceState.workspaceGroups!.isNotEmpty)
+                CustomDropdown(
+                  hintText: 'Select team',
+                  hintStyle: OctopusTheme.of(context).textTheme.hint,
+                  selectedStyle:
+                      OctopusTheme.of(context).textTheme.primaryGreyBody,
+                  listItemStyle:
+                      OctopusTheme.of(context).textTheme.primaryGreyBody,
+                  items: workspace.state!.workspaceState.workspaceGroups
+                          ?.map((group) => group.name ?? 'Unnamed')
+                          .toList() ??
+                      [],
+                  controller: _teamController,
+                  borderSide: BorderSide(
+                    width: 1,
+                    color: OctopusTheme.of(context).colorTheme.border,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
               Container(
                 height: 40.h,
                 margin: const EdgeInsets.symmetric(vertical: 20),
                 child: TextButton(
                   style:
                       OctopusTheme.of(context).buttonTheme.brandPrimaryButton,
-                  onPressed: () {},
+                  onPressed: () async {
+                    Octopus.of(context).showLoadingOverlay(context);
+                    final team = workspace.state!.workspaceState.workspaceGroups
+                        ?.firstWhereOrNull(
+                            (group) => group.name == _teamController.text);
+                    final role = workspace.state!.workspaceState.workspaceRoles!
+                        .firstWhere((role) => role.name == _controller.text);
+                    await workspace.addMember(
+                        _emailController.text, role, team);
+                    Fluttertoast.showToast(
+                        msg: "Invite email successfully",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.black87,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
                   child: const Text('Invite email'),
                 ),
               ),

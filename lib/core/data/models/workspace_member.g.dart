@@ -18,6 +18,9 @@ WorkspaceMember _$WorkspaceMemberFromJson(Map<String, dynamic> json) =>
       role: json['role'] == null
           ? null
           : WorkspaceRole.fromJson(json['role'] as Map<String, dynamic>),
+      groups: (json['groups'] as List<dynamic>?)
+          ?.map((e) => WorkspaceGroup.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$WorkspaceMemberToJson(WorkspaceMember instance) =>
@@ -26,4 +29,5 @@ Map<String, dynamic> _$WorkspaceMemberToJson(WorkspaceMember instance) =>
       'createdDate': instance.createdDate?.toIso8601String(),
       'updatedDate': instance.updatedDate?.toIso8601String(),
       'role': instance.role,
+      'groups': instance.groups,
     };

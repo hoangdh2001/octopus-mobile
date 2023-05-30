@@ -6,6 +6,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:octopus/core/data/client/workspace.dart';
 import 'package:octopus/core/data/models/enums/workspace_own_capability.dart';
 import 'package:octopus/core/data/models/workspace_member.dart';
+import 'package:octopus/core/data/models/workspace_state.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/octopus_workspace.dart';
 import 'package:octopus/pages/users_management/add_roles.dart';
@@ -28,124 +29,136 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
   bool listExpanded = false;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
-      appBar: AppBar(
-        elevation: 0,
-        leading: const BackButton(),
-        title: Text(
-          "Users Management",
-          style: OctopusTheme.of(context).textTheme.navigationTitle,
-        ),
-        centerTitle: true,
-        backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
-      ),
-      body: ListView(
-        controller: ModalScrollController.of(context),
-        physics: ClampingScrollPhysics(),
-        children: [
-          _buildMembers(
-              workspace.state!.workspaceState.members ?? <WorkspaceMember>[]),
-          Container(
-            height: 8.0,
-            color: OctopusTheme.of(context).colorTheme.disabled,
-          ),
-          OptionListTile(
-            title: 'Invite members to workspace',
-            leading: Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: SvgPicture.asset(
-                'assets/icons/user_add.svg',
-                width: 24,
-                height: 24,
-                color: OctopusTheme.of(context)
-                    .colorTheme
-                    .primaryGrey
-                    .withOpacity(0.5),
+    return StreamBuilder<WorkspaceState>(
+        stream: workspace.state!.workspaceStateStream,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Container(
+              color: OctopusTheme.of(context).colorTheme.disabled,
+              child: Center(
+                  child: _getIndicatorWidget(Theme.of(context).platform)),
+            );
+          }
+
+          return Scaffold(
+            backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
+            appBar: AppBar(
+              elevation: 0,
+              leading: const BackButton(),
+              title: Text(
+                "Users Management",
+                style: OctopusTheme.of(context).textTheme.navigationTitle,
               ),
+              centerTitle: true,
+              backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
             ),
-            trailing: SvgPicture.asset(
-              'assets/icons/arrow_right.svg',
-              color: OctopusTheme.of(context).colorTheme.primaryGrey,
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const AddMembers();
+            body: ListView(
+              controller: ModalScrollController.of(context),
+              physics: const ClampingScrollPhysics(),
+              children: [
+                _buildMembers(workspace.state!.workspaceState.members ??
+                    <WorkspaceMember>[]),
+                Container(
+                  height: 8.0,
+                  color: OctopusTheme.of(context).colorTheme.disabled,
+                ),
+                OptionListTile(
+                  title: 'Invite members to workspace',
+                  leading: Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: SvgPicture.asset(
+                      'assets/icons/user_add.svg',
+                      width: 24,
+                      height: 24,
+                      color: OctopusTheme.of(context)
+                          .colorTheme
+                          .primaryGrey
+                          .withOpacity(0.5),
+                    ),
+                  ),
+                  trailing: SvgPicture.asset(
+                    'assets/icons/arrow_right.svg',
+                    color: OctopusTheme.of(context).colorTheme.primaryGrey,
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return const AddMembers();
+                        },
+                      ),
+                    );
                   },
                 ),
-              );
-            },
-          ),
-          OptionListTile(
-            title: 'Groups',
-            leading: Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: SvgPicture.asset(
-                'assets/icons/users_group.svg',
-                width: 24,
-                height: 24,
-                color: OctopusTheme.of(context)
-                    .colorTheme
-                    .primaryGrey
-                    .withOpacity(0.5),
-              ),
-            ),
-            trailing: SvgPicture.asset(
-              'assets/icons/arrow_right.svg',
-              color: OctopusTheme.of(context).colorTheme.primaryGrey,
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialWithModalsPageRoute(
-                  builder: (context) {
-                    return const GroupsPage();
+                OptionListTile(
+                  title: 'Groups',
+                  leading: Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: SvgPicture.asset(
+                      'assets/icons/users_group.svg',
+                      width: 24,
+                      height: 24,
+                      color: OctopusTheme.of(context)
+                          .colorTheme
+                          .primaryGrey
+                          .withOpacity(0.5),
+                    ),
+                  ),
+                  trailing: SvgPicture.asset(
+                    'assets/icons/arrow_right.svg',
+                    color: OctopusTheme.of(context).colorTheme.primaryGrey,
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialWithModalsPageRoute(
+                        builder: (context) {
+                          return const GroupsPage();
+                        },
+                      ),
+                    );
                   },
                 ),
-              );
-            },
-          ),
-          OptionListTile(
-            title: 'Roles',
-            leading: Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: SvgPicture.asset(
-                'assets/icons/roles.svg',
-                width: 24,
-                height: 24,
-                color: OctopusTheme.of(context)
-                    .colorTheme
-                    .primaryGrey
-                    .withOpacity(0.5),
-              ),
-            ),
-            trailing: SvgPicture.asset(
-              'assets/icons/arrow_right.svg',
-              color: OctopusTheme.of(context).colorTheme.primaryGrey,
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return const AddRoles();
+                OptionListTile(
+                  title: 'Roles',
+                  leading: Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: SvgPicture.asset(
+                      'assets/icons/roles.svg',
+                      width: 24,
+                      height: 24,
+                      color: OctopusTheme.of(context)
+                          .colorTheme
+                          .primaryGrey
+                          .withOpacity(0.5),
+                    ),
+                  ),
+                  trailing: SvgPicture.asset(
+                    'assets/icons/arrow_right.svg',
+                    color: OctopusTheme.of(context).colorTheme.primaryGrey,
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return const AddRoles();
+                        },
+                      ),
+                    );
                   },
                 ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
+              ],
+            ),
+          );
+        });
   }
 
   Widget _buildMembers(List<WorkspaceMember> members) {
     final groupMembers = members
       ..sort((prev, curr) {
-        if (curr.role!.ownCapability
+        if (curr.role!.ownCapabilities
                 ?.contains(WorkspaceOwnCapability.allCapabilities) ??
             false) return 1;
         return 0;
@@ -202,7 +215,10 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  member.user.name,
+                                  member.user.firstName != null &&
+                                          member.user.lastName != null
+                                      ? member.user.name
+                                      : 'Unknown name',
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -210,12 +226,13 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
                                   height: 1.0,
                                 ),
                                 Text(
-                                  member.role!.name,
+                                  '${member.role!.name} (${member.user.email})',
                                   style: TextStyle(
-                                      color: OctopusTheme.of(context)
-                                          .colorTheme
-                                          .primaryGrey
-                                          .withOpacity(0.5)),
+                                    color: OctopusTheme.of(context)
+                                        .colorTheme
+                                        .primaryGrey
+                                        .withOpacity(0.5),
+                                  ),
                                 ),
                               ],
                             ),
@@ -292,5 +309,19 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
           ),
       ],
     );
+  }
+
+  Widget _getIndicatorWidget(TargetPlatform platform) {
+    switch (platform) {
+      case TargetPlatform.iOS:
+        return const CupertinoActivityIndicator(
+          color: Colors.grey,
+        );
+      case TargetPlatform.android:
+      default:
+        return const CircularProgressIndicator(
+          color: Colors.grey,
+        );
+    }
   }
 }

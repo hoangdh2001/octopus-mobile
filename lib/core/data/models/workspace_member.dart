@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:octopus/core/data/models/user.dart';
+import 'package:octopus/core/data/models/workspace_group.dart';
 import 'package:octopus/core/data/models/workspace_role.dart';
 
 part 'workspace_member.g.dart';
@@ -11,12 +12,14 @@ class WorkspaceMember extends Equatable {
   final DateTime? createdDate;
   final DateTime? updatedDate;
   final WorkspaceRole? role;
+  final List<WorkspaceGroup>? groups;
 
   const WorkspaceMember({
     required this.user,
     this.createdDate,
     this.updatedDate,
     this.role,
+    this.groups,
   });
 
   factory WorkspaceMember.fromJson(Map<String, dynamic> json) =>
@@ -30,5 +33,6 @@ class WorkspaceMember extends Equatable {
         createdDate,
         updatedDate,
         role,
+        groups,
       ];
 }

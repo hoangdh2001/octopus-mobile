@@ -13,6 +13,8 @@ CreateProjectRequest _$CreateProjectRequestFromJson(
       statusList: (json['statusList'] as List<dynamic>)
           .map((e) => TaskStatus.fromJson(e as Map<String, dynamic>))
           .toList(),
+      createChannel: json['createChannel'] as bool,
+      workspaceAccess: json['workspaceAccess'] as bool,
       members:
           (json['members'] as List<dynamic>?)?.map((e) => e as String).toList(),
     );
@@ -23,4 +25,6 @@ Map<String, dynamic> _$CreateProjectRequestToJson(
       'name': instance.name,
       'members': instance.members,
       'statusList': instance.statusList,
+      'createChannel': instance.createChannel,
+      'workspaceAccess': instance.workspaceAccess,
     };

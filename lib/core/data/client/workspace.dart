@@ -3,12 +3,14 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:octopus/core/data/client/client.dart';
 import 'package:octopus/core/data/client/project.dart';
+import 'package:octopus/core/data/models/enums/workspace_own_capability.dart';
 import 'package:octopus/core/data/models/get_task_response.dart';
 import 'package:octopus/core/data/models/project_state.dart';
 import 'package:octopus/core/data/models/setting.dart';
 import 'package:octopus/core/data/models/task.dart';
 import 'package:octopus/core/data/models/task_status.dart';
 import 'package:octopus/core/data/models/user.dart';
+import 'package:octopus/core/data/models/workspace_group.dart';
 import 'package:octopus/core/data/models/workspace_member.dart';
 import 'package:octopus/core/data/models/workspace_role.dart';
 import 'package:octopus/core/data/models/workspace_state.dart';
@@ -46,10 +48,18 @@ class Workspace {
   }
 
   Future<WorkspaceState> createProject(
-      String name, List<TaskStatus> statusList) async {
+      String name,
+      List<TaskStatus> statusList,
+      bool createChannelForProject,
+      bool workspaceAccess,
+      List<User> users) async {
     _checkInitialized();
-    final workspace =
-        await _workspaceRepository.createProject(id!, name, statusList);
+    final workspace = await _workspaceRepository.createProject(
+        id!, name, statusList, createChannelForProject, workspaceAccess,
+        members: users.map((e) => e.id).toList());
+
+    // final updatedProject = await _workspaceRepository.addMemberToProject(
+    //     id!, project.id, users.map((e) => e.id).toList());
     state?.updateWorkspaceState(workspace);
     return workspace;
   }
@@ -146,10 +156,29 @@ class Workspace {
     state?.updateProject(project);
   }
 
-  Future<void> addMember(String email, WorkspaceRole role) async {
+  Future<void> addMember(
+      String email, WorkspaceRole role, WorkspaceGroup? group) async {
     _checkInitialized();
-    final user = await _workspaceRepository.addMember(id!, email, role.id);
+    final user =
+        await _workspaceRepository.addMember(id!, email, role.id, group?.id);
     state?.updateMember(user);
+  }
+
+  Future<void> addGroup(String name,
+      {String? description, List<String> members = const []}) async {
+    _checkInitialized();
+    final group = await _workspaceRepository.addGroup(id!, name,
+        description: description, members: members);
+    state?.updateWorkspaceState(group);
+  }
+
+  Future<void> addRole(String name,
+      {String? description,
+      List<WorkspaceOwnCapability> capabilities = const []}) async {
+    _checkInitialized();
+    final role = await _workspaceRepository.addRole(id!, name,
+        description: description, permissions: capabilities);
+    state?.updateWorkspaceState(role);
   }
 
   void _checkInitialized() {

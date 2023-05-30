@@ -11,6 +11,7 @@ import 'package:octopus/di/service_locator.dart';
 import 'package:octopus/navigator_service.dart';
 import 'package:octopus/octopus.dart';
 import 'package:octopus/octopus_workspace.dart';
+import 'package:octopus/pages/new_workspace/new_workspace_page.dart';
 
 class HomePageArgs {
   final Client chatClient;
@@ -84,11 +85,7 @@ class _HomePageState extends State<HomePage> {
               );
             },
             noDataBuilder: (context) {
-              return Scaffold(
-                body: Center(
-                  child: _getIndicatorWidget(Theme.of(context).platform),
-                ),
-              );
+              return NewWorkspacePage();
             },
           ),
         );

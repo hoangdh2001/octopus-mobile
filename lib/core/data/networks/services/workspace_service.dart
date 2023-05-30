@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:octopus/core/data/models/add_group_request.dart';
+import 'package:octopus/core/data/models/add_member_to_project_request.dart';
 import 'package:octopus/core/data/models/add_members_with_email.dart';
 import 'package:octopus/core/data/models/add_role_request.dart';
 import 'package:octopus/core/data/models/add_task_request.dart';
@@ -101,4 +102,10 @@ abstract class WorkspaceService {
   @POST('/workspaces/{id}/roles')
   Future<WorkspaceState> addRole(
       @Path('id') String id, @Body() AddRoleRequest request);
+
+  // @POST('/workspaces/{id}/projects/{projectID}/members')
+  // Future<ProjectState> addMemberToProject(
+  //     @Path('id') String workspaceID,
+  //     @Path('projectID') String projectID,
+  //     @Body() AddMemberToProjectRequest request);
 }

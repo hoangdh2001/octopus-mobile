@@ -20,6 +20,10 @@ mixin _$CreateProjectEvent {
   TResult when<TResult extends Object?>({
     required TResult Function(String name) nameChanged,
     required TResult Function(List<TaskStatus> statusList) statusChanged,
+    required TResult Function(List<User> users) usersChanged,
+    required TResult Function(bool workspaceAccess) workspaceAccessChanged,
+    required TResult Function(bool createChannelForProject)
+        createChannelForProjectChanged,
     required TResult Function() submitted,
   }) =>
       throw _privateConstructorUsedError;
@@ -27,6 +31,10 @@ mixin _$CreateProjectEvent {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String name)? nameChanged,
     TResult? Function(List<TaskStatus> statusList)? statusChanged,
+    TResult? Function(List<User> users)? usersChanged,
+    TResult? Function(bool workspaceAccess)? workspaceAccessChanged,
+    TResult? Function(bool createChannelForProject)?
+        createChannelForProjectChanged,
     TResult? Function()? submitted,
   }) =>
       throw _privateConstructorUsedError;
@@ -34,6 +42,10 @@ mixin _$CreateProjectEvent {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String name)? nameChanged,
     TResult Function(List<TaskStatus> statusList)? statusChanged,
+    TResult Function(List<User> users)? usersChanged,
+    TResult Function(bool workspaceAccess)? workspaceAccessChanged,
+    TResult Function(bool createChannelForProject)?
+        createChannelForProjectChanged,
     TResult Function()? submitted,
     required TResult orElse(),
   }) =>
@@ -42,6 +54,11 @@ mixin _$CreateProjectEvent {
   TResult map<TResult extends Object?>({
     required TResult Function(NameChanged value) nameChanged,
     required TResult Function(StatusChanged value) statusChanged,
+    required TResult Function(UsersChanged value) usersChanged,
+    required TResult Function(WorkspaceAccessChanged value)
+        workspaceAccessChanged,
+    required TResult Function(CreateChannelForProjectChanged value)
+        createChannelForProjectChanged,
     required TResult Function(Submitted value) submitted,
   }) =>
       throw _privateConstructorUsedError;
@@ -49,6 +66,10 @@ mixin _$CreateProjectEvent {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(NameChanged value)? nameChanged,
     TResult? Function(StatusChanged value)? statusChanged,
+    TResult? Function(UsersChanged value)? usersChanged,
+    TResult? Function(WorkspaceAccessChanged value)? workspaceAccessChanged,
+    TResult? Function(CreateChannelForProjectChanged value)?
+        createChannelForProjectChanged,
     TResult? Function(Submitted value)? submitted,
   }) =>
       throw _privateConstructorUsedError;
@@ -56,6 +77,10 @@ mixin _$CreateProjectEvent {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(NameChanged value)? nameChanged,
     TResult Function(StatusChanged value)? statusChanged,
+    TResult Function(UsersChanged value)? usersChanged,
+    TResult Function(WorkspaceAccessChanged value)? workspaceAccessChanged,
+    TResult Function(CreateChannelForProjectChanged value)?
+        createChannelForProjectChanged,
     TResult Function(Submitted value)? submitted,
     required TResult orElse(),
   }) =>
@@ -146,6 +171,10 @@ class _$NameChanged implements NameChanged {
   TResult when<TResult extends Object?>({
     required TResult Function(String name) nameChanged,
     required TResult Function(List<TaskStatus> statusList) statusChanged,
+    required TResult Function(List<User> users) usersChanged,
+    required TResult Function(bool workspaceAccess) workspaceAccessChanged,
+    required TResult Function(bool createChannelForProject)
+        createChannelForProjectChanged,
     required TResult Function() submitted,
   }) {
     return nameChanged(name);
@@ -156,6 +185,10 @@ class _$NameChanged implements NameChanged {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String name)? nameChanged,
     TResult? Function(List<TaskStatus> statusList)? statusChanged,
+    TResult? Function(List<User> users)? usersChanged,
+    TResult? Function(bool workspaceAccess)? workspaceAccessChanged,
+    TResult? Function(bool createChannelForProject)?
+        createChannelForProjectChanged,
     TResult? Function()? submitted,
   }) {
     return nameChanged?.call(name);
@@ -166,6 +199,10 @@ class _$NameChanged implements NameChanged {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String name)? nameChanged,
     TResult Function(List<TaskStatus> statusList)? statusChanged,
+    TResult Function(List<User> users)? usersChanged,
+    TResult Function(bool workspaceAccess)? workspaceAccessChanged,
+    TResult Function(bool createChannelForProject)?
+        createChannelForProjectChanged,
     TResult Function()? submitted,
     required TResult orElse(),
   }) {
@@ -180,6 +217,11 @@ class _$NameChanged implements NameChanged {
   TResult map<TResult extends Object?>({
     required TResult Function(NameChanged value) nameChanged,
     required TResult Function(StatusChanged value) statusChanged,
+    required TResult Function(UsersChanged value) usersChanged,
+    required TResult Function(WorkspaceAccessChanged value)
+        workspaceAccessChanged,
+    required TResult Function(CreateChannelForProjectChanged value)
+        createChannelForProjectChanged,
     required TResult Function(Submitted value) submitted,
   }) {
     return nameChanged(this);
@@ -190,6 +232,10 @@ class _$NameChanged implements NameChanged {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(NameChanged value)? nameChanged,
     TResult? Function(StatusChanged value)? statusChanged,
+    TResult? Function(UsersChanged value)? usersChanged,
+    TResult? Function(WorkspaceAccessChanged value)? workspaceAccessChanged,
+    TResult? Function(CreateChannelForProjectChanged value)?
+        createChannelForProjectChanged,
     TResult? Function(Submitted value)? submitted,
   }) {
     return nameChanged?.call(this);
@@ -200,6 +246,10 @@ class _$NameChanged implements NameChanged {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(NameChanged value)? nameChanged,
     TResult Function(StatusChanged value)? statusChanged,
+    TResult Function(UsersChanged value)? usersChanged,
+    TResult Function(WorkspaceAccessChanged value)? workspaceAccessChanged,
+    TResult Function(CreateChannelForProjectChanged value)?
+        createChannelForProjectChanged,
     TResult Function(Submitted value)? submitted,
     required TResult orElse(),
   }) {
@@ -293,6 +343,10 @@ class _$StatusChanged implements StatusChanged {
   TResult when<TResult extends Object?>({
     required TResult Function(String name) nameChanged,
     required TResult Function(List<TaskStatus> statusList) statusChanged,
+    required TResult Function(List<User> users) usersChanged,
+    required TResult Function(bool workspaceAccess) workspaceAccessChanged,
+    required TResult Function(bool createChannelForProject)
+        createChannelForProjectChanged,
     required TResult Function() submitted,
   }) {
     return statusChanged(statusList);
@@ -303,6 +357,10 @@ class _$StatusChanged implements StatusChanged {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String name)? nameChanged,
     TResult? Function(List<TaskStatus> statusList)? statusChanged,
+    TResult? Function(List<User> users)? usersChanged,
+    TResult? Function(bool workspaceAccess)? workspaceAccessChanged,
+    TResult? Function(bool createChannelForProject)?
+        createChannelForProjectChanged,
     TResult? Function()? submitted,
   }) {
     return statusChanged?.call(statusList);
@@ -313,6 +371,10 @@ class _$StatusChanged implements StatusChanged {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String name)? nameChanged,
     TResult Function(List<TaskStatus> statusList)? statusChanged,
+    TResult Function(List<User> users)? usersChanged,
+    TResult Function(bool workspaceAccess)? workspaceAccessChanged,
+    TResult Function(bool createChannelForProject)?
+        createChannelForProjectChanged,
     TResult Function()? submitted,
     required TResult orElse(),
   }) {
@@ -327,6 +389,11 @@ class _$StatusChanged implements StatusChanged {
   TResult map<TResult extends Object?>({
     required TResult Function(NameChanged value) nameChanged,
     required TResult Function(StatusChanged value) statusChanged,
+    required TResult Function(UsersChanged value) usersChanged,
+    required TResult Function(WorkspaceAccessChanged value)
+        workspaceAccessChanged,
+    required TResult Function(CreateChannelForProjectChanged value)
+        createChannelForProjectChanged,
     required TResult Function(Submitted value) submitted,
   }) {
     return statusChanged(this);
@@ -337,6 +404,10 @@ class _$StatusChanged implements StatusChanged {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(NameChanged value)? nameChanged,
     TResult? Function(StatusChanged value)? statusChanged,
+    TResult? Function(UsersChanged value)? usersChanged,
+    TResult? Function(WorkspaceAccessChanged value)? workspaceAccessChanged,
+    TResult? Function(CreateChannelForProjectChanged value)?
+        createChannelForProjectChanged,
     TResult? Function(Submitted value)? submitted,
   }) {
     return statusChanged?.call(this);
@@ -347,6 +418,10 @@ class _$StatusChanged implements StatusChanged {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(NameChanged value)? nameChanged,
     TResult Function(StatusChanged value)? statusChanged,
+    TResult Function(UsersChanged value)? usersChanged,
+    TResult Function(WorkspaceAccessChanged value)? workspaceAccessChanged,
+    TResult Function(CreateChannelForProjectChanged value)?
+        createChannelForProjectChanged,
     TResult Function(Submitted value)? submitted,
     required TResult orElse(),
   }) {
@@ -365,6 +440,515 @@ abstract class StatusChanged implements CreateProjectEvent {
   @JsonKey(ignore: true)
   _$$StatusChangedCopyWith<_$StatusChanged> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$UsersChangedCopyWith<$Res> {
+  factory _$$UsersChangedCopyWith(
+          _$UsersChanged value, $Res Function(_$UsersChanged) then) =
+      __$$UsersChangedCopyWithImpl<$Res>;
+  @useResult
+  $Res call({List<User> users});
+}
+
+/// @nodoc
+class __$$UsersChangedCopyWithImpl<$Res>
+    extends _$CreateProjectEventCopyWithImpl<$Res, _$UsersChanged>
+    implements _$$UsersChangedCopyWith<$Res> {
+  __$$UsersChangedCopyWithImpl(
+      _$UsersChanged _value, $Res Function(_$UsersChanged) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? users = null,
+  }) {
+    return _then(_$UsersChanged(
+      null == users
+          ? _value._users
+          : users // ignore: cast_nullable_to_non_nullable
+              as List<User>,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$UsersChanged implements UsersChanged {
+  const _$UsersChanged(final List<User> users) : _users = users;
+
+  final List<User> _users;
+  @override
+  List<User> get users {
+    if (_users is EqualUnmodifiableListView) return _users;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_users);
+  }
+
+  @override
+  String toString() {
+    return 'CreateProjectEvent.usersChanged(users: $users)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UsersChanged &&
+            const DeepCollectionEquality().equals(other._users, _users));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_users));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UsersChangedCopyWith<_$UsersChanged> get copyWith =>
+      __$$UsersChangedCopyWithImpl<_$UsersChanged>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String name) nameChanged,
+    required TResult Function(List<TaskStatus> statusList) statusChanged,
+    required TResult Function(List<User> users) usersChanged,
+    required TResult Function(bool workspaceAccess) workspaceAccessChanged,
+    required TResult Function(bool createChannelForProject)
+        createChannelForProjectChanged,
+    required TResult Function() submitted,
+  }) {
+    return usersChanged(users);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String name)? nameChanged,
+    TResult? Function(List<TaskStatus> statusList)? statusChanged,
+    TResult? Function(List<User> users)? usersChanged,
+    TResult? Function(bool workspaceAccess)? workspaceAccessChanged,
+    TResult? Function(bool createChannelForProject)?
+        createChannelForProjectChanged,
+    TResult? Function()? submitted,
+  }) {
+    return usersChanged?.call(users);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String name)? nameChanged,
+    TResult Function(List<TaskStatus> statusList)? statusChanged,
+    TResult Function(List<User> users)? usersChanged,
+    TResult Function(bool workspaceAccess)? workspaceAccessChanged,
+    TResult Function(bool createChannelForProject)?
+        createChannelForProjectChanged,
+    TResult Function()? submitted,
+    required TResult orElse(),
+  }) {
+    if (usersChanged != null) {
+      return usersChanged(users);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(NameChanged value) nameChanged,
+    required TResult Function(StatusChanged value) statusChanged,
+    required TResult Function(UsersChanged value) usersChanged,
+    required TResult Function(WorkspaceAccessChanged value)
+        workspaceAccessChanged,
+    required TResult Function(CreateChannelForProjectChanged value)
+        createChannelForProjectChanged,
+    required TResult Function(Submitted value) submitted,
+  }) {
+    return usersChanged(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(NameChanged value)? nameChanged,
+    TResult? Function(StatusChanged value)? statusChanged,
+    TResult? Function(UsersChanged value)? usersChanged,
+    TResult? Function(WorkspaceAccessChanged value)? workspaceAccessChanged,
+    TResult? Function(CreateChannelForProjectChanged value)?
+        createChannelForProjectChanged,
+    TResult? Function(Submitted value)? submitted,
+  }) {
+    return usersChanged?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(NameChanged value)? nameChanged,
+    TResult Function(StatusChanged value)? statusChanged,
+    TResult Function(UsersChanged value)? usersChanged,
+    TResult Function(WorkspaceAccessChanged value)? workspaceAccessChanged,
+    TResult Function(CreateChannelForProjectChanged value)?
+        createChannelForProjectChanged,
+    TResult Function(Submitted value)? submitted,
+    required TResult orElse(),
+  }) {
+    if (usersChanged != null) {
+      return usersChanged(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class UsersChanged implements CreateProjectEvent {
+  const factory UsersChanged(final List<User> users) = _$UsersChanged;
+
+  List<User> get users;
+  @JsonKey(ignore: true)
+  _$$UsersChangedCopyWith<_$UsersChanged> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$WorkspaceAccessChangedCopyWith<$Res> {
+  factory _$$WorkspaceAccessChangedCopyWith(_$WorkspaceAccessChanged value,
+          $Res Function(_$WorkspaceAccessChanged) then) =
+      __$$WorkspaceAccessChangedCopyWithImpl<$Res>;
+  @useResult
+  $Res call({bool workspaceAccess});
+}
+
+/// @nodoc
+class __$$WorkspaceAccessChangedCopyWithImpl<$Res>
+    extends _$CreateProjectEventCopyWithImpl<$Res, _$WorkspaceAccessChanged>
+    implements _$$WorkspaceAccessChangedCopyWith<$Res> {
+  __$$WorkspaceAccessChangedCopyWithImpl(_$WorkspaceAccessChanged _value,
+      $Res Function(_$WorkspaceAccessChanged) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? workspaceAccess = null,
+  }) {
+    return _then(_$WorkspaceAccessChanged(
+      null == workspaceAccess
+          ? _value.workspaceAccess
+          : workspaceAccess // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$WorkspaceAccessChanged implements WorkspaceAccessChanged {
+  const _$WorkspaceAccessChanged(this.workspaceAccess);
+
+  @override
+  final bool workspaceAccess;
+
+  @override
+  String toString() {
+    return 'CreateProjectEvent.workspaceAccessChanged(workspaceAccess: $workspaceAccess)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$WorkspaceAccessChanged &&
+            (identical(other.workspaceAccess, workspaceAccess) ||
+                other.workspaceAccess == workspaceAccess));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, workspaceAccess);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$WorkspaceAccessChangedCopyWith<_$WorkspaceAccessChanged> get copyWith =>
+      __$$WorkspaceAccessChangedCopyWithImpl<_$WorkspaceAccessChanged>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String name) nameChanged,
+    required TResult Function(List<TaskStatus> statusList) statusChanged,
+    required TResult Function(List<User> users) usersChanged,
+    required TResult Function(bool workspaceAccess) workspaceAccessChanged,
+    required TResult Function(bool createChannelForProject)
+        createChannelForProjectChanged,
+    required TResult Function() submitted,
+  }) {
+    return workspaceAccessChanged(workspaceAccess);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String name)? nameChanged,
+    TResult? Function(List<TaskStatus> statusList)? statusChanged,
+    TResult? Function(List<User> users)? usersChanged,
+    TResult? Function(bool workspaceAccess)? workspaceAccessChanged,
+    TResult? Function(bool createChannelForProject)?
+        createChannelForProjectChanged,
+    TResult? Function()? submitted,
+  }) {
+    return workspaceAccessChanged?.call(workspaceAccess);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String name)? nameChanged,
+    TResult Function(List<TaskStatus> statusList)? statusChanged,
+    TResult Function(List<User> users)? usersChanged,
+    TResult Function(bool workspaceAccess)? workspaceAccessChanged,
+    TResult Function(bool createChannelForProject)?
+        createChannelForProjectChanged,
+    TResult Function()? submitted,
+    required TResult orElse(),
+  }) {
+    if (workspaceAccessChanged != null) {
+      return workspaceAccessChanged(workspaceAccess);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(NameChanged value) nameChanged,
+    required TResult Function(StatusChanged value) statusChanged,
+    required TResult Function(UsersChanged value) usersChanged,
+    required TResult Function(WorkspaceAccessChanged value)
+        workspaceAccessChanged,
+    required TResult Function(CreateChannelForProjectChanged value)
+        createChannelForProjectChanged,
+    required TResult Function(Submitted value) submitted,
+  }) {
+    return workspaceAccessChanged(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(NameChanged value)? nameChanged,
+    TResult? Function(StatusChanged value)? statusChanged,
+    TResult? Function(UsersChanged value)? usersChanged,
+    TResult? Function(WorkspaceAccessChanged value)? workspaceAccessChanged,
+    TResult? Function(CreateChannelForProjectChanged value)?
+        createChannelForProjectChanged,
+    TResult? Function(Submitted value)? submitted,
+  }) {
+    return workspaceAccessChanged?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(NameChanged value)? nameChanged,
+    TResult Function(StatusChanged value)? statusChanged,
+    TResult Function(UsersChanged value)? usersChanged,
+    TResult Function(WorkspaceAccessChanged value)? workspaceAccessChanged,
+    TResult Function(CreateChannelForProjectChanged value)?
+        createChannelForProjectChanged,
+    TResult Function(Submitted value)? submitted,
+    required TResult orElse(),
+  }) {
+    if (workspaceAccessChanged != null) {
+      return workspaceAccessChanged(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class WorkspaceAccessChanged implements CreateProjectEvent {
+  const factory WorkspaceAccessChanged(final bool workspaceAccess) =
+      _$WorkspaceAccessChanged;
+
+  bool get workspaceAccess;
+  @JsonKey(ignore: true)
+  _$$WorkspaceAccessChangedCopyWith<_$WorkspaceAccessChanged> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$CreateChannelForProjectChangedCopyWith<$Res> {
+  factory _$$CreateChannelForProjectChangedCopyWith(
+          _$CreateChannelForProjectChanged value,
+          $Res Function(_$CreateChannelForProjectChanged) then) =
+      __$$CreateChannelForProjectChangedCopyWithImpl<$Res>;
+  @useResult
+  $Res call({bool createChannelForProject});
+}
+
+/// @nodoc
+class __$$CreateChannelForProjectChangedCopyWithImpl<$Res>
+    extends _$CreateProjectEventCopyWithImpl<$Res,
+        _$CreateChannelForProjectChanged>
+    implements _$$CreateChannelForProjectChangedCopyWith<$Res> {
+  __$$CreateChannelForProjectChangedCopyWithImpl(
+      _$CreateChannelForProjectChanged _value,
+      $Res Function(_$CreateChannelForProjectChanged) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? createChannelForProject = null,
+  }) {
+    return _then(_$CreateChannelForProjectChanged(
+      null == createChannelForProject
+          ? _value.createChannelForProject
+          : createChannelForProject // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$CreateChannelForProjectChanged
+    implements CreateChannelForProjectChanged {
+  const _$CreateChannelForProjectChanged(this.createChannelForProject);
+
+  @override
+  final bool createChannelForProject;
+
+  @override
+  String toString() {
+    return 'CreateProjectEvent.createChannelForProjectChanged(createChannelForProject: $createChannelForProject)';
+  }
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$CreateChannelForProjectChanged &&
+            (identical(
+                    other.createChannelForProject, createChannelForProject) ||
+                other.createChannelForProject == createChannelForProject));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, createChannelForProject);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$CreateChannelForProjectChangedCopyWith<_$CreateChannelForProjectChanged>
+      get copyWith => __$$CreateChannelForProjectChangedCopyWithImpl<
+          _$CreateChannelForProjectChanged>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function(String name) nameChanged,
+    required TResult Function(List<TaskStatus> statusList) statusChanged,
+    required TResult Function(List<User> users) usersChanged,
+    required TResult Function(bool workspaceAccess) workspaceAccessChanged,
+    required TResult Function(bool createChannelForProject)
+        createChannelForProjectChanged,
+    required TResult Function() submitted,
+  }) {
+    return createChannelForProjectChanged(createChannelForProject);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function(String name)? nameChanged,
+    TResult? Function(List<TaskStatus> statusList)? statusChanged,
+    TResult? Function(List<User> users)? usersChanged,
+    TResult? Function(bool workspaceAccess)? workspaceAccessChanged,
+    TResult? Function(bool createChannelForProject)?
+        createChannelForProjectChanged,
+    TResult? Function()? submitted,
+  }) {
+    return createChannelForProjectChanged?.call(createChannelForProject);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function(String name)? nameChanged,
+    TResult Function(List<TaskStatus> statusList)? statusChanged,
+    TResult Function(List<User> users)? usersChanged,
+    TResult Function(bool workspaceAccess)? workspaceAccessChanged,
+    TResult Function(bool createChannelForProject)?
+        createChannelForProjectChanged,
+    TResult Function()? submitted,
+    required TResult orElse(),
+  }) {
+    if (createChannelForProjectChanged != null) {
+      return createChannelForProjectChanged(createChannelForProject);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(NameChanged value) nameChanged,
+    required TResult Function(StatusChanged value) statusChanged,
+    required TResult Function(UsersChanged value) usersChanged,
+    required TResult Function(WorkspaceAccessChanged value)
+        workspaceAccessChanged,
+    required TResult Function(CreateChannelForProjectChanged value)
+        createChannelForProjectChanged,
+    required TResult Function(Submitted value) submitted,
+  }) {
+    return createChannelForProjectChanged(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(NameChanged value)? nameChanged,
+    TResult? Function(StatusChanged value)? statusChanged,
+    TResult? Function(UsersChanged value)? usersChanged,
+    TResult? Function(WorkspaceAccessChanged value)? workspaceAccessChanged,
+    TResult? Function(CreateChannelForProjectChanged value)?
+        createChannelForProjectChanged,
+    TResult? Function(Submitted value)? submitted,
+  }) {
+    return createChannelForProjectChanged?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(NameChanged value)? nameChanged,
+    TResult Function(StatusChanged value)? statusChanged,
+    TResult Function(UsersChanged value)? usersChanged,
+    TResult Function(WorkspaceAccessChanged value)? workspaceAccessChanged,
+    TResult Function(CreateChannelForProjectChanged value)?
+        createChannelForProjectChanged,
+    TResult Function(Submitted value)? submitted,
+    required TResult orElse(),
+  }) {
+    if (createChannelForProjectChanged != null) {
+      return createChannelForProjectChanged(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class CreateChannelForProjectChanged implements CreateProjectEvent {
+  const factory CreateChannelForProjectChanged(
+      final bool createChannelForProject) = _$CreateChannelForProjectChanged;
+
+  bool get createChannelForProject;
+  @JsonKey(ignore: true)
+  _$$CreateChannelForProjectChangedCopyWith<_$CreateChannelForProjectChanged>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -407,6 +991,10 @@ class _$Submitted implements Submitted {
   TResult when<TResult extends Object?>({
     required TResult Function(String name) nameChanged,
     required TResult Function(List<TaskStatus> statusList) statusChanged,
+    required TResult Function(List<User> users) usersChanged,
+    required TResult Function(bool workspaceAccess) workspaceAccessChanged,
+    required TResult Function(bool createChannelForProject)
+        createChannelForProjectChanged,
     required TResult Function() submitted,
   }) {
     return submitted();
@@ -417,6 +1005,10 @@ class _$Submitted implements Submitted {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String name)? nameChanged,
     TResult? Function(List<TaskStatus> statusList)? statusChanged,
+    TResult? Function(List<User> users)? usersChanged,
+    TResult? Function(bool workspaceAccess)? workspaceAccessChanged,
+    TResult? Function(bool createChannelForProject)?
+        createChannelForProjectChanged,
     TResult? Function()? submitted,
   }) {
     return submitted?.call();
@@ -427,6 +1019,10 @@ class _$Submitted implements Submitted {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String name)? nameChanged,
     TResult Function(List<TaskStatus> statusList)? statusChanged,
+    TResult Function(List<User> users)? usersChanged,
+    TResult Function(bool workspaceAccess)? workspaceAccessChanged,
+    TResult Function(bool createChannelForProject)?
+        createChannelForProjectChanged,
     TResult Function()? submitted,
     required TResult orElse(),
   }) {
@@ -441,6 +1037,11 @@ class _$Submitted implements Submitted {
   TResult map<TResult extends Object?>({
     required TResult Function(NameChanged value) nameChanged,
     required TResult Function(StatusChanged value) statusChanged,
+    required TResult Function(UsersChanged value) usersChanged,
+    required TResult Function(WorkspaceAccessChanged value)
+        workspaceAccessChanged,
+    required TResult Function(CreateChannelForProjectChanged value)
+        createChannelForProjectChanged,
     required TResult Function(Submitted value) submitted,
   }) {
     return submitted(this);
@@ -451,6 +1052,10 @@ class _$Submitted implements Submitted {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(NameChanged value)? nameChanged,
     TResult? Function(StatusChanged value)? statusChanged,
+    TResult? Function(UsersChanged value)? usersChanged,
+    TResult? Function(WorkspaceAccessChanged value)? workspaceAccessChanged,
+    TResult? Function(CreateChannelForProjectChanged value)?
+        createChannelForProjectChanged,
     TResult? Function(Submitted value)? submitted,
   }) {
     return submitted?.call(this);
@@ -461,6 +1066,10 @@ class _$Submitted implements Submitted {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(NameChanged value)? nameChanged,
     TResult Function(StatusChanged value)? statusChanged,
+    TResult Function(UsersChanged value)? usersChanged,
+    TResult Function(WorkspaceAccessChanged value)? workspaceAccessChanged,
+    TResult Function(CreateChannelForProjectChanged value)?
+        createChannelForProjectChanged,
     TResult Function(Submitted value)? submitted,
     required TResult orElse(),
   }) {
@@ -482,6 +1091,9 @@ mixin _$CreateProjectState {
   Option<WorkspaceState> get successOrFail =>
       throw _privateConstructorUsedError;
   List<TaskStatus> get statusList => throw _privateConstructorUsedError;
+  List<User> get users => throw _privateConstructorUsedError;
+  bool get createChannelForProject => throw _privateConstructorUsedError;
+  bool get workspaceAccess => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $CreateProjectStateCopyWith<CreateProjectState> get copyWith =>
@@ -498,7 +1110,10 @@ abstract class $CreateProjectStateCopyWith<$Res> {
       {String name,
       bool isSubmitting,
       Option<WorkspaceState> successOrFail,
-      List<TaskStatus> statusList});
+      List<TaskStatus> statusList,
+      List<User> users,
+      bool createChannelForProject,
+      bool workspaceAccess});
 }
 
 /// @nodoc
@@ -518,6 +1133,9 @@ class _$CreateProjectStateCopyWithImpl<$Res, $Val extends CreateProjectState>
     Object? isSubmitting = null,
     Object? successOrFail = null,
     Object? statusList = null,
+    Object? users = null,
+    Object? createChannelForProject = null,
+    Object? workspaceAccess = null,
   }) {
     return _then(_value.copyWith(
       name: null == name
@@ -536,6 +1154,18 @@ class _$CreateProjectStateCopyWithImpl<$Res, $Val extends CreateProjectState>
           ? _value.statusList
           : statusList // ignore: cast_nullable_to_non_nullable
               as List<TaskStatus>,
+      users: null == users
+          ? _value.users
+          : users // ignore: cast_nullable_to_non_nullable
+              as List<User>,
+      createChannelForProject: null == createChannelForProject
+          ? _value.createChannelForProject
+          : createChannelForProject // ignore: cast_nullable_to_non_nullable
+              as bool,
+      workspaceAccess: null == workspaceAccess
+          ? _value.workspaceAccess
+          : workspaceAccess // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -552,7 +1182,10 @@ abstract class _$$_CreateProjectStateCopyWith<$Res>
       {String name,
       bool isSubmitting,
       Option<WorkspaceState> successOrFail,
-      List<TaskStatus> statusList});
+      List<TaskStatus> statusList,
+      List<User> users,
+      bool createChannelForProject,
+      bool workspaceAccess});
 }
 
 /// @nodoc
@@ -570,6 +1203,9 @@ class __$$_CreateProjectStateCopyWithImpl<$Res>
     Object? isSubmitting = null,
     Object? successOrFail = null,
     Object? statusList = null,
+    Object? users = null,
+    Object? createChannelForProject = null,
+    Object? workspaceAccess = null,
   }) {
     return _then(_$_CreateProjectState(
       name: null == name
@@ -588,6 +1224,18 @@ class __$$_CreateProjectStateCopyWithImpl<$Res>
           ? _value._statusList
           : statusList // ignore: cast_nullable_to_non_nullable
               as List<TaskStatus>,
+      users: null == users
+          ? _value._users
+          : users // ignore: cast_nullable_to_non_nullable
+              as List<User>,
+      createChannelForProject: null == createChannelForProject
+          ? _value.createChannelForProject
+          : createChannelForProject // ignore: cast_nullable_to_non_nullable
+              as bool,
+      workspaceAccess: null == workspaceAccess
+          ? _value.workspaceAccess
+          : workspaceAccess // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -599,8 +1247,12 @@ class _$_CreateProjectState implements _CreateProjectState {
       {required this.name,
       required this.isSubmitting,
       required this.successOrFail,
-      required final List<TaskStatus> statusList})
-      : _statusList = statusList;
+      required final List<TaskStatus> statusList,
+      required final List<User> users,
+      required this.createChannelForProject,
+      required this.workspaceAccess})
+      : _statusList = statusList,
+        _users = users;
 
   @override
   final String name;
@@ -616,9 +1268,22 @@ class _$_CreateProjectState implements _CreateProjectState {
     return EqualUnmodifiableListView(_statusList);
   }
 
+  final List<User> _users;
+  @override
+  List<User> get users {
+    if (_users is EqualUnmodifiableListView) return _users;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_users);
+  }
+
+  @override
+  final bool createChannelForProject;
+  @override
+  final bool workspaceAccess;
+
   @override
   String toString() {
-    return 'CreateProjectState(name: $name, isSubmitting: $isSubmitting, successOrFail: $successOrFail, statusList: $statusList)';
+    return 'CreateProjectState(name: $name, isSubmitting: $isSubmitting, successOrFail: $successOrFail, statusList: $statusList, users: $users, createChannelForProject: $createChannelForProject, workspaceAccess: $workspaceAccess)';
   }
 
   @override
@@ -632,12 +1297,25 @@ class _$_CreateProjectState implements _CreateProjectState {
             (identical(other.successOrFail, successOrFail) ||
                 other.successOrFail == successOrFail) &&
             const DeepCollectionEquality()
-                .equals(other._statusList, _statusList));
+                .equals(other._statusList, _statusList) &&
+            const DeepCollectionEquality().equals(other._users, _users) &&
+            (identical(
+                    other.createChannelForProject, createChannelForProject) ||
+                other.createChannelForProject == createChannelForProject) &&
+            (identical(other.workspaceAccess, workspaceAccess) ||
+                other.workspaceAccess == workspaceAccess));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, name, isSubmitting,
-      successOrFail, const DeepCollectionEquality().hash(_statusList));
+  int get hashCode => Object.hash(
+      runtimeType,
+      name,
+      isSubmitting,
+      successOrFail,
+      const DeepCollectionEquality().hash(_statusList),
+      const DeepCollectionEquality().hash(_users),
+      createChannelForProject,
+      workspaceAccess);
 
   @JsonKey(ignore: true)
   @override
@@ -652,7 +1330,10 @@ abstract class _CreateProjectState implements CreateProjectState {
       {required final String name,
       required final bool isSubmitting,
       required final Option<WorkspaceState> successOrFail,
-      required final List<TaskStatus> statusList}) = _$_CreateProjectState;
+      required final List<TaskStatus> statusList,
+      required final List<User> users,
+      required final bool createChannelForProject,
+      required final bool workspaceAccess}) = _$_CreateProjectState;
 
   @override
   String get name;
@@ -662,6 +1343,12 @@ abstract class _CreateProjectState implements CreateProjectState {
   Option<WorkspaceState> get successOrFail;
   @override
   List<TaskStatus> get statusList;
+  @override
+  List<User> get users;
+  @override
+  bool get createChannelForProject;
+  @override
+  bool get workspaceAccess;
   @override
   @JsonKey(ignore: true)
   _$$_CreateProjectStateCopyWith<_$_CreateProjectState> get copyWith =>

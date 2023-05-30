@@ -8,9 +8,15 @@ class CreateProjectRequest {
   final String name;
   final List<String>? members;
   final List<TaskStatus> statusList;
+  final bool createChannel;
+  final bool workspaceAccess;
 
   CreateProjectRequest(
-      {required this.name, required this.statusList, this.members});
+      {required this.name,
+      required this.statusList,
+      required this.createChannel,
+      required this.workspaceAccess,
+      this.members});
 
   factory CreateProjectRequest.fromJson(Map<String, dynamic> json) =>
       _$CreateProjectRequestFromJson(json);

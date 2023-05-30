@@ -10,13 +10,13 @@ class WorkspaceRole extends Equatable {
   final String name;
   final bool roleDefault;
   final String? description;
-  final List<WorkspaceOwnCapability>? ownCapability;
+  final List<WorkspaceOwnCapability>? ownCapabilities;
 
   const WorkspaceRole({
     required this.id,
     required this.name,
     this.description,
-    this.ownCapability,
+    this.ownCapabilities,
     this.roleDefault = false,
   });
 
@@ -30,7 +30,7 @@ class WorkspaceRole extends Equatable {
         id,
         name,
         description,
-        ownCapability,
+        ownCapabilities,
         roleDefault,
       ];
 }

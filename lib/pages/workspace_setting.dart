@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:octopus/core/data/client/workspace.dart';
+import 'package:octopus/core/data/models/enums/workspace_own_capability.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/octopus.dart';
 import 'package:octopus/octopus_workspace.dart';
@@ -10,6 +12,7 @@ import 'package:octopus/pages/users_management/users_management.dart';
 import 'package:octopus/pages/workspace/workspace_page.dart';
 import 'package:octopus/widgets/avatars/workspace_avatar.dart';
 import 'package:octopus/widgets/options/options_list.dart';
+import 'package:collection/collection.dart';
 
 class WorkspaceSettingPage extends StatefulWidget {
   const WorkspaceSettingPage({super.key, required this.workspace});
@@ -148,14 +151,32 @@ class _WorkspaceSettingPageState extends State<WorkspaceSettingPage> {
                                 OctopusTheme.of(context).colorTheme.primaryGrey,
                           ),
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialWithModalsPageRoute(
-                                builder: (context) {
-                                  return const UsersManagementPage();
-                                },
-                              ),
+                            final currentUser =
+                                Octopus.of(context).client.state.currentUser;
+                            final currentMember = _workspace
+                                .state!.workspaceState.members
+                                ?.firstWhereOrNull(
+                              (member) => member.user.id == currentUser!.id,
                             );
+                            if (currentMember!.role!.ownCapabilities!.contains(
+                                WorkspaceOwnCapability.allCapabilities)) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const UsersManagementPage(),
+                                ),
+                              );
+                            } else {
+                              Fluttertoast.showToast(
+                                  msg: "You don't have permission to access",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.black87,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
+                            }
                           },
                         ),
                         OptionListTile(

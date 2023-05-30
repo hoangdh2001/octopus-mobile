@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart'
     hide ExpansionTile, ModalBottomSheetRoute;
 import 'package:flutter_svg/svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:octopus/core/config/routes.dart';
+import 'package:octopus/core/data/models/enums/workspace_own_capability.dart';
 import 'package:octopus/core/extensions/extension_iterable.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:octopus/core/ui/better_stream_builder.dart';
 import 'package:octopus/octopus.dart';
+import 'package:octopus/octopus_workspace.dart';
 import 'package:octopus/pages/create_project/create_project_page.dart';
 import 'package:octopus/pages/new_task/new_task_page.dart';
 import 'package:octopus/pages/new_workspace/new_workspace_page.dart';
@@ -17,6 +20,7 @@ import 'package:octopus/widgets/custom_expansion_tile/expansion_tile.dart';
 import 'package:octopus/widgets/menu_item.dart';
 import 'package:octopus/pages/settings/settings_page.dart';
 import 'package:octopus/widgets/project_list/project_list.dart';
+import 'package:collection/collection.dart';
 
 class LeftDrawer extends StatefulWidget {
   const LeftDrawer({
@@ -82,7 +86,30 @@ class _LeftDrawerState extends State<LeftDrawer> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          showNewProjectModal(context);
+                          final workspace =
+                              OctopusWorkspace.of(context).workspace;
+                          final currentUser =
+                              Octopus.of(context).client.state.currentUser;
+                          final currentMember = workspace
+                              .state!.workspaceState.members
+                              ?.firstWhereOrNull(
+                            (member) => member.user.id == currentUser!.id,
+                          );
+                          if (currentMember!.role!.ownCapabilities!.contains(
+                                  WorkspaceOwnCapability.allCapabilities) ||
+                              currentMember.role!.ownCapabilities!.contains(
+                                  WorkspaceOwnCapability.createProject)) {
+                            showNewProjectModal(context);
+                          } else {
+                            Fluttertoast.showToast(
+                                msg: "You don't have permission to access",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.black87,
+                                textColor: Colors.white,
+                                fontSize: 16.0);
+                          }
                         },
                         child: SvgPicture.asset(
                           'assets/icons/plus.svg',

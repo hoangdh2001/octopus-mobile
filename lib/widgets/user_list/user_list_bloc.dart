@@ -61,7 +61,8 @@ class UserListBloc extends PagedValueBloc<int, User> {
       final membersWorkspace = users
           .where((user) =>
               client.state.currentWorkspace!.state!.workspaceState.members
-                  ?.contains(user) ??
+                  ?.map((member) => member.user)
+                  .contains(user) ??
               false)
           .toList();
       emit(PagedValueState(items: membersWorkspace, nextPageKey: nextKey));

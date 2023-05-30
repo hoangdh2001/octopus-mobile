@@ -1,15 +1,21 @@
 import 'package:collection/collection.dart';
+import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:octopus/core/data/models/user.dart';
 import 'package:octopus/core/extensions/extension_iterable.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/octopus.dart';
 import 'package:octopus/octopus_workspace.dart';
+import 'package:octopus/pages/assign_user/assign_user_page.dart';
 import 'package:octopus/pages/create_project/bloc/create_project_bloc.dart';
 import 'package:octopus/pages/statuses/statuses_page.dart';
 import 'package:octopus/core/extensions/extension_color.dart';
+import 'package:octopus/widgets/avatars/user_avatar.dart';
 
 class CreateProjectPage extends StatefulWidget {
   const CreateProjectPage({super.key});
@@ -19,12 +25,12 @@ class CreateProjectPage extends StatefulWidget {
 }
 
 class _CreateProjectPageState extends State<CreateProjectPage> {
-  bool? _showChannelSetting = false;
   @override
   Widget build(BuildContext context) {
     final theme = OctopusTheme.of(context);
     final workspace = OctopusWorkspace.of(context).workspace;
-    final bloc = CreateProjectBloc(workspace);
+    final bloc = CreateProjectBloc(workspace,
+        [User.fromJson(workspace.client.state.currentUser!.toJson())]);
     return BlocProvider(
       create: (context) => bloc,
       child: Scaffold(
@@ -79,54 +85,222 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Space name',
-                  style: OctopusTheme.of(context).textTheme.primaryGreyBodyBold,
-                ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Enter Space name',
-                      hintStyle: OctopusTheme.of(context).textTheme.hint,
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(
-                          width: 2,
-                          color:
-                              OctopusTheme.of(context).colorTheme.brandPrimary,
+            child: BlocBuilder<CreateProjectBloc, CreateProjectState>(
+              builder: (context, state) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Space name',
+                      style: OctopusTheme.of(context)
+                          .textTheme
+                          .primaryGreyBodyBold,
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: 'Enter Space name',
+                          hintStyle: OctopusTheme.of(context).textTheme.hint,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                              width: 2,
+                              color: OctopusTheme.of(context)
+                                  .colorTheme
+                                  .brandPrimary,
+                            ),
+                          ),
                         ),
+                        autofocus: true,
+                        cursorColor:
+                            OctopusTheme.of(context).colorTheme.brandPrimary,
+                        enableSuggestions: true,
+                        autocorrect: false,
+                        style:
+                            OctopusTheme.of(context).textTheme.primaryGreyBody,
+                        onChanged: (value) {
+                          bloc.add(NameChanged(value));
+                        },
                       ),
                     ),
-                    autofocus: true,
-                    cursorColor:
-                        OctopusTheme.of(context).colorTheme.brandPrimary,
-                    enableSuggestions: true,
-                    autocorrect: false,
-                    style: OctopusTheme.of(context).textTheme.primaryGreyBody,
-                    onChanged: (value) {
-                      bloc.add(NameChanged(value));
-                    },
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  'Space settings',
-                  style: OctopusTheme.of(context).textTheme.primaryGreyBodyBold,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                BlocBuilder<CreateProjectBloc, CreateProjectState>(
-                  builder: (context, state) {
-                    return Card(
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'Privacy',
+                      style: OctopusTheme.of(context)
+                          .textTheme
+                          .primaryGreyBodyBold,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    SizedBox(
+                      height: 40.h,
+                      width: double.infinity,
+                      child: CupertinoSlidingSegmentedControl<bool>(
+                        backgroundColor: OctopusTheme.of(context)
+                            .colorTheme
+                            .contentViewSecondary,
+                        groupValue: state.workspaceAccess,
+                        // Callback that sets the selected segmented control.
+                        onValueChanged: (bool? value) {
+                          if (value != null) {
+                            bloc.add(WorkspaceAccessChanged(value));
+                          }
+                        },
+                        children: <bool, Widget>{
+                          true: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 8,
+                            ),
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset('assets/icons/users.svg',
+                                      width: 24,
+                                      height: 24,
+                                      color: !state.workspaceAccess
+                                          ? OctopusTheme.of(context)
+                                              .colorTheme
+                                              .primaryGrey
+                                          : OctopusTheme.of(context)
+                                              .colorTheme
+                                              .brandPrimary),
+                                  const SizedBox(
+                                    width: 8,
+                                  ),
+                                  Text(
+                                    'Workspace',
+                                    style: !state.workspaceAccess
+                                        ? OctopusTheme.of(context)
+                                            .textTheme
+                                            .primaryGreyBodyBold
+                                        : OctopusTheme.of(context)
+                                            .textTheme
+                                            .brandPrimaryBodyBold,
+                                  ),
+                                ]),
+                          ),
+                          false: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset('assets/icons/lock.svg',
+                                    width: 24,
+                                    height: 24,
+                                    color: state.workspaceAccess
+                                        ? OctopusTheme.of(context)
+                                            .colorTheme
+                                            .primaryGrey
+                                        : OctopusTheme.of(context)
+                                            .colorTheme
+                                            .brandPrimary),
+                                const SizedBox(
+                                  width: 8,
+                                ),
+                                Text(
+                                  'Private',
+                                  style: state.workspaceAccess
+                                      ? OctopusTheme.of(context)
+                                          .textTheme
+                                          .primaryGreyBodyBold
+                                      : OctopusTheme.of(context)
+                                          .textTheme
+                                          .brandPrimaryBodyBold,
+                                ),
+                              ],
+                            ),
+                          ),
+                        },
+                      ),
+                    ),
+                    if (!state.workspaceAccess)
+                      Divider(
+                        height: 1,
+                        thickness: 1,
+                        color: OctopusTheme.of(context).colorTheme.border,
+                      ),
+                    if (!state.workspaceAccess)
+                      Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        elevation: 0,
+                        color: theme.colorTheme.contentViewSecondary,
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () {},
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Row(
+                              children: [
+                                Text('Share with',
+                                    style: theme.textTheme.primaryGreyBody),
+                                const Spacer(),
+                                GestureDetector(
+                                  onTap: () {
+                                    showBarModalBottomSheet(
+                                      context: context,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20).r,
+                                      ),
+                                      builder: (context) => AssignUserPage(
+                                        onDoneTap: (users) {
+                                          bloc.add(
+                                            UsersChanged(users),
+                                          );
+                                        },
+                                        users: state.users,
+                                      ),
+                                    );
+                                  },
+                                  child: SizedBox(
+                                    width: 100.w,
+                                    height: 30.h,
+                                    child: Stack(
+                                      clipBehavior: Clip.none,
+                                      alignment: Alignment.centerRight,
+                                      children: List.generate(
+                                        state.users.length,
+                                        (index) {
+                                          final user = state.users[index];
+                                          return Positioned(
+                                            right: index * 20,
+                                            child: UserAvatar(
+                                              user: user,
+                                              showOnlineStatus: false,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'Space settings',
+                      style: OctopusTheme.of(context)
+                          .textTheme
+                          .primaryGreyBodyBold,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Card(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -203,41 +377,41 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                           ),
                         ],
                       ),
-                    );
-                  },
-                ),
-                Row(
-                  children: [
-                    Checkbox(
-                      fillColor: MaterialStatePropertyAll(
-                          OctopusTheme.of(context).colorTheme.brandPrimary),
-                      value: _showChannelSetting,
-                      onChanged: (value) {
-                        setState(() {
-                          _showChannelSetting = value;
-                        });
-                      },
                     ),
-                    Text(
-                      'Create channel for project',
-                      style: theme.textTheme.primaryGreyBody,
-                    ),
+                    if (!state.workspaceAccess && state.users.length > 2)
+                      CheckboxListTile(
+                        value: state.createChannelForProject,
+                        onChanged: (value) {
+                          if (value != null) {
+                            bloc.add(CreateChannelForProjectChanged(value));
+                          }
+                        },
+                        title: Text(
+                          'Create channel for project',
+                          style: theme.textTheme.primaryGreyBody,
+                        ),
+                        activeColor:
+                            OctopusTheme.of(context).colorTheme.brandPrimary,
+                        controlAffinity: ListTileControlAffinity.leading,
+                        contentPadding: EdgeInsets.zero,
+                        visualDensity: VisualDensity.compact,
+                      ),
+                    // AnimatedOpacity(
+                    //     opacity: _showChannelSetting ?? false ? 1.0 : 0.0,
+                    //     duration: const Duration(milliseconds: 200),
+                    //     child: Column(
+                    //       children: [
+                    //         Text(
+                    //           'Channel Settings',
+                    //           style: OctopusTheme.of(context)
+                    //               .textTheme
+                    //               .primaryGreyBodyBold,
+                    //         )
+                    //       ],
+                    //     )),
                   ],
-                ),
-                AnimatedOpacity(
-                    opacity: _showChannelSetting ?? false ? 1.0 : 0.0,
-                    duration: const Duration(milliseconds: 200),
-                    child: Column(
-                      children: [
-                        Text(
-                          'Channel Settings',
-                          style: OctopusTheme.of(context)
-                              .textTheme
-                              .primaryGreyBodyBold,
-                        )
-                      ],
-                    )),
-              ],
+                );
+              },
             ),
           ),
         ),

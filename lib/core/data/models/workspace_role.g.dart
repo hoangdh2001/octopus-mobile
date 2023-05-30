@@ -11,7 +11,7 @@ WorkspaceRole _$WorkspaceRoleFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       name: json['name'] as String,
       description: json['description'] as String?,
-      ownCapability: (json['ownCapability'] as List<dynamic>?)
+      ownCapabilities: (json['ownCapabilities'] as List<dynamic>?)
           ?.map((e) => $enumDecode(_$WorkspaceOwnCapabilityEnumMap, e))
           .toList(),
       roleDefault: json['roleDefault'] as bool? ?? false,
@@ -23,7 +23,7 @@ Map<String, dynamic> _$WorkspaceRoleToJson(WorkspaceRole instance) =>
       'name': instance.name,
       'roleDefault': instance.roleDefault,
       'description': instance.description,
-      'ownCapability': instance.ownCapability
+      'ownCapabilities': instance.ownCapabilities
           ?.map((e) => _$WorkspaceOwnCapabilityEnumMap[e]!)
           .toList(),
     };

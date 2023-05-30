@@ -2,10 +2,12 @@ import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart' hide BackButton;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:octopus/core/data/models/user.dart';
 import 'package:octopus/core/data/models/workspace_member.dart';
 import 'package:octopus/core/data/models/workspace_state.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
+import 'package:octopus/octopus.dart';
 import 'package:octopus/octopus_workspace.dart';
 import 'package:octopus/widgets/channel/channel_back_button.dart';
 import 'package:octopus/widgets/chips_dropdown_textfield.dart';
@@ -21,7 +23,7 @@ class AddGroups extends StatefulWidget {
 class _AddGroupsState extends State<AddGroups> {
   late TextEditingController _controller;
 
-  late TextEditingController _teamController;
+  late TextEditingController _descriptionController;
 
   late TextEditingController? _chipController;
 
@@ -37,7 +39,7 @@ class _AddGroupsState extends State<AddGroups> {
   @override
   void initState() {
     _controller = TextEditingController();
-    _teamController = TextEditingController();
+    _descriptionController = TextEditingController();
     _chipController = TextEditingController();
     super.initState();
   }
@@ -45,7 +47,7 @@ class _AddGroupsState extends State<AddGroups> {
   @override
   void dispose() {
     _controller.dispose();
-    _teamController.dispose();
+    _descriptionController.dispose();
     super.dispose();
   }
 
@@ -87,6 +89,7 @@ class _AddGroupsState extends State<AddGroups> {
                 const SizedBox(height: 10),
                 SizedBox(
                   child: TextField(
+                    controller: _controller,
                     decoration: InputDecoration(
                       hintText: 'Enter name group',
                       hintStyle: OctopusTheme.of(context).textTheme.hint,
@@ -274,6 +277,7 @@ class _AddGroupsState extends State<AddGroups> {
                 const SizedBox(height: 10),
                 SizedBox(
                   child: TextField(
+                    controller: _descriptionController,
                     decoration: InputDecoration(
                       hintText: 'Enter description will appear in group list',
                       hintStyle: OctopusTheme.of(context).textTheme.hint,
@@ -309,7 +313,26 @@ class _AddGroupsState extends State<AddGroups> {
                   child: TextButton(
                     style:
                         OctopusTheme.of(context).buttonTheme.brandPrimaryButton,
-                    onPressed: () {},
+                    onPressed: () async {
+                      Octopus.of(context).showLoadingOverlay(context);
+                      await workspace.addGroup(
+                        _controller.text,
+                        description: _descriptionController.text,
+                        members: _selectedUsers
+                            .map((member) => member.user.id)
+                            .toList(),
+                      );
+                      Fluttertoast.showToast(
+                          msg: "Add group successfully",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.black87,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
                     child: const Text('Add group'),
                   ),
                 ),

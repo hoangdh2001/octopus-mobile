@@ -1,10 +1,14 @@
 import 'dart:convert';
 
+import 'package:octopus/core/data/models/add_group_request.dart';
+import 'package:octopus/core/data/models/add_member_to_project_request.dart';
 import 'package:octopus/core/data/models/add_members_with_email.dart';
+import 'package:octopus/core/data/models/add_role_request.dart';
 import 'package:octopus/core/data/models/add_task_request.dart';
 import 'package:octopus/core/data/models/create_project_request.dart';
 import 'package:octopus/core/data/models/create_space_request.dart';
 import 'package:octopus/core/data/models/create_workspace_request.dart';
+import 'package:octopus/core/data/models/enums/workspace_own_capability.dart';
 import 'package:octopus/core/data/models/get_task_response.dart';
 import 'package:octopus/core/data/models/project_state.dart';
 import 'package:octopus/core/data/models/setting.dart';
@@ -76,12 +80,21 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
   @override
   Future<WorkspaceState> createProject(
-      String workspaceID, String name, List<TaskStatus> statusList,
+      String workspaceID,
+      String name,
+      List<TaskStatus> statusList,
+      bool createChannelForProject,
+      bool workspaceAccess,
       {List<String> members = const []}) async {
     final workspace = await _workspaceService.createProject(
         workspaceID,
         CreateProjectRequest(
-            name: name, members: members, statusList: statusList));
+          name: name,
+          members: members,
+          statusList: statusList,
+          createChannel: createChannelForProject,
+          workspaceAccess: workspaceAccess,
+        ));
     return workspace;
   }
 
@@ -179,9 +192,40 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
   @override
   Future<WorkspaceMember> addMember(
-      String workspaceID, String email, String role) async {
-    final user = await _workspaceService.addMembers(
-        workspaceID, AddMemberWithEmail(email: email, role: role));
+      String workspaceID, String email, String role, String? group) async {
+    final user = await _workspaceService.addMembers(workspaceID,
+        AddMemberWithEmail(email: email, role: role, group: group));
     return user;
   }
+
+  @override
+  Future<WorkspaceState> addGroup(String workspaceID, String name,
+      {String? description, List<String> members = const []}) async {
+    final group = await _workspaceService.addGroup(
+        workspaceID,
+        AddGroupRequest(
+            name: name, description: description, memberID: members));
+    return group;
+  }
+
+  @override
+  Future<WorkspaceState> addRole(String workspaceID, String name,
+      {String? description,
+      List<WorkspaceOwnCapability> permissions = const []}) async {
+    final workspace = await _workspaceService.addRole(
+        workspaceID,
+        AddRoleRequest(
+            name: name,
+            description: description,
+            ownCapabilities: permissions));
+    return workspace;
+  }
+
+  // @override
+  // Future<ProjectState> addMemberToProject(
+  //     String workspaceID, String projectID, List<String> members) async {
+  //   final project = await _workspaceService.addMemberToProject(
+  //       workspaceID, projectID, AddMemberToProjectRequest(members));
+  //   return project;
+  // }
 }
