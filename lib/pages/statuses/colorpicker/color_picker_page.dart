@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_svg/svg.dart';
@@ -36,14 +37,14 @@ class _ColorPickerPageState extends State<ColorPickerPage> {
             leadingWidth: 0,
             centerTitle: false,
             title: Text(
-              'Pick a color',
+              'picker_color'.tr(),
               style: OctopusTheme.of(context).textTheme.navigationTitle,
             ),
             actions: [
               TextButton(
                 style: OctopusTheme.of(context).buttonTheme.buttonBrandPrimary,
                 onPressed: () {},
-                child: const Text('Done'),
+                child: Text('done'.tr()),
               ),
             ],
             bottom: PreferredSize(

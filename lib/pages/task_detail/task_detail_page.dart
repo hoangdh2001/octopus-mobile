@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -134,7 +135,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                         controller: _controller,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Task Name',
+                          hintText: 'new_task_page.task_name_placeholder'.tr(),
                           hintStyle:
                               OctopusTheme.of(context).textTheme.hintLarge,
                         ),
@@ -179,15 +180,15 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                           .textTheme
                           .brandPrimaryBodyBold,
                       automaticIndicatorColorAdjustment: true,
-                      tabs: const [
+                      tabs: [
                         Tab(
-                          text: 'Overview',
+                          text: 'task_detail_page.overview_tab'.tr(),
                         ),
                         Tab(
-                          text: 'Comments',
+                          text: 'task_detail_page.comments_tab'.tr(),
                         ),
                         Tab(
-                          text: 'Attachments',
+                          text: 'task_detail_page.attachment_tab'.tr(),
                         ),
                       ],
                     ),
@@ -220,7 +221,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                             padding: const EdgeInsets.all(8),
                             child: Row(
                               children: [
-                                Text('Status',
+                                Text('task_detail_page.status_option'.tr(),
                                     style: theme.textTheme.primaryGreyBody),
                                 const SizedBox(
                                   width: 16,
@@ -297,7 +298,9 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                                       .toList();
                                   return Row(
                                     children: [
-                                      Text('Assignee',
+                                      Text(
+                                          'task_detail_page.assignee_option'
+                                              .tr(),
                                           style:
                                               theme.textTheme.primaryGreyBody),
                                       const Spacer(),
@@ -404,7 +407,8 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                                                 color: theme.colorTheme.icon,
                                               ),
                                               label: Text(
-                                                'Add Assignee',
+                                                'task_detail_page.add_assignee'
+                                                    .tr(),
                                                 style: theme
                                                     .textTheme.primaryGreyBody,
                                               ),
@@ -449,7 +453,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                               padding: const EdgeInsets.all(8),
                               child: Row(
                                 children: [
-                                  Text('Dates',
+                                  Text('task_detail_page.dates_option'.tr(),
                                       style: theme.textTheme.primaryGreyBody),
                                   const Spacer(),
                                   (widget.task.startDate != null ||
@@ -464,7 +468,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                                             Text(
                                               widget.task.startDate != null
                                                   ? '${DateFormat('MMMM dd').format(task.startDate!)} - '
-                                                  : 'Start date - ',
+                                                  : '${'start_date'.tr()} - ',
                                               style: theme
                                                   .textTheme.primaryGreyBody,
                                             ),
@@ -480,7 +484,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                                               widget.task.dueDate != null
                                                   ? DateFormat('MMMM dd')
                                                       .format(task.dueDate!)
-                                                  : 'Due date',
+                                                  : '${'due_date'.tr()}}',
                                               style: theme
                                                   .textTheme.primaryGreyBody,
                                             ),
@@ -521,7 +525,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                                             color: theme.colorTheme.icon,
                                           ),
                                           label: Text(
-                                            'Add dates',
+                                            'task_detail_page.add_dates'.tr(),
                                             style:
                                                 theme.textTheme.primaryGreyBody,
                                           ),
@@ -552,7 +556,7 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Text(
-                              'Description',
+                              'task_detail_page.description_option'.tr(),
                               style: theme.textTheme.primaryGreyBody,
                             ),
                             const SizedBox(
@@ -569,8 +573,8 @@ class _TaskDetailPageState extends State<TaskDetailPage> {
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
-                                    label: const Text(
-                                      'Add Description',
+                                    label: Text(
+                                      'task_detail_page.add_description'.tr(),
                                     ),
                                   )
                                 : Text(

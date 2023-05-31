@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
@@ -32,7 +33,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 onPressed: () {
                   Navigator.pushNamed(context, Routes.LOGIN);
                 },
-                child: const Text('Get Started'),
+                child: Text('get_started'.tr()),
               ),
             ),
           ],

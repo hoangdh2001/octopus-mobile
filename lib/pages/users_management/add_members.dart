@@ -1,4 +1,5 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart' hide BackButton;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -53,7 +54,7 @@ class _AddMembersState extends State<AddMembers> {
         elevation: 0,
         leading: const BackButton(),
         title: Text(
-          "Invite team",
+          "workspace_setting_page.invite_members_title".tr(),
           style: OctopusTheme.of(context).textTheme.navigationTitle,
         ),
         centerTitle: true,
@@ -67,10 +68,13 @@ class _AddMembersState extends State<AddMembers> {
             children: [
               Text.rich(
                 style: OctopusTheme.of(context).textTheme.primaryGreyBodyBold,
-                const TextSpan(
+                TextSpan(
                   children: [
-                    TextSpan(text: "Email address"),
-                    TextSpan(text: " (*)", style: TextStyle(color: Colors.red))
+                    TextSpan(
+                        text:
+                            "workspace_setting_page.email_address_label".tr()),
+                    const TextSpan(
+                        text: " (*)", style: TextStyle(color: Colors.red))
                   ],
                 ),
               ),
@@ -79,7 +83,8 @@ class _AddMembersState extends State<AddMembers> {
                 child: TextField(
                   controller: _emailController,
                   decoration: InputDecoration(
-                    hintText: 'Enter email address to invite',
+                    hintText:
+                        'workspace_setting_page.email_address_placeholder'.tr(),
                     hintStyle: OctopusTheme.of(context).textTheme.hint,
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10)),
@@ -103,7 +108,7 @@ class _AddMembersState extends State<AddMembers> {
                 height: 10,
               ),
               Text(
-                'Role',
+                'workspace_setting_page.role_label'.tr(),
                 style: OctopusTheme.of(context).textTheme.primaryGreyBodyBold,
               ),
               const SizedBox(height: 10),
@@ -131,7 +136,7 @@ class _AddMembersState extends State<AddMembers> {
               if (workspace.state!.workspaceState.workspaceGroups != null &&
                   workspace.state!.workspaceState.workspaceGroups!.isNotEmpty)
                 Text(
-                  'Team',
+                  'workspace_setting_page.team_label'.tr(),
                   style: OctopusTheme.of(context).textTheme.primaryGreyBodyBold,
                 ),
               if (workspace.state!.workspaceState.workspaceGroups != null &&
@@ -140,14 +145,14 @@ class _AddMembersState extends State<AddMembers> {
               if (workspace.state!.workspaceState.workspaceGroups != null &&
                   workspace.state!.workspaceState.workspaceGroups!.isNotEmpty)
                 CustomDropdown(
-                  hintText: 'Select team',
+                  hintText: 'workspace_setting_page.team_placeholder'.tr(),
                   hintStyle: OctopusTheme.of(context).textTheme.hint,
                   selectedStyle:
                       OctopusTheme.of(context).textTheme.primaryGreyBody,
                   listItemStyle:
                       OctopusTheme.of(context).textTheme.primaryGreyBody,
                   items: workspace.state!.workspaceState.workspaceGroups
-                          ?.map((group) => group.name ?? 'Unnamed')
+                          ?.map((group) => group.name ?? 'unnamed'.tr())
                           .toList() ??
                       [],
                   controller: _teamController,
@@ -173,7 +178,7 @@ class _AddMembersState extends State<AddMembers> {
                     await workspace.addMember(
                         _emailController.text, role, team);
                     Fluttertoast.showToast(
-                        msg: "Invite email successfully",
+                        msg: "workspace_setting_page.invite_email_success".tr(),
                         toastLength: Toast.LENGTH_SHORT,
                         gravity: ToastGravity.CENTER,
                         timeInSecForIosWeb: 1,
@@ -183,7 +188,7 @@ class _AddMembersState extends State<AddMembers> {
                     Navigator.pop(context);
                     Navigator.pop(context);
                   },
-                  child: const Text('Invite email'),
+                  child: Text('workspace_setting_page.invite_email'.tr()),
                 ),
               ),
             ],

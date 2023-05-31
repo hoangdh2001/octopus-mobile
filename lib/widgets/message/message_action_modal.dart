@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:octopus/core/data/models/enums/message_status.dart';
@@ -327,16 +328,16 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
     });
     final answer = await showConfirmationDialog(
       context,
-      title: "Detete Message",
+      title: "detete_confirm_title".tr(),
       icon: SvgPicture.asset(
         'assets/icons/flag.svg',
         color: OctopusTheme.of(context).colorTheme.error,
         width: 24,
         height: 24,
       ),
-      question: "Are you sure you want to permanently delete this message?",
-      okText: "DELETE",
-      cancelText: "CANCEL",
+      question: 'delete_confirm_description'.tr(),
+      okText: 'delete'.tr().toUpperCase(),
+      cancelText: "cancel".tr().toUpperCase(),
     );
 
     if (answer == true) {
@@ -392,7 +393,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
             ),
             const SizedBox(width: 16),
             Text(
-              "Reply",
+              "reply".tr(),
               style: streamChatThemeData.textTheme.primaryGreyBody,
             ),
           ],
@@ -439,7 +440,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
             ),
             const SizedBox(width: 16),
             Text(
-              "${widget.message.pinned ? 'Unpin' : 'Pin'} Message",
+              widget.message.pinned ? 'unpin_message'.tr() : 'pin_message'.tr(),
               style: streamChatThemeData.textTheme.primaryGreyBody,
             ),
           ],
@@ -463,7 +464,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
             ),
             const SizedBox(width: 16),
             Text(
-              'Delete message',
+              'delete_message'.tr(),
               style: OctopusTheme.of(context)
                   .textTheme
                   .primaryGreyBody
@@ -490,7 +491,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
             ),
             const SizedBox(width: 16),
             Text(
-              'Retrieve message',
+              'retrieve'.tr(),
               style: OctopusTheme.of(context)
                   .textTheme
                   .primaryGreyBody
@@ -521,7 +522,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
             ),
             const SizedBox(width: 16),
             Text(
-              "Copy message",
+              "copy_message".tr(),
               style: streamChatThemeData.textTheme.primaryGreyBody,
             ),
           ],
@@ -547,7 +548,7 @@ class _MessageActionsModalState extends State<MessageActionsModal> {
             ),
             const SizedBox(width: 16),
             Text(
-              "Edit message",
+              "edit_message".tr(),
               style: streamChatThemeData.textTheme.primaryGreyBody,
             ),
           ],

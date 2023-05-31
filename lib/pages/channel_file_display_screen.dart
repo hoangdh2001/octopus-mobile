@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide BackButton;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -62,7 +63,7 @@ class _ChannelFileDisplayScreenState extends State<ChannelFileDisplayScreen> {
         elevation: 1,
         centerTitle: true,
         title: Text(
-          'Files',
+          'files'.tr(),
           style: TextStyle(
             color: OctopusTheme.of(context).colorTheme.primaryGrey,
             fontSize: 16.0,
@@ -94,7 +95,7 @@ class _ChannelFileDisplayScreenState extends State<ChannelFileDisplayScreen> {
                       ),
                       const SizedBox(height: 16.0),
                       Text(
-                        'No File',
+                        'no_file'.tr(),
                         style: TextStyle(
                           fontSize: 14.0,
                           color:
@@ -103,7 +104,7 @@ class _ChannelFileDisplayScreenState extends State<ChannelFileDisplayScreen> {
                       ),
                       const SizedBox(height: 8.0),
                       Text(
-                        'File appear here',
+                        'file_appear_here'.tr(),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 14.0,

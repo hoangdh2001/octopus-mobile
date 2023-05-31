@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart'
     hide ExpansionTile, ModalBottomSheetRoute;
 import 'package:flutter_svg/svg.dart';
@@ -64,7 +65,7 @@ class _LeftDrawerState extends State<LeftDrawer> {
               ),
               ExpansionTile(
                 title: Text(
-                  'Spaces',
+                  'left_drawer.projects_menu'.tr(),
                   style: OctopusTheme.of(context).textTheme.primaryGreyBody,
                 ),
                 visualDensity: VisualDensity.compact,
@@ -141,7 +142,7 @@ class _LeftDrawerState extends State<LeftDrawer> {
               ),
               ExpansionTile(
                 title: Text(
-                  'Docs',
+                  'left_drawer.docs_menu'.tr(),
                   style: OctopusTheme.of(context).textTheme.primaryGreyBody,
                 ),
                 visualDensity: VisualDensity.compact,
@@ -270,7 +271,7 @@ class _LeftDrawerState extends State<LeftDrawer> {
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.grey.withOpacity(0.2),
-                  hintText: "Search",
+                  hintText: "left_drawer.search_input".tr(),
                   hintStyle: OctopusTheme.of(context).textTheme.hint,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),

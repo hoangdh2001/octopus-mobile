@@ -52,7 +52,8 @@ abstract class ChannelRepository {
   Future<EmptyResponse> deleteReaction(
       String channelID, String messageID, String reactionType);
 
-  Future<String> call(String channelID, {String callType = 'pushCall'});
+  Future<String> call(String channelID, bool hasVideo, bool isGroup,
+      {String callType = 'pushCall'});
 
   Future<ChannelState> udpateChannel(
       String channelID, Map<String, Object?> data);

@@ -97,13 +97,15 @@ class ProjectList extends StatelessWidget {
                         if (currentMember != null &&
                                 (currentMember.role == ProjectRole.OWNER ||
                                     currentMember.role == ProjectRole.MEMBER) &&
-                                (currentMember2!.role?.ownCapabilities
-                                        ?.contains(WorkspaceOwnCapability
-                                            .createList) ??
-                                    false) ||
-                            (currentMember2!.role?.ownCapabilities?.contains(
-                                    WorkspaceOwnCapability.allCapabilities) ??
-                                false)) {
+                                ((currentMember2!.role?.ownCapabilities
+                                            ?.contains(WorkspaceOwnCapability
+                                                .createList) ??
+                                        false) ||
+                                    (currentMember2.role?.ownCapabilities
+                                            ?.contains(WorkspaceOwnCapability
+                                                .allCapabilities) ??
+                                        false)) ||
+                            project.state!.projectState.workspaceAccess) {
                           showListModal(context, project);
                         } else {
                           Fluttertoast.showToast(
@@ -162,17 +164,17 @@ class ProjectList extends StatelessWidget {
                         ?.firstWhereOrNull(
                       (member) => member.user.id == currentUser!.id,
                     );
-                    if (currentMember != null &&
-                        ((currentMember.role == ProjectRole.OWNER ||
+                    if ((currentMember != null &&
+                            ((currentMember.role == ProjectRole.OWNER ||
                                 currentMember.role == ProjectRole.MEMBER ||
-                                currentMember.role == ProjectRole.VIEWER) ||
-                            (currentMember2!.role?.ownCapabilities?.contains(
-                                    WorkspaceOwnCapability.viewOtherProject) ??
-                                false) ||
-                            (currentMember2.role?.ownCapabilities?.contains(
-                                    WorkspaceOwnCapability.allCapabilities) ??
-                                false) ||
-                            project.state!.projectState.workspaceAccess)) {
+                                currentMember.role == ProjectRole.VIEWER)) ||
+                        (currentMember2!.role?.ownCapabilities?.contains(
+                                WorkspaceOwnCapability.viewOtherProject) ??
+                            false) ||
+                        (currentMember2.role?.ownCapabilities?.contains(
+                                WorkspaceOwnCapability.allCapabilities) ??
+                            false) ||
+                        project.state!.projectState.workspaceAccess)) {
                       Navigator.pop(context);
                       Navigator.pushNamed(context, Routes.TASK_LIST,
                           arguments: TaskListPageArgs(

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart' hide BackButton;
 import 'package:flutter_svg/svg.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -45,7 +46,7 @@ class _StatusesPageState extends State<StatusesPage> {
         elevation: 0,
         leading: const BackButton(),
         title: Text(
-          'Custom Statuses',
+          'custom_status'.tr(),
           style: OctopusTheme.of(context).textTheme.navigationTitle,
         ),
         actions: [
@@ -58,7 +59,7 @@ class _StatusesPageState extends State<StatusesPage> {
                 ..._closedStatuses,
               ]);
             },
-            child: const Text('Create'),
+            child: Text('create'.tr()),
           ),
         ],
         bottom: PreferredSize(
@@ -75,8 +76,8 @@ class _StatusesPageState extends State<StatusesPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text('Active'),
-              const Text('For tasks that have been started'),
+              Text('active'.tr()),
+              Text('active_description'.tr()),
               const SizedBox(
                 height: 16,
               ),
@@ -216,14 +217,14 @@ class _StatusesPageState extends State<StatusesPage> {
                     );
                   },
                   icon: SvgPicture.asset('assets/icons/plus.svg'),
-                  label: const Text('Add status'),
+                  label: Text('add_status'.tr()),
                 ),
               ),
               const SizedBox(
                 height: 16,
               ),
-              const Text('Closed Status'),
-              const Text('Completed tasks that are hidden by default'),
+              Text('closed'.tr()),
+              Text('closed_description'.tr()),
               const SizedBox(
                 height: 16,
               ),

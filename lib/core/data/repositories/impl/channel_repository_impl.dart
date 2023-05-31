@@ -129,8 +129,9 @@ class ChannelRepositoryImpl implements ChannelRepository {
   }
 
   @override
-  Future<String> call(String channelID, {String callType = 'pushCall'}) async {
-    return await _channelService.call(channelID, callType);
+  Future<String> call(String channelID, bool hasVideo, bool isGroup,
+      {String callType = 'pushCall'}) async {
+    return await _channelService.call(channelID, callType, hasVideo, isGroup);
   }
 
   @override

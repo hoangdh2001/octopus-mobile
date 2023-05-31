@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
@@ -18,7 +19,7 @@ class VisibleFootnote extends StatelessWidget {
           height: 16,
         ),
         const SizedBox(width: 8),
-        Text('Only visible to you',
+        Text('only_visible_to_you'.tr(),
             style: chatThemeData.textTheme.primaryGreyFootnote),
       ],
     );

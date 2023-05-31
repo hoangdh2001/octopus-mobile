@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:octopus/core/data/models/task_status.dart';
@@ -34,7 +35,7 @@ class _ChooseStatusPageState extends State<ChooseStatusPage> {
         leadingWidth: 0,
         centerTitle: false,
         title: Text(
-          'Chooose status',
+          'choose_status_title'.tr(),
           style: OctopusTheme.of(context).textTheme.navigationTitle,
         ),
         actions: [
@@ -54,7 +55,7 @@ class _ChooseStatusPageState extends State<ChooseStatusPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text('ACTIVE'),
+                  Text('active_status'.tr()),
                   const SizedBox(
                     height: 8,
                   ),
@@ -105,7 +106,7 @@ class _ChooseStatusPageState extends State<ChooseStatusPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text('CLOSED STATUS'),
+                  Text('closed_status'.tr()),
                   const SizedBox(
                     height: 8,
                   ),

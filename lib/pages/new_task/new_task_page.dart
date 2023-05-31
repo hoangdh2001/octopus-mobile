@@ -64,7 +64,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
             TextField(
               decoration: InputDecoration(
                 border: InputBorder.none,
-                hintText: 'Task name',
+                hintText: 'new_task_page.task_name_placeholder'.tr(),
                 hintStyle: OctopusTheme.of(context).textTheme.hintLarge,
               ),
               autofocus: true,
@@ -104,8 +104,9 @@ class _NewTaskPageState extends State<NewTaskPage> {
                       },
                       child: Text(
                         state.space == null
-                            ? 'Choose list'
-                            : 'In ${state.space!.name}',
+                            ? 'new_task_page.choose_list'.tr()
+                            : 'new_task_page.in_list'
+                                .tr(namedArgs: {'value': state.space!.name}),
                         style: TextStyle(fontSize: 13.sp),
                       ),
                     ),
@@ -258,7 +259,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
             TextField(
               decoration: InputDecoration(
                 border: InputBorder.none,
-                hintText: 'Add Description',
+                hintText: 'new_task_page.add_description'.tr(),
                 hintStyle: OctopusTheme.of(context).textTheme.hint,
                 prefixIcon: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -312,7 +313,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                       Text(
                         state.startDate != null || state.dueDate != null
                             ? '${DateFormat('dd MMMM').format(state.startDate!)}${state.dueDate != null ? ' - ${DateFormat('dd MMMM').format(state.dueDate!)}' : ''}'
-                            : 'Add Dates',
+                            : 'new_task_page.add_dates'.tr(),
                         style: theme.textTheme.primaryGreyBody,
                       ),
                     ],
@@ -323,7 +324,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
             TextField(
               decoration: InputDecoration(
                 border: InputBorder.none,
-                hintText: 'Add Subtask',
+                hintText: 'new_task_page.add_subtasks'.tr(),
                 hintStyle: OctopusTheme.of(context).textTheme.hint,
                 prefixIcon: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -350,7 +351,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                     Navigator.pop(context);
                   },
                   child: Text(
-                    'Cancel',
+                    'cancel'.tr(),
                     style: TextStyle(fontSize: 13.sp),
                   ),
                 ),
@@ -369,7 +370,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                               bloc.add(const Submitted());
                             },
                       child: Text(
-                        'Create',
+                        'create'.tr(),
                         style: TextStyle(fontSize: 13.sp),
                       ),
                     );
@@ -417,7 +418,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                         Text.rich(
                           TextSpan(children: [
                             TextSpan(
-                              text: 'Workspace',
+                              text: 'workspace'.tr(),
                               style: OctopusTheme.of(context)
                                   .textTheme
                                   .primaryGreyBodyBold,
@@ -534,17 +535,27 @@ class _NewTaskPageState extends State<NewTaskPage> {
                                           (member) =>
                                               member.user.id == currentUser!.id,
                                         );
-                                        if (currentMember != null &&
-                                            ((currentMember.role ==
+                                        if ((currentMember != null &&
+                                                ((currentMember.role ==
                                                         ProjectRole.OWNER ||
                                                     currentMember.role ==
-                                                        ProjectRole.MEMBER) ||
-                                                (currentMember2!
-                                                        .role?.ownCapabilities
-                                                        ?.contains(
-                                                            WorkspaceOwnCapability
-                                                                .allCapabilities) ??
-                                                    false))) {
+                                                        ProjectRole.MEMBER ||
+                                                    currentMember.role ==
+                                                        ProjectRole.VIEWER)) ||
+                                            (currentMember2!
+                                                    .role?.ownCapabilities
+                                                    ?.contains(
+                                                        WorkspaceOwnCapability
+                                                            .viewOtherProject) ??
+                                                false) ||
+                                            (currentMember2
+                                                    .role?.ownCapabilities
+                                                    ?.contains(
+                                                        WorkspaceOwnCapability
+                                                            .allCapabilities) ??
+                                                false) ||
+                                            project.state!.projectState
+                                                .workspaceAccess)) {
                                           bloc.add(SelectList(project, space));
                                           Navigator.pop(context);
                                         } else {

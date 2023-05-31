@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart' hide BackButton;
 import 'package:flutter_svg/svg.dart';
 import 'package:octopus/core/config/routes.dart';
@@ -46,7 +47,7 @@ class _PinnedMessagesScreenState extends State<PinnedMessagesScreen> {
         elevation: 1,
         centerTitle: true,
         title: Text(
-          'Pinned Messages',
+          'pinned_messages'.tr(),
           style: TextStyle(
             color: OctopusTheme.of(context).colorTheme.primaryGrey,
             fontSize: 16.0,
@@ -70,7 +71,7 @@ class _PinnedMessagesScreenState extends State<PinnedMessagesScreen> {
                 ),
                 const SizedBox(height: 16.0),
                 Text(
-                  'No pin items',
+                  'no_pin_message'.tr(),
                   style: TextStyle(
                     fontSize: 17.0,
                     color: OctopusTheme.of(context).colorTheme.primaryGrey,
@@ -82,7 +83,7 @@ class _PinnedMessagesScreenState extends State<PinnedMessagesScreen> {
                   textAlign: TextAlign.center,
                   text: TextSpan(children: [
                     TextSpan(
-                      text: 'Long press message ',
+                      text: 'long_press_message'.tr(),
                       style: TextStyle(
                         fontSize: 14.0,
                         color: OctopusTheme.of(context)
@@ -92,7 +93,7 @@ class _PinnedMessagesScreenState extends State<PinnedMessagesScreen> {
                       ),
                     ),
                     TextSpan(
-                      text: 'Pin To Conversation',
+                      text: 'pin_to_conversation'.tr(),
                       style: TextStyle(
                         fontSize: 14.0,
                         fontWeight: FontWeight.bold,

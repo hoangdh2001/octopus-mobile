@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:octopus/core/data/models/enums/message_type.dart';
 import 'package:octopus/core/data/models/message.dart';
@@ -97,17 +98,29 @@ class SystemMessage extends StatelessWidget {
     final isMyMessage = currentUser!.id == message.sender!.id;
     switch (message.type) {
       case MessageType.systemAddMember:
-        return '${isMyMessage ? 'You' : message.sender!.name} added ${message.text} to the group';
+        return 'system_add_member'.tr(args: [
+          isMyMessage ? 'you'.tr() : message.sender!.name,
+          message.text ?? ''
+        ]);
       case MessageType.systemMemberLeft:
-        return '${isMyMessage ? 'You' : message.sender!.name} left the group';
+        return 'system_member_left'
+            .tr(args: [isMyMessage ? 'you'.tr() : message.sender!.name]);
       case MessageType.systemRemovedMember:
-        return '${isMyMessage ? 'You' : message.sender!.name} removed ${message.text} from the group';
+        return 'system_removed_member'.tr(args: [
+          isMyMessage ? 'you'.tr() : message.sender!.name,
+          message.text ?? ''
+        ]);
       case MessageType.systemCreatedChannel:
-        return '${isMyMessage ? 'You' : message.sender!.name} created group';
+        return 'system_created_channel'
+            .tr(args: [isMyMessage ? 'you'.tr() : message.sender!.name]);
       case MessageType.systemChangedAvatar:
-        return '${isMyMessage ? 'You' : message.sender!.name} changed group avatar';
+        return 'system_changed_avatar'
+            .tr(args: [isMyMessage ? 'you'.tr() : message.sender!.name]);
       case MessageType.systemChangedName:
-        return '${isMyMessage ? 'You' : message.sender!.name} changed group name ${message.text}';
+        return 'system_changed_channel_name'.tr(args: [
+          isMyMessage ? 'you'.tr() : message.sender!.name,
+          message.text ?? ''
+        ]);
       default:
         return '${message.text}';
     }

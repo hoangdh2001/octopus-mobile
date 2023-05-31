@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -71,7 +72,7 @@ class _WorkspaceSettingPageState extends State<WorkspaceSettingPage> {
                       style: OctopusTheme.of(context)
                           .buttonTheme
                           .buttonBrandPrimary,
-                      child: const Text('Done'),
+                      child: Text('done'.tr()),
                     )
                   ],
                 ),
@@ -117,7 +118,8 @@ class _WorkspaceSettingPageState extends State<WorkspaceSettingPage> {
                             style: OctopusTheme.of(context)
                                 .buttonTheme
                                 .buttonBrandPrimary,
-                            child: const Text('Switch workspace'),
+                            child: Text(
+                                'workspace_setting_page.switch_workspace'.tr()),
                           ),
                           const SizedBox(height: 15.0),
                         ],
@@ -126,7 +128,7 @@ class _WorkspaceSettingPageState extends State<WorkspaceSettingPage> {
                     Column(
                       children: [
                         OptionListTile(
-                          title: 'Users Management',
+                          title: 'workspace_setting_page.users_management'.tr(),
                           tileColor:
                               OctopusTheme.of(context).colorTheme.contentView,
                           titleTextStyle: OctopusTheme.of(context)
@@ -169,7 +171,7 @@ class _WorkspaceSettingPageState extends State<WorkspaceSettingPage> {
                               );
                             } else {
                               Fluttertoast.showToast(
-                                  msg: "You don't have permission to access",
+                                  msg: "dont_have_permission".tr(),
                                   toastLength: Toast.LENGTH_SHORT,
                                   gravity: ToastGravity.CENTER,
                                   timeInSecForIosWeb: 1,
@@ -180,7 +182,8 @@ class _WorkspaceSettingPageState extends State<WorkspaceSettingPage> {
                           },
                         ),
                         OptionListTile(
-                          title: 'Push notifications',
+                          title:
+                              'workspace_setting_page.push_notification'.tr(),
                           tileColor:
                               OctopusTheme.of(context).colorTheme.contentView,
                           titleTextStyle: OctopusTheme.of(context)
@@ -207,7 +210,9 @@ class _WorkspaceSettingPageState extends State<WorkspaceSettingPage> {
                           onTap: () {},
                         ),
                         OptionListTile(
-                          title: 'Share app with your team',
+                          title:
+                              'workspace_setting_page.share_app_with_your_team'
+                                  .tr(),
                           tileColor:
                               OctopusTheme.of(context).colorTheme.contentView,
                           titleTextStyle: OctopusTheme.of(context)
@@ -234,7 +239,7 @@ class _WorkspaceSettingPageState extends State<WorkspaceSettingPage> {
                           onTap: () {},
                         ),
                         OptionListTile(
-                          title: 'Settings',
+                          title: 'workspace_setting_page.settings'.tr(),
                           tileColor:
                               OctopusTheme.of(context).colorTheme.contentView,
                           titleTextStyle: OctopusTheme.of(context)

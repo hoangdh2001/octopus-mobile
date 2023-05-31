@@ -132,7 +132,7 @@ class _TaskListPageState extends State<TaskListPage> {
             SvgPicture.asset('assets/icons/description.svg',
                 color: OctopusTheme.of(context).colorTheme.icon),
             Text(
-              "Board",
+              "list_page.board_view".tr(),
               style: OctopusTheme.of(context).textTheme.primaryGreyBody,
             ),
             SvgPicture.asset('assets/icons/arrow_down.svg',
@@ -233,7 +233,7 @@ class _TaskListPageState extends State<TaskListPage> {
                             Text(
                               task.startDate != null
                                   ? '${DateFormat('MMMM dd').format(task.startDate!)} - '
-                                  : 'Start date - ',
+                                  : '${'start_date'.tr()} - ',
                               style: OctopusTheme.of(context)
                                   .textTheme
                                   .primaryGreyBody,
@@ -244,7 +244,7 @@ class _TaskListPageState extends State<TaskListPage> {
                             Text(
                               task.dueDate != null
                                   ? DateFormat('MMMM dd').format(task.dueDate!)
-                                  : 'Due date',
+                                  : 'due_date'.tr(),
                               style: OctopusTheme.of(context)
                                   .textTheme
                                   .primaryGreyBody,

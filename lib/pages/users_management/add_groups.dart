@@ -1,4 +1,5 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart' hide BackButton;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -60,7 +61,7 @@ class _AddGroupsState extends State<AddGroups> {
         elevation: 0,
         leading: const BackButton(),
         title: Text(
-          "Add groups",
+          "workspace_setting_page.add_groups_title".tr(),
           style: OctopusTheme.of(context).textTheme.navigationTitle,
         ),
         centerTitle: true,
@@ -78,10 +79,11 @@ class _AddGroupsState extends State<AddGroups> {
               children: [
                 Text.rich(
                   style: OctopusTheme.of(context).textTheme.primaryGreyBodyBold,
-                  const TextSpan(
+                  TextSpan(
                     children: [
-                      TextSpan(text: "Name group"),
                       TextSpan(
+                          text: "workspace_setting_page.name_group_label".tr()),
+                      const TextSpan(
                           text: " (*)", style: TextStyle(color: Colors.red))
                     ],
                   ),
@@ -91,7 +93,8 @@ class _AddGroupsState extends State<AddGroups> {
                   child: TextField(
                     controller: _controller,
                     decoration: InputDecoration(
-                      hintText: 'Enter name group',
+                      hintText:
+                          'workspace_setting_page.name_group_placeholder'.tr(),
                       hintStyle: OctopusTheme.of(context).textTheme.hint,
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10)),
@@ -117,14 +120,14 @@ class _AddGroupsState extends State<AddGroups> {
                   height: 10,
                 ),
                 Text(
-                  "You cannot change this content later.",
+                  "workspace_setting_page.name_group_description".tr(),
                   style: OctopusTheme.of(context).textTheme.primaryGreyBody,
                 ),
                 const SizedBox(
                   height: 20,
                 ),
                 Text(
-                  'Add members',
+                  'workspace_setting_page.add_members_label'.tr(),
                   style: OctopusTheme.of(context).textTheme.primaryGreyBodyBold,
                 ),
                 const SizedBox(height: 10),
@@ -271,7 +274,7 @@ class _AddGroupsState extends State<AddGroups> {
                   height: 20,
                 ),
                 Text(
-                  'Description',
+                  'workspace_setting_page.description_label'.tr(),
                   style: OctopusTheme.of(context).textTheme.primaryGreyBodyBold,
                 ),
                 const SizedBox(height: 10),
@@ -279,7 +282,8 @@ class _AddGroupsState extends State<AddGroups> {
                   child: TextField(
                     controller: _descriptionController,
                     decoration: InputDecoration(
-                      hintText: 'Enter description will appear in group list',
+                      hintText:
+                          'workspace_setting_page.description_placeholder'.tr(),
                       hintStyle: OctopusTheme.of(context).textTheme.hint,
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10)),
@@ -323,7 +327,7 @@ class _AddGroupsState extends State<AddGroups> {
                             .toList(),
                       );
                       Fluttertoast.showToast(
-                          msg: "Add group successfully",
+                          msg: "workspace_setting_page.add_group_success".tr(),
                           toastLength: Toast.LENGTH_SHORT,
                           gravity: ToastGravity.CENTER,
                           timeInSecForIosWeb: 1,
@@ -333,7 +337,7 @@ class _AddGroupsState extends State<AddGroups> {
                       Navigator.pop(context);
                       Navigator.pop(context);
                     },
-                    child: const Text('Add group'),
+                    child: Text('workspace_setting_page.add_group_button'.tr()),
                   ),
                 ),
               ],

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -23,7 +24,7 @@ class _LoginWithPassScreenState extends State<LoginWithPassScreen> {
     return Scaffold(
       backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
       appBar: ScreenHeader(
-        title: "Sign in",
+        title: "sign_in_page.sign_in".tr(),
         leading: IconButton(
           splashColor: Colors.transparent,
           onPressed: () {
@@ -45,7 +46,7 @@ class _LoginWithPassScreenState extends State<LoginWithPassScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Password',
+                  'sign_in_page.password_label'.tr(),
                   style: OctopusTheme.of(context)
                       .textTheme
                       .secondaryGreyLabelSecondary,
@@ -58,7 +59,7 @@ class _LoginWithPassScreenState extends State<LoginWithPassScreen> {
                       return TextField(
                         controller: _passwordController,
                         decoration: InputDecoration(
-                          hintText: 'Enter password',
+                          hintText: 'sign_in_page.password_placeholder'.tr(),
                           hintStyle: OctopusTheme.of(context).textTheme.hint,
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10)),
@@ -118,7 +119,7 @@ class _LoginWithPassScreenState extends State<LoginWithPassScreen> {
                         _passwordController.text),
                   );
                 },
-                child: const Text('Sign in'),
+                child: Text("sign_in_page.sign_in".tr()),
               ),
             ),
             Container(
@@ -126,7 +127,7 @@ class _LoginWithPassScreenState extends State<LoginWithPassScreen> {
               child: TextButton(
                 style: OctopusTheme.of(context).buttonTheme.buttonBrandPrimary,
                 onPressed: () {},
-                child: const Text("Don't have password or forgot password?"),
+                child: Text("sign_in_page.dont_have_account".tr()),
               ),
             ),
           ],

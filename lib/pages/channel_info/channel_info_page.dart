@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -149,7 +150,7 @@ class _ChannelInfoPageState extends State<ChannelInfoPage> {
 
               return OptionListTile(
                 tileColor: OctopusTheme.of(context).colorTheme.contentView,
-                title: 'Mute user',
+                title: 'mute_user'.tr(),
                 titleTextStyle:
                     OctopusTheme.of(context).textTheme.primaryGreyBody,
                 leading: Padding(
@@ -204,7 +205,7 @@ class _ChannelInfoPageState extends State<ChannelInfoPage> {
         //   onTap: () {},
         // ),
         OptionListTile(
-          title: "Pinned messages",
+          title: "pinned_messages".tr(),
           tileColor: OctopusTheme.of(context).colorTheme.contentView,
           titleTextStyle: OctopusTheme.of(context).textTheme.primaryGreyBody,
           leading: Padding(
@@ -238,7 +239,7 @@ class _ChannelInfoPageState extends State<ChannelInfoPage> {
           },
         ),
         OptionListTile(
-          title: 'Photos & Videos',
+          title: 'photos_and_videos'.tr(),
           tileColor: OctopusTheme.of(context).colorTheme.contentView,
           titleTextStyle: OctopusTheme.of(context).textTheme.primaryGreyBody,
           leading: Padding(
@@ -274,7 +275,7 @@ class _ChannelInfoPageState extends State<ChannelInfoPage> {
           },
         ),
         OptionListTile(
-          title: 'Files',
+          title: 'files'.tr(),
           tileColor: OctopusTheme.of(context).colorTheme.contentView,
           titleTextStyle: OctopusTheme.of(context).textTheme.primaryGreyBody,
           leading: Padding(
@@ -310,7 +311,7 @@ class _ChannelInfoPageState extends State<ChannelInfoPage> {
           },
         ),
         OptionListTile(
-          title: 'Share group',
+          title: 'share_group'.tr(),
           tileColor: OctopusTheme.of(context).colorTheme.contentView,
           titleTextStyle: OctopusTheme.of(context).textTheme.primaryGreyBody,
           leading: Padding(
@@ -343,7 +344,7 @@ class _ChannelInfoPageState extends State<ChannelInfoPage> {
 
   Widget _buildDeleteListTile() {
     return OptionListTile(
-      title: 'Delete Conversation',
+      title: 'delete_conversion'.tr(),
       tileColor: OctopusTheme.of(context).colorTheme.contentView,
       titleTextStyle:
           OctopusTheme.of(context).textTheme.primaryGreyBody.copyWith(
@@ -393,7 +394,7 @@ class _ChannelInfoPageState extends State<ChannelInfoPage> {
     if (otherMember != null) {
       if (otherMember.active ?? false) {
         alternativeWidget = Text(
-          'Online',
+          'online'.tr(),
           style: TextStyle(
               color: OctopusTheme.of(context)
                   .colorTheme
@@ -402,7 +403,8 @@ class _ChannelInfoPageState extends State<ChannelInfoPage> {
         );
       } else {
         alternativeWidget = Text(
-          'Last seen ${Jiffy(otherMember.lastActive).fromNow()}',
+          'last_seen_value'.tr(
+              namedArgs: {'value': Jiffy(otherMember.lastActive).fromNow()}),
           style: TextStyle(
               color: OctopusTheme.of(context)
                   .colorTheme

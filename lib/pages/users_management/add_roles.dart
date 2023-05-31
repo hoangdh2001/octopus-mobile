@@ -186,7 +186,7 @@ class _AddRolesState extends State<AddRoles> {
                     .contains(WorkspaceOwnCapability.allCapabilities))
                   CheckboxListTile(
                     value: ownCapabilities
-                        .contains(WorkspaceOwnCapability.addMember),
+                        .contains(WorkspaceOwnCapability.viewOtherProject),
                     onChanged: (value) {
                       setState(() {
                         if (value ?? false) {
@@ -212,7 +212,7 @@ class _AddRolesState extends State<AddRoles> {
                     .contains(WorkspaceOwnCapability.allCapabilities))
                   CheckboxListTile(
                     value: ownCapabilities
-                        .contains(WorkspaceOwnCapability.addMember),
+                        .contains(WorkspaceOwnCapability.createList),
                     onChanged: (value) {
                       setState(() {
                         if (value ?? false) {

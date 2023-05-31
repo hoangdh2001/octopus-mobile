@@ -60,6 +60,8 @@ class _HomePageState extends State<HomePage> {
                 worspace: data,
                 child: Navigator(
                   onGenerateRoute: AppRoutes.generateRoute,
+                  key: NavigationService.instance.navigationKey,
+                  observers: [NavigationService.instance.routeObserver],
                   onGenerateInitialRoutes: (navigator, initialRoute) {
                     if (initialRoute == Routes.HOME) {
                       return [
@@ -76,7 +78,7 @@ class _HomePageState extends State<HomePage> {
                     }
                     return [
                       AppRoutes.generateRoute(
-                        RouteSettings(name: initRoute),
+                        RouteSettings(name: initialRoute),
                       )!,
                     ];
                   },
@@ -85,7 +87,7 @@ class _HomePageState extends State<HomePage> {
               );
             },
             noDataBuilder: (context) {
-              return NewWorkspacePage();
+              return const NewWorkspacePage();
             },
           ),
         );

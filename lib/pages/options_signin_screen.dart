@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:octopus/core/config/routes.dart';
@@ -18,7 +19,7 @@ class _OptionsSignInScreenState extends State<OptionsSignInScreen> {
     return Scaffold(
       backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
       appBar: ScreenHeader(
-        title: "SSO Login",
+        title: "login_option_page.title".tr(),
         leading: IconButton(
           splashColor: Colors.transparent,
           onPressed: () {
@@ -37,7 +38,7 @@ class _OptionsSignInScreenState extends State<OptionsSignInScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              "Other sign in methods available",
+              "login_option_page.subtitle".tr(),
               style: OctopusTheme.of(context).textTheme.primaryGreyBody,
             ),
             SizedBox(
@@ -53,7 +54,7 @@ class _OptionsSignInScreenState extends State<OptionsSignInScreen> {
                 onPressed: () {
                   Navigator.pushNamed(context, Routes.LOGIN_WITH_PASS);
                 },
-                child: const Text('Login with password'),
+                child: Text('login_option_page.login_with_password'.tr()),
               ),
             ),
           ],

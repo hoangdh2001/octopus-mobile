@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
@@ -43,17 +44,17 @@ class _MainPageState extends State<MainPage> {
   List<MenuItem> get _menuItems {
     return <MenuItem>[
       MenuItem(
-        title: "Home",
+        title: 'home_title'.tr(),
         urlIcon: "assets/icons/home.svg",
         isSelected: _isSelected(0),
       ),
       MenuItem(
-        title: "Notification",
+        title: 'notification_title'.tr(),
         urlIcon: "assets/icons/notification.svg",
         isSelected: _isSelected(1),
       ),
       MenuItem(
-        title: "Messages",
+        title: 'messages_title'.tr(),
         urlIcon: "assets/icons/messages.svg",
         isSelected: _isSelected(2),
       ),
@@ -63,11 +64,11 @@ class _MainPageState extends State<MainPage> {
   String _title(int index) {
     switch (index) {
       case 0:
-        return 'Home';
+        return 'home_title'.tr();
       case 1:
-        return 'Notification';
+        return 'notification_title'.tr();
       case 2:
-        return 'Messages';
+        return 'messages_title'.tr();
       default:
         return "";
     }

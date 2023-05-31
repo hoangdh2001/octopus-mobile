@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jiffy/jiffy.dart';
@@ -184,7 +185,7 @@ class ChannelLastMessageDate extends StatelessWidget {
               startOfDay
                   .subtract(const Duration(days: 1))
                   .millisecondsSinceEpoch) {
-            stringDate = "Yesterday";
+            stringDate = "yesterday".tr();
           } else if (startOfDay.difference(lastMessageAt).inDays < 7) {
             stringDate = Jiffy(lastMessageAt.toLocal()).EEEE;
           } else {
@@ -227,7 +228,7 @@ class ChannelListTileSubtitle extends StatelessWidget {
             height: 16,
           ),
           Text(
-            '  Muted',
+            'muted'.tr(),
             style: textStyle,
           ),
         ],
@@ -273,7 +274,7 @@ class ChannelLastMessageText extends StatelessWidget {
 
           if (lastMessage == null) {
             return Text(
-              'No recent messages',
+              'no_recent_messages'.tr(),
               style: textStyle,
             );
           }

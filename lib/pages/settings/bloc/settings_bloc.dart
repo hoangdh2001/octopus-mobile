@@ -12,6 +12,7 @@ part 'settings_bloc.freezed.dart';
 enum SettingSection {
   general,
   theme,
+  language,
   appVer,
   logout;
 }

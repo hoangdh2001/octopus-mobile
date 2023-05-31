@@ -738,8 +738,8 @@ class Channel {
     return _client.unmuteChannel(id!);
   }
 
-  Future<String> call() async {
-    final uuid = await _channelRepository.call(id!);
+  Future<String> call({bool isVideo = false, bool isGroup = false}) async {
+    final uuid = await _channelRepository.call(id!, isVideo, isGroup);
     return uuid;
   }
 

@@ -1,4 +1,5 @@
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -86,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
                   Navigator.pushNamed(context, Routes.LOGIN_OPTION);
                 },
                 style: OctopusTheme.of(context).buttonTheme.buttonBrandPrimary,
-                child: const Text("Other sign in options"),
+                child: Text("login_page.other_sign_in_options".tr()),
               ),
             )
           : null,
@@ -116,8 +117,9 @@ class _LoginPageState extends State<LoginPage> {
                   height: 30.h,
                 ),
                 Text(
-                  "We've sent you an email",
+                  "login_page.title".tr(),
                   style: OctopusTheme.of(context).textTheme.primaryGreyH1,
+                  textAlign: TextAlign.center,
                 ),
                 SizedBox(
                   height: 10.h,
@@ -127,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
                   text: TextSpan(
                     style: OctopusTheme.of(context).textTheme.primaryGreyBody,
                     children: [
-                      const TextSpan(text: 'Go to your email to open link in '),
+                      TextSpan(text: 'login_page.subtitle'.tr()),
                       TextSpan(
                         text: widget.email,
                         style: OctopusTheme.of(context)
@@ -153,17 +155,17 @@ class _LoginPageState extends State<LoginPage> {
                         builder: (_) {
                           return MailAppPickerDialog(
                             mailApps: result,
-                            title: 'Choose Mail App',
+                            title: 'login_page.choose_email_app'.tr(),
                           );
                         },
                       );
                     },
-                    child: const Text('Open Email App'),
+                    child: Text('login_page.open_email_app'.tr()),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 15).r,
-                  child: const SeparatorText(text: "OR"),
+                  child: SeparatorText(text: "login_page.or".tr()),
                 ),
                 BlocConsumer<LoginBloc, LoginState>(
                   bloc: getIt<LoginBloc>(),
@@ -231,7 +233,7 @@ class _LoginPageState extends State<LoginPage> {
                             onPressed: () {
                               getIt<LoginBloc>().add(const ShowOTPField());
                             },
-                            child: const Text('Enter code'),
+                            child: Text('login_page.enter_code'.tr()),
                           ),
                         ),
                 ),
@@ -242,7 +244,7 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () {
                       getIt<LoginBloc>().add(ResendCode(widget.email));
                     },
-                    child: const Text('Resend code'),
+                    child: Text('login_page.resend'.tr()),
                   ),
                 ),
               ],

@@ -15,6 +15,8 @@ class SettingsSectionFactory {
         return SettingsSection(section: section);
       case SettingSection.appVer:
         return SettingsSection(section: section);
+      case SettingSection.language:
+        return SettingsSection(section: section);
       default:
         return Container();
     }

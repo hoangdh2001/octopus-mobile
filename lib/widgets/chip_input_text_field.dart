@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
@@ -74,7 +75,7 @@ class ChipInputTextFieldState<T> extends State<ChipsInputTextField<T>> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 5),
                 child: Text(
-                  'To:',
+                  'to'.tr().toUpperCase(),
                   style: OctopusTheme.of(context)
                       .textTheme
                       .primaryGreyBody

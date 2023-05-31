@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
@@ -26,9 +27,9 @@ class DateDivider extends StatelessWidget {
 
     var dayInfo = createdAt.MMMd;
     if (createdAt.isSame(now, Units.DAY)) {
-      dayInfo = 'Today';
+      dayInfo = 'today'.tr();
     } else if (createdAt.isSame(now.subtract(days: 1), Units.DAY)) {
-      dayInfo = 'Yesterday';
+      dayInfo = 'yesterday'.tr();
     } else if (createdAt.isAfter(now.subtract(days: 7), Units.DAY)) {
       dayInfo = createdAt.EEEE;
     } else if (createdAt.isAfter(now.subtract(years: 1), Units.DAY)) {

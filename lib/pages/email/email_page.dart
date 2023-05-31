@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -62,7 +63,7 @@ class _EmailPageState extends State<EmailPage> {
                       }
                     : null,
                 child: Text(
-                  'Next',
+                  'email_page.next'.tr(),
                   style: TextStyle(fontSize: 13.sp),
                 ),
               );
@@ -77,7 +78,7 @@ class _EmailPageState extends State<EmailPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Your email address',
+              'email_page.email_address_label'.tr(),
               style:
                   OctopusTheme.of(context).textTheme.secondaryGreyLabelPrimary,
             ),
@@ -98,7 +99,7 @@ class _EmailPageState extends State<EmailPage> {
               ),
             ),
             Text(
-              "We'll send you an email to confirm you address",
+              "email_page.email_address_caption".tr(),
               style: OctopusTheme.of(context).textTheme.secondaryGreyBody,
             ),
           ],

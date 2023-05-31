@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -49,12 +50,12 @@ class _AddStatusPageState extends State<AddStatusPage> {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text('Cancel'),
+            child: Text('cancel'.tr()),
           ),
         ),
         leadingWidth: 70,
         title: Text(
-          'New Status',
+          'new_status'.tr(),
           style: OctopusTheme.of(context).textTheme.navigationTitle,
         ),
         actions: [
@@ -66,7 +67,7 @@ class _AddStatusPageState extends State<AddStatusPage> {
                     widget.onCreate.call(_controller.text, color);
                     Navigator.pop(context);
                   },
-            child: const Text('Create'),
+            child: Text('create'.tr()),
           ),
         ],
         bottom: PreferredSize(
@@ -91,7 +92,7 @@ class _AddStatusPageState extends State<AddStatusPage> {
                 child: TextField(
                   controller: _controller,
                   decoration: InputDecoration(
-                    hintText: 'Type status name',
+                    hintText: 'new_status_placeholder'.tr(),
                     hintStyle: OctopusTheme.of(context).textTheme.hint,
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10)),
@@ -183,7 +184,7 @@ class _AddStatusPageState extends State<AddStatusPage> {
                             const SizedBox(
                               width: 12,
                             ),
-                            Text('Pick a color',
+                            Text('picker_color'.tr(),
                                 style: theme.textTheme.primaryGreyBody),
                             const Spacer(),
                             color != null

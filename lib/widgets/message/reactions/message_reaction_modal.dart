@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:octopus/core/data/models/enums/message_status.dart';
 import 'package:octopus/core/data/models/message.dart';
@@ -155,7 +156,7 @@ class MessageReactionsModal extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Message Reactions',
+              'message_reactions'.tr(),
               style: chatThemeData.textTheme.primaryGreyH1,
             ),
             const SizedBox(height: 16),

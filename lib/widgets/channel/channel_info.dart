@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart' show IterableExtension;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:octopus/core/data/client/channel.dart';
@@ -57,13 +58,14 @@ class ChannelInfo extends StatelessWidget {
 
     final memberCount = channel.memberCount;
     if (memberCount != null && memberCount > 2) {
-      var text = '$memberCount Members';
+      var text =
+          'value_members'.tr(namedArgs: {'count': memberCount.toString()});
       final onlineCount =
           members?.where((m) => m.user?.active == true).length ?? 0;
       if (
           // channel.ownCapabilities.contains(PermissionType.connectEvents) &&
           onlineCount > 0) {
-        text += ', $onlineCount Online';
+        text += 'online_count'.tr(namedArgs: {'count': onlineCount.toString()});
       }
       alternativeWidget = Text(
         text,
@@ -79,13 +81,16 @@ class ChannelInfo extends StatelessWidget {
       if (otherMember != null) {
         if (otherMember.user?.active == true) {
           alternativeWidget = Text(
-            'Active now',
+            'active_now'.tr(),
             style: textStyle,
           );
         } else {
           alternativeWidget = Text(
-            'Active '
-            '${Jiffy(otherMember.user?.lastActive).fromNow()} ago',
+            'active_value'.tr(
+              namedArgs: {
+                'value': Jiffy(otherMember.user!.lastActive).fromNow(),
+              },
+            ),
             style: textStyle,
           );
         }

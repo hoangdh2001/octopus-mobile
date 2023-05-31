@@ -82,7 +82,10 @@ abstract class ChannelService {
 
   @POST('/channels/{channelID}/call/{callType}')
   Future<String> call(
-      @Path('channelID') String channelID, @Path('callType') String callType);
+      @Path('channelID') String channelID,
+      @Path('callType') String callType,
+      @Query('hasVideo') bool hasVideo,
+      @Query('isGroup') bool isGroup);
 
   @PUT('/channels/{channelID}')
   Future<ChannelState> updateChannel(@Path('channelID') String channelID,

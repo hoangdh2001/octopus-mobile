@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -145,7 +146,7 @@ class _AssignUserPageState extends State<AssignUserPage> {
           return [
             SliverAppBar(
               leadingWidth: 0,
-              title: Text('Users',
+              title: Text('assign_users_page.title'.tr(),
                   style: OctopusTheme.of(context).textTheme.navigationTitle),
               centerTitle: false,
               backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
@@ -171,7 +172,7 @@ class _AssignUserPageState extends State<AssignUserPage> {
                     }
                     Navigator.pop(context);
                   },
-                  child: const Text('Done'),
+                  child: Text('done'.tr()),
                 ),
               ],
             ),
@@ -182,7 +183,7 @@ class _AssignUserPageState extends State<AssignUserPage> {
                   padding: const EdgeInsets.symmetric(vertical: 8.0).r,
                   child: CupertinoSearchTextField(
                     controller: _controller,
-                    placeholder: "Search",
+                    placeholder: "search".tr(),
                     itemColor: OctopusTheme.of(context).colorTheme.icon,
                     placeholderStyle: OctopusTheme.of(context).textTheme.hint,
                     style: OctopusTheme.of(context).textTheme.primaryGreyBody,
@@ -235,12 +236,12 @@ class _AssignUserPageState extends State<AssignUserPage> {
                     labelStyle:
                         OctopusTheme.of(context).textTheme.brandPrimaryBodyBold,
                     automaticIndicatorColorAdjustment: true,
-                    tabs: const [
+                    tabs: [
                       Tab(
-                        text: 'Members',
+                        text: 'assign_users_page.members_tab'.tr(),
                       ),
                       Tab(
-                        text: 'Groups',
+                        text: 'assign_users_page.groups_tab'.tr(),
                       ),
                     ],
                   ),
@@ -260,7 +261,7 @@ class _AssignUserPageState extends State<AssignUserPage> {
                     ),
                     child: _selectedUsers.isEmpty
                         ? Text(
-                            'People',
+                            'assign_users_page.people'.tr(),
                             style: OctopusTheme.of(context)
                                 .textTheme
                                 .primaryGreyBodyBold,
@@ -283,7 +284,7 @@ class _AssignUserPageState extends State<AssignUserPage> {
                                   width: 8,
                                 ),
                                 Text(
-                                  'Remove All',
+                                  'assign_users_page.remove_all'.tr(),
                                   style: OctopusTheme.of(context)
                                       .textTheme
                                       .primaryGreyBodyBold,
@@ -337,7 +338,7 @@ class _AssignUserPageState extends State<AssignUserPage> {
                               .primaryGreyBodyBold,
                           children: [
                             TextSpan(
-                              text: ' (You)',
+                              text: ' (${'you'.tr()})',
                               style: OctopusTheme.of(context)
                                   .textTheme
                                   .primaryGreyBody,
@@ -373,7 +374,7 @@ class _AssignUserPageState extends State<AssignUserPage> {
                                   ),
                                 ),
                                 Text(
-                                  'No users found',
+                                  'no_users_found'.tr(),
                                   style: OctopusTheme.of(context)
                                       .textTheme
                                       .primaryGreyH1,
@@ -392,9 +393,11 @@ class _AssignUserPageState extends State<AssignUserPage> {
                 itemBuilder: (context, index) {
                   final group = groups[index];
                   return CheckboxListTile(
-                    title: Text(group.group.name ?? 'Unnamed'),
+                    title: Text(group.group.name ?? 'unnamed'.tr()),
                     subtitle: Text(
-                      '${group.group.description} (${group.users?.length ?? 0} Members)',
+                      '${group.group.description} (${'value_members'.tr(namedArgs: {
+                            'count': group.users!.length.toString()
+                          })})',
                       style: OctopusTheme.of(context).textTheme.primaryGreyBody,
                     ),
                     onChanged: (bool? value) {

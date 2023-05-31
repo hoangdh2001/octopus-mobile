@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:octopus/core/data/models/user.dart';
@@ -101,7 +102,9 @@ class UserListTile extends StatelessWidget {
 
     final title = this.title ??
         Text(
-          '${user.firstName} ${user.lastName}',
+          user.firstName != null && user.lastName != null
+              ? user.name
+              : 'unnamed'.tr(),
           style: chatThemeData.textTheme.primaryGreyBodyBold,
         );
 

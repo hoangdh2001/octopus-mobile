@@ -1,10 +1,10 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:octopus/core/config/routes.dart';
 import 'package:octopus/core/data/models/filter.dart';
 import 'package:octopus/core/data/models/sort_option.dart';
 import 'package:octopus/core/data/models/user.dart';
@@ -12,7 +12,6 @@ import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/core/ui/paged_value_scroll_view/bloc/paged_value_bloc.dart';
 import 'package:octopus/octopus.dart';
 import 'package:octopus/octopus_channel.dart';
-import 'package:octopus/pages/channel/channel_page.dart';
 import 'package:octopus/widgets/avatars/user_avatar.dart';
 import 'package:octopus/widgets/button/neumorphic_button.dart';
 import 'package:octopus/widgets/screen_header.dart';
@@ -102,8 +101,9 @@ class _AddUserPageState extends State<AddUserPage> {
     return Scaffold(
       backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
       appBar: ScreenHeader(
-        title: "New members",
-        subtitle: "Selected: ${_selectedUsers.length}",
+        title: "new_members".tr(),
+        subtitle: "selected_member_value"
+            .tr(namedArgs: {'count': _selectedUsers.length.toString()}),
         leading: IconButton(
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
@@ -125,7 +125,7 @@ class _AddUserPageState extends State<AddUserPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0).r,
                 child: CupertinoSearchTextField(
                   controller: _controller,
-                  placeholder: "Search",
+                  placeholder: "search".tr(),
                   itemColor: OctopusTheme.of(context).colorTheme.icon,
                   placeholderStyle: OctopusTheme.of(context).textTheme.hint,
                   style: OctopusTheme.of(context).textTheme.primaryGreyBody,
@@ -152,7 +152,7 @@ class _AddUserPageState extends State<AddUserPage> {
                       horizontal: 16,
                     ),
                     child: Text(
-                      'Suggested',
+                      'suggested'.tr(),
                       style: OctopusTheme.of(context)
                           .textTheme
                           .primaryGreyBodyBold,
@@ -217,7 +217,7 @@ class _AddUserPageState extends State<AddUserPage> {
                                   ),
                                 ),
                                 Text(
-                                  'Nothing found',
+                                  'nothing_found'.tr(),
                                   style: OctopusTheme.of(context)
                                       .textTheme
                                       .primaryGreyH1,

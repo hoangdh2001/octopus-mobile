@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:octopus/core/config/routes.dart';
@@ -178,7 +179,7 @@ class _NewMessagePageState extends State<NewMessagePage> {
     return Scaffold(
       backgroundColor: OctopusTheme.of(context).colorTheme.contentView,
       appBar: ScreenHeader(
-        title: "News message",
+        title: "news_message".tr(),
         leading: IconButton(
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
@@ -301,7 +302,7 @@ class _NewMessagePageState extends State<NewMessagePage> {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'Create a new group',
+                          'create_a_new_group'.tr(),
                           style: OctopusTheme.of(context)
                               .textTheme
                               .primaryGreyBodyBold,
@@ -320,7 +321,7 @@ class _NewMessagePageState extends State<NewMessagePage> {
                     horizontal: 16,
                   ),
                   child: Text(
-                    'Suggested',
+                    'suggested'.tr(),
                     style:
                         OctopusTheme.of(context).textTheme.primaryGreyBodyBold,
                   ),

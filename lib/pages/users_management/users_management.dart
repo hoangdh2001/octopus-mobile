@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide BackButton;
 import 'package:flutter_svg/flutter_svg.dart';
@@ -46,7 +47,7 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
               elevation: 0,
               leading: const BackButton(),
               title: Text(
-                "Users Management",
+                "workspace_setting_page.users_management".tr(),
                 style: OctopusTheme.of(context).textTheme.navigationTitle,
               ),
               centerTitle: true,
@@ -63,7 +64,7 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
                   color: OctopusTheme.of(context).colorTheme.disabled,
                 ),
                 OptionListTile(
-                  title: 'Invite members to workspace',
+                  title: 'workspace_setting_page.invite_members'.tr(),
                   leading: Padding(
                     padding: const EdgeInsets.all(18.0),
                     child: SvgPicture.asset(
@@ -92,7 +93,7 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
                   },
                 ),
                 OptionListTile(
-                  title: 'Groups',
+                  title: 'workspace_setting_page.groups'.tr(),
                   leading: Padding(
                     padding: const EdgeInsets.all(18.0),
                     child: SvgPicture.asset(
@@ -121,7 +122,7 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
                   },
                 ),
                 OptionListTile(
-                  title: 'Roles',
+                  title: 'workspace_setting_page.roles'.tr(),
                   leading: Padding(
                     padding: const EdgeInsets.all(18.0),
                     child: SvgPicture.asset(
@@ -218,7 +219,7 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
                                   member.user.firstName != null &&
                                           member.user.lastName != null
                                       ? member.user.name
-                                      : 'Unknown name',
+                                      : 'unnamed'.tr(),
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -286,7 +287,11 @@ class _UsersManagementPageState extends State<UsersManagementPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  '${members.length - groupMembersLength} more',
+                                  'value_more'.tr(namedArgs: {
+                                    'count':
+                                        (members.length - groupMembersLength)
+                                            .toString()
+                                  }),
                                   style: TextStyle(
                                       color: OctopusTheme.of(context)
                                           .colorTheme

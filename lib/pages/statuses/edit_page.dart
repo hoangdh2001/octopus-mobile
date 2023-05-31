@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
@@ -35,7 +36,7 @@ class _EditPageState extends State<EditPage> {
             leadingWidth: 0,
             centerTitle: false,
             title: Text(
-              'Edit',
+              'edit_bottom_sheet.title'.tr(),
               style: OctopusTheme.of(context).textTheme.navigationTitle,
             ),
             actions: [
@@ -44,7 +45,7 @@ class _EditPageState extends State<EditPage> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text('Done'),
+                child: Text('done'.tr()),
               ),
             ],
             bottom: PreferredSize(
@@ -75,7 +76,7 @@ class _EditPageState extends State<EditPage> {
                         ),
                         Expanded(
                           child: Text(
-                            'Edit',
+                            'edit_bottom_sheet.title'.tr(),
                             style: OctopusTheme.of(context)
                                 .textTheme
                                 .primaryGreyBody,
@@ -106,7 +107,7 @@ class _EditPageState extends State<EditPage> {
                         ),
                         Expanded(
                           child: Text(
-                            'Delete status',
+                            'edit_bottom_sheet.delete_option'.tr(),
                             style: OctopusTheme.of(context)
                                 .textTheme
                                 .primaryGreyBody

@@ -8,6 +8,7 @@ import 'package:octopus/core/data/models/message.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/octopus.dart';
 import 'package:octopus/octopus_channel.dart';
+import 'package:octopus/pages/calls/call_page.dart';
 import 'package:octopus/pages/calls/video_call_page.dart';
 import 'package:octopus/pages/channel_info/channel_info_page.dart';
 import 'package:octopus/pages/channel_info/group_info_page.dart';
@@ -111,8 +112,17 @@ class _ChannelPageState extends State<ChannelPage> {
             child: IconButton(
               onPressed: () {
                 final channel = OctopusChannel.of(context).channel;
-                Navigator.pushNamed(context, Routes.CALL_PAGE,
-                    arguments: VideoCallArgs(channel: channel));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return CallPage(
+                        channel: channel,
+                        isGroup: channel.memberCount! > 2,
+                      );
+                    },
+                  ),
+                );
               },
               icon: SvgPicture.asset(
                 'assets/icons/phone.svg',
@@ -122,8 +132,23 @@ class _ChannelPageState extends State<ChannelPage> {
           ),
           Padding(
             padding: const EdgeInsets.only(right: 16),
-            child: Center(
-              child: SvgPicture.asset(
+            child: IconButton(
+              onPressed: () {
+                final channel = OctopusChannel.of(context).channel;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return CallPage(
+                        channel: channel,
+                        isVideo: true,
+                        isGroup: channel.memberCount! > 2,
+                      );
+                    },
+                  ),
+                );
+              },
+              icon: SvgPicture.asset(
                 'assets/icons/cam.svg',
                 width: 26,
                 color: OctopusTheme.of(context).colorTheme.icon,

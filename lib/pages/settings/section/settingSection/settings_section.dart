@@ -1,9 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
 import 'package:octopus/pages/settings/bloc/settings_bloc.dart';
 import 'package:octopus/pages/settings/section/settingSection/cells/app_ver_cell.dart';
 import 'package:octopus/pages/settings/section/settingSection/cells/general_cell.dart';
+import 'package:octopus/pages/settings/section/settingSection/cells/language_cell.dart';
 import 'package:octopus/pages/settings/section/settingSection/cells/logout_cell.dart';
 import 'package:octopus/pages/settings/section/settingSection/cells/theme_cell.dart';
 
@@ -15,13 +17,15 @@ class SettingsSection extends StatelessWidget {
   String? _title() {
     switch (section) {
       case SettingSection.general:
-        return 'General';
+        return 'setting_page.general_option'.tr();
       case SettingSection.theme:
-        return 'Dark Mode';
+        return 'setting_page.theme_option'.tr();
       case SettingSection.logout:
         return null;
       case SettingSection.appVer:
-        return 'More';
+        return 'setting_page.more_info'.tr();
+      case SettingSection.language:
+        return 'setting_page.language_option'.tr();
     }
   }
 
@@ -35,6 +39,8 @@ class SettingsSection extends StatelessWidget {
         return [const LogoutCell()];
       case SettingSection.appVer:
         return [const AppVerCell()];
+      case SettingSection.language:
+        return [const LanguageCell()];
     }
   }
 

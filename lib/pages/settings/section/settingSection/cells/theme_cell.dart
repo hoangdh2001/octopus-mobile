@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -60,7 +61,7 @@ class _ThemeCellState extends State<ThemeCell> {
                 ThemeMode.dark: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    'On',
+                    'setting_page.on_segment'.tr(),
                     style: theme == ThemeMode.dark
                         ? OctopusTheme.of(context)
                             .textTheme
@@ -73,23 +74,27 @@ class _ThemeCellState extends State<ThemeCell> {
                 ThemeMode.light: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    'Off',
+                    'setting_page.off_segment'.tr(),
                     style: theme == ThemeMode.light
-                        ? OctopusTheme.of(context).textTheme.primaryGreyBodyBold
+                        ? OctopusTheme.of(context)
+                            .textTheme
+                            .brandPrimaryBodyBold
                         : OctopusTheme.of(context)
                             .textTheme
-                            .brandPrimaryBodyBold,
+                            .primaryGreyBodyBold,
                   ),
                 ),
                 ThemeMode.system: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
-                    'Auto',
+                    'setting_page.auto_segment'.tr(),
                     style: theme == ThemeMode.system
-                        ? OctopusTheme.of(context).textTheme.primaryGreyBodyBold
+                        ? OctopusTheme.of(context)
+                            .textTheme
+                            .brandPrimaryBodyBold
                         : OctopusTheme.of(context)
                             .textTheme
-                            .brandPrimaryBodyBold,
+                            .primaryGreyBodyBold,
                   ),
                 ),
               },

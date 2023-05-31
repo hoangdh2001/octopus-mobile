@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart' hide BackButton;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -42,7 +43,7 @@ class _NewWorkspacePageState extends State<NewWorkspacePage> {
                 leading: const BackButton(),
                 elevation: 0,
                 title: Text(
-                  "Create Workspace",
+                  "new_workspace".tr(),
                   style: OctopusTheme.of(context).textTheme.primaryGreyH1,
                 ),
               )
@@ -58,14 +59,14 @@ class _NewWorkspacePageState extends State<NewWorkspacePage> {
               children: [
                 if (!widget.showBack)
                   Text(
-                    "Create Workspace",
+                    "new_workspace".tr(),
                     style: OctopusTheme.of(context).textTheme.primaryGreyH1,
                   ),
                 SizedBox(
                   height: 16.h,
                 ),
                 Text(
-                  "Give a name to your workspace - that's where all the work happens!",
+                  "new_workspace_description".tr(),
                   textAlign: TextAlign.center,
                   style: OctopusTheme.of(context).textTheme.primaryGreyBody,
                 ),
@@ -76,7 +77,7 @@ class _NewWorkspacePageState extends State<NewWorkspacePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Workspace name',
+                      'workspace_name_label'.tr(),
                       style: OctopusTheme.of(context)
                           .textTheme
                           .secondaryGreyLabelSecondary,
@@ -85,7 +86,7 @@ class _NewWorkspacePageState extends State<NewWorkspacePage> {
                     SizedBox(
                       child: TextField(
                         decoration: InputDecoration(
-                          hintText: 'Workspace name',
+                          hintText: 'workspace_name_label'.tr(),
                           hintStyle: OctopusTheme.of(context).textTheme.hint,
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10)),
@@ -116,6 +117,7 @@ class _NewWorkspacePageState extends State<NewWorkspacePage> {
                         state.successOrFail.fold(
                           () {},
                           (workspace) {
+                            Navigator.pop(context);
                             client.state.currentWorkspace = workspace;
                             getIt<SharedPreferences>().setString(
                               workspaceLocal,
@@ -140,9 +142,11 @@ class _NewWorkspacePageState extends State<NewWorkspacePage> {
                             onPressed: state.name.isEmpty
                                 ? null
                                 : () {
+                                    Octopus.of(context)
+                                        .showLoadingOverlay(context);
                                     bloc.add(const Submitted());
                                   },
-                            child: const Text('Create Workspace'),
+                            child: Text('new_workspace'.tr()),
                           ),
                         );
                       },

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -68,7 +69,7 @@ class _ChannelListPageState extends State<ChannelListPage> {
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0).r,
               child: CupertinoSearchTextField(
                 controller: _controller,
-                placeholder: "Search",
+                placeholder: "search".tr(),
                 itemColor: OctopusTheme.of(context).colorTheme.icon,
                 placeholderStyle: OctopusTheme.of(context).textTheme.hint,
                 style: OctopusTheme.of(context).textTheme.primaryGreyBody,

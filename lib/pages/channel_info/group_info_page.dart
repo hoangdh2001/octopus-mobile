@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart' show IterableExtension;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide BackButton;
 import 'package:flutter_svg/svg.dart';
@@ -142,7 +143,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                       builder: (context, state) {
                         if (!state.hasData) {
                           return Text(
-                            'Loading...',
+                            'loading'.tr(),
                             style: TextStyle(
                               color: OctopusTheme.of(context)
                                   .colorTheme
@@ -174,7 +175,15 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                     height: 3.0,
                   ),
                   Text(
-                    '${channel.memberCount} Members, ${snapshot.data?.where((e) => e.user!.active ?? false).length ?? 0} Online',
+                    '${'value_members'.tr(namedArgs: {
+                          'count': channel.memberCount.toString()
+                        })} ${'online_count'.tr(namedArgs: {
+                          'count': (snapshot.data
+                                      ?.where((e) => e.user!.active ?? false)
+                                      .length ??
+                                  0)
+                              .toString()
+                        })}',
                     style: TextStyle(
                       color: OctopusTheme.of(context)
                           .colorTheme
@@ -308,7 +317,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
                               member.userID == channel.createdBy?.id
-                                  ? 'Owner'
+                                  ? 'owner'.tr()
                                   : '',
                               style: TextStyle(
                                   color: OctopusTheme.of(context)
@@ -400,7 +409,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
             Padding(
               padding: const EdgeInsets.all(7.0),
               child: Text(
-                'NAME',
+                'name'.tr().toUpperCase(),
                 style: OctopusTheme.of(context)
                     .textTheme
                     .primaryGreyFootnote
@@ -422,7 +431,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                 controller: _nameController,
                 cursorColor: OctopusTheme.of(context).colorTheme.primaryGrey,
                 decoration: InputDecoration.collapsed(
-                    hintText: 'Add a group name',
+                    hintText: 'add_group_name'.tr(),
                     hintStyle: OctopusTheme.of(context)
                         .textTheme
                         .primaryGreyBodyBold
@@ -506,7 +515,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
         // ),
         // if (channel.ownCapabilities.contains(PermissionType.muteChannel))
         OptionListTile(
-          title: 'Change Avatar',
+          title: 'change_avatar'.tr(),
           tileColor: OctopusTheme.of(context).colorTheme.contentView,
           titleTextStyle: OctopusTheme.of(context).textTheme.primaryGreyBody,
           leading: Padding(
@@ -528,7 +537,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
               return OptionListTile(
                 tileColor: OctopusTheme.of(context).colorTheme.contentView,
                 separatorColor: OctopusTheme.of(context).colorTheme.disabled,
-                title: 'Mute group',
+                title: 'mute_group'.tr(),
                 titleTextStyle:
                     OctopusTheme.of(context).textTheme.primaryGreyBody,
                 leading: Padding(
@@ -564,7 +573,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
               );
             }),
         OptionListTile(
-          title: 'Pinned Messages',
+          title: 'pinned_messages'.tr(),
           tileColor: OctopusTheme.of(context).colorTheme.contentView,
           titleTextStyle: OctopusTheme.of(context).textTheme.primaryGreyBody,
           leading: Padding(
@@ -600,7 +609,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
         OptionListTile(
           tileColor: OctopusTheme.of(context).colorTheme.contentView,
           separatorColor: OctopusTheme.of(context).colorTheme.disabled,
-          title: 'Photos and videos',
+          title: 'photos_and_videos'.tr(),
           titleTextStyle: OctopusTheme.of(context).textTheme.primaryGreyBody,
           leading: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -637,7 +646,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
         OptionListTile(
           tileColor: OctopusTheme.of(context).colorTheme.contentView,
           separatorColor: OctopusTheme.of(context).colorTheme.disabled,
-          title: 'Files',
+          title: 'files'.tr(),
           titleTextStyle: OctopusTheme.of(context).textTheme.primaryGreyBody,
           leading: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -676,7 +685,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
         OptionListTile(
           tileColor: OctopusTheme.of(context).colorTheme.contentView,
           separatorColor: OctopusTheme.of(context).colorTheme.disabled,
-          title: 'Leave group',
+          title: 'leave_channel'.tr(),
           titleTextStyle: OctopusTheme.of(context).textTheme.primaryGreyBody,
           leading: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -697,11 +706,10 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
           onTap: () async {
             final res = await showConfirmationDialog(
               context,
-              title: "Leave channel",
-              okText: 'LEAVE',
-              question:
-                  'You will leave this group and will no longer receive messages. Are you sure?',
-              cancelText: 'CANCEL',
+              title: "leave_channel_title".tr(),
+              okText: 'leave'.tr(),
+              question: 'leave_channel_description'.tr(),
+              cancelText: 'cancel'.tr().toUpperCase(),
               icon: SvgPicture.asset(
                 'assets/icons/user_remove.svg',
                 color: OctopusTheme.of(context).colorTheme.error,
@@ -777,7 +785,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                         width: 24.0,
                         height: 24.0,
                       ),
-                      'View Info',
+                      'view_info'.tr(),
                       () async {
                         var client = Octopus.of(context).client;
 
@@ -813,7 +821,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                         width: 24.0,
                         height: 24.0,
                       ),
-                      "Message",
+                      "message".tr(),
                       () async {
                         var client = Octopus.of(context).client;
 
@@ -845,14 +853,13 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                           width: 24.0,
                           height: 24.0,
                         ),
-                        'Remove from group', () async {
+                        'remove_from_group'.tr(), () async {
                       final res = await showConfirmationDialog(
                         context,
-                        title: 'Remove member',
-                        okText: 'OK',
-                        question:
-                            'Are you sure you want to remove this member?',
-                        cancelText: 'Cancel',
+                        title: 'remove_member_title'.tr(),
+                        okText: 'ok'.tr(),
+                        question: 'remove_member_description'.tr(),
+                        cancelText: 'cancel'.tr().toUpperCase(),
                       );
 
                       if (res == true) {
@@ -868,7 +875,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                         width: 24.0,
                         height: 24.0,
                       ),
-                      'Cancel', () {
+                      'cancel'.tr().toUpperCase(), () {
                     Navigator.pop(context);
                   }),
                 ],
@@ -894,7 +901,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
     if (otherMember != null) {
       if (otherMember.active ?? false) {
         alternativeWidget = Text(
-          'Online',
+          'online'.tr(),
           style: TextStyle(
               color: OctopusTheme.of(context)
                   .colorTheme
@@ -903,7 +910,8 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
         );
       } else {
         alternativeWidget = Text(
-          'Last seen ${Jiffy(otherMember.lastActive).fromNow()}',
+          'last_seen_value'.tr(
+              namedArgs: {'value': Jiffy(otherMember.lastActive).fromNow()}),
           style: TextStyle(
               color: OctopusTheme.of(context)
                   .colorTheme
@@ -969,21 +977,21 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                   Navigator.pop(context);
                   pickImageFromGallery();
                 },
-                child: const Text('Select photo from gallery'),
+                child: Text('select_from_gallery'.tr()),
               ),
               CupertinoActionSheetAction(
                 onPressed: () {
                   Navigator.pop(context);
                   takePhoto();
                 },
-                child: const Text('Take photo'),
+                child: Text('take_photo'.tr()),
               ),
             ],
             cancelButton: CupertinoActionSheetAction(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('Cancel'),
+              child: Text('cancel'.tr()),
             ),
           ),
         );
@@ -999,7 +1007,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                   pickImageFromGallery();
                 },
                 leading: const Icon(Icons.photo_library),
-                title: const Text('Select photo from gallery'),
+                title: Text('select_from_gallery'.tr()),
               ),
               ListTile(
                 onTap: () {
@@ -1007,7 +1015,7 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
                   takePhoto();
                 },
                 leading: const Icon(Icons.camera_alt),
-                title: const Text('Take photo'),
+                title: Text('take_photo'.tr()),
               ),
             ],
           ),
@@ -1141,9 +1149,11 @@ class _GroupInfoScreenState extends State<GroupInfoScreen> {
 
   String _getLastSeen(User user) {
     if (user.active ?? false) {
-      return 'Online';
+      return 'online'.tr();
     } else {
-      return 'Last seen ${Jiffy(user.lastActive).fromNow()}';
+      return 'last_seen_value'.tr(namedArgs: {
+        'value': Jiffy(user.lastActive).fromNow(),
+      });
     }
   }
 }

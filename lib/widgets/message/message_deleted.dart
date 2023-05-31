@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:octopus/core/theme/oc_message_theme_data.dart';
 import 'package:octopus/core/theme/oc_theme.dart';
@@ -43,7 +44,7 @@ class MessageDeleted extends StatelessWidget {
           horizontal: 16,
         ),
         child: Text(
-          "Message is retrived",
+          "message_retrived".tr(),
           style: messageTheme.messageTextStyle?.copyWith(
             fontStyle: FontStyle.italic,
             color: messageTheme.createdAtStyle?.color,

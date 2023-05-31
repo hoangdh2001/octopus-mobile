@@ -54,7 +54,7 @@ class _RecentPageState extends State<RecentPage> {
                       RecentSegment.mywork: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'My Work',
+                          'home_page.my_work_segment'.tr(),
                           style: isSelectMyWork
                               ? theme.textTheme.brandPrimaryBodyBold
                               : theme.textTheme.primaryGreyBodyBold,
@@ -63,7 +63,7 @@ class _RecentPageState extends State<RecentPage> {
                       RecentSegment.calendar: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Calendar',
+                          'home_page.calendar_segment'.tr(),
                           style: isSelectMyWork
                               ? theme.textTheme.primaryGreyBodyBold
                               : theme.textTheme.brandPrimaryBodyBold,
@@ -97,15 +97,15 @@ class _RecentPageState extends State<RecentPage> {
                           .textTheme
                           .brandPrimaryBodyBold,
                       automaticIndicatorColorAdjustment: true,
-                      tabs: const [
-                        Tab(
+                      tabs: [
+                        const Tab(
                           text: 'To Do',
                         ),
                         Tab(
-                          text: 'Comments',
+                          text: 'home_page.comment_tab'.tr(),
                         ),
                         Tab(
-                          text: 'Done',
+                          text: 'home_page.done_tab'.tr(),
                         ),
                       ],
                     ),
@@ -138,7 +138,8 @@ class _RecentPageState extends State<RecentPage> {
                                       TextSpan(
                                         children: [
                                           TextSpan(
-                                            text: 'Today',
+                                            text: 'home_page.today_expansion'
+                                                .tr(),
                                             style: OctopusTheme.of(context)
                                                 .textTheme
                                                 .primaryGreyBodyBold,
@@ -209,7 +210,12 @@ class _RecentPageState extends State<RecentPage> {
                                             children: [
                                               if (task.startDate != null)
                                                 Text(
-                                                  'Started ${Jiffy(task.startDate).fromNow()}',
+                                                  'home_page.started_time'
+                                                      .tr(namedArgs: {
+                                                    'time':
+                                                        Jiffy(task.startDate)
+                                                            .fromNow()
+                                                  }),
                                                   style: OctopusTheme.of(
                                                           context)
                                                       .textTheme
@@ -258,7 +264,8 @@ class _RecentPageState extends State<RecentPage> {
                                       TextSpan(
                                         children: [
                                           TextSpan(
-                                            text: 'Overdue',
+                                            text: 'home_page.overdue_expansion'
+                                                .tr(),
                                             style: OctopusTheme.of(context)
                                                 .textTheme
                                                 .primaryGreyBodyBold,
@@ -329,7 +336,12 @@ class _RecentPageState extends State<RecentPage> {
                                             children: [
                                               if (task.startDate != null)
                                                 Text(
-                                                  'Started ${Jiffy(task.startDate).fromNow()}',
+                                                  'home_page.started_time'
+                                                      .tr(namedArgs: {
+                                                    'time':
+                                                        Jiffy(task.startDate)
+                                                            .fromNow()
+                                                  }),
                                                   style: OctopusTheme.of(
                                                           context)
                                                       .textTheme
@@ -378,7 +390,8 @@ class _RecentPageState extends State<RecentPage> {
                                       TextSpan(
                                         children: [
                                           TextSpan(
-                                            text: 'Next',
+                                            text:
+                                                'home_page.next_expansion'.tr(),
                                             style: OctopusTheme.of(context)
                                                 .textTheme
                                                 .primaryGreyBodyBold,
@@ -449,7 +462,12 @@ class _RecentPageState extends State<RecentPage> {
                                             children: [
                                               if (task.startDate != null)
                                                 Text(
-                                                  'Started ${Jiffy(task.startDate).fromNow()}',
+                                                  'home_page.started_time'
+                                                      .tr(namedArgs: {
+                                                    'time':
+                                                        Jiffy(task.startDate)
+                                                            .fromNow()
+                                                  }),
                                                   style: OctopusTheme.of(
                                                           context)
                                                       .textTheme
@@ -498,7 +516,9 @@ class _RecentPageState extends State<RecentPage> {
                                     TextSpan(
                                       children: [
                                         TextSpan(
-                                          text: 'No due date',
+                                          text:
+                                              'home_page.no_due_date_expansion'
+                                                  .tr(),
                                           style: OctopusTheme.of(context)
                                               .textTheme
                                               .primaryGreyBodyBold,
@@ -567,7 +587,11 @@ class _RecentPageState extends State<RecentPage> {
                                           children: [
                                             if (task.startDate != null)
                                               Text(
-                                                'Started ${Jiffy(task.startDate).fromNow()}',
+                                                'home_page.started_time'
+                                                    .tr(namedArgs: {
+                                                  'time': Jiffy(task.startDate)
+                                                      .fromNow()
+                                                }),
                                                 style: OctopusTheme.of(context)
                                                     .textTheme
                                                     .secondaryGreyCaption2,

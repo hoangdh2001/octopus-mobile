@@ -341,9 +341,14 @@ class _ChannelService implements ChannelService {
   Future<String> call(
     String channelID,
     String callType,
+    bool hasVideo,
+    bool isGroup,
   ) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'hasVideo': hasVideo,
+      r'isGroup': isGroup
+    };
     final _headers = <String, dynamic>{};
     final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<String>(_setStreamType<String>(Options(

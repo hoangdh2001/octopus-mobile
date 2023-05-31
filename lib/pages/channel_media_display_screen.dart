@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide BackButton;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -62,7 +63,7 @@ class _ChannelMediaDisplayScreenState extends State<ChannelMediaDisplayScreen> {
         elevation: 1,
         centerTitle: true,
         title: Text(
-          'Photos and Videos',
+          'photos_and_videos'.tr(),
           style: TextStyle(
             color: OctopusTheme.of(context).colorTheme.primaryGrey,
             fontSize: 16.0,
@@ -95,7 +96,7 @@ class _ChannelMediaDisplayScreenState extends State<ChannelMediaDisplayScreen> {
                       ),
                       const SizedBox(height: 16.0),
                       Text(
-                        'No media',
+                        'no_media'.tr(),
                         style: TextStyle(
                           fontSize: 14.0,
                           color:
@@ -104,7 +105,7 @@ class _ChannelMediaDisplayScreenState extends State<ChannelMediaDisplayScreen> {
                       ),
                       const SizedBox(height: 8.0),
                       Text(
-                        'Photo and video will appear here',
+                        'will_appear_here'.tr(),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 14.0,

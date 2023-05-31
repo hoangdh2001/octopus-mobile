@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart' hide BackButton;
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:octopus/core/data/models/group.dart';
@@ -22,7 +23,7 @@ class _GroupsPageState extends State<GroupsPage> {
         elevation: 0,
         leading: const BackButton(),
         title: Text(
-          "Groups",
+          "workspace_setting_page.groups".tr(),
           style: OctopusTheme.of(context).textTheme.navigationTitle,
         ),
         centerTitle: true,
@@ -36,27 +37,26 @@ class _GroupsPageState extends State<GroupsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text(
-                "Groups",
-                style: TextStyle(
+              Text(
+                "workspace_setting_page.groups".tr(),
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
-                "Groups are a way to organize your team members. You can use groups to assign roles and permissions to multiple people at once.",
+                "workspace_setting_page.group_description".tr(),
                 style: OctopusTheme.of(context).textTheme.primaryGreyBody,
               ),
               _buildMembers(),
-              const Text(
-                "Create a group",
-                style: TextStyle(
+              Text(
+                "workspace_setting_page.create_group_label".tr(),
+                style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Text(
-                  "You can create a group by clicking the button below. Once you create a group, you can add members to it and assign roles and permissions to the group.",
+              Text("workspace_setting_page.create_group_description".tr(),
                   style: OctopusTheme.of(context).textTheme.primaryGreyBody),
               const SizedBox(height: 10),
               TextButton(
@@ -68,7 +68,7 @@ class _GroupsPageState extends State<GroupsPage> {
                       });
                 },
                 style: OctopusTheme.of(context).buttonTheme.brandPrimaryButton,
-                child: const Text('Create a group'),
+                child: Text('workspace_setting_page.create_group_button'.tr()),
               ),
             ],
           ),
@@ -109,14 +109,16 @@ class _GroupsPageState extends State<GroupsPage> {
             return ListTile(
               title: group.workspaceGroup!.name != null
                   ? Text(group.workspaceGroup!.name!)
-                  : const Text('Unnamed group'),
+                  : Text('unnamed_group'.tr()),
               subtitle: group.workspaceGroup!.description != null
                   ? Text(group.workspaceGroup!.description!)
-                  : const Text('No description'),
+                  : Text('no_description'.tr()),
               contentPadding: EdgeInsets.zero,
               dense: false,
               visualDensity: VisualDensity.compact,
-              trailing: Text('${group.memberCount} members',
+              trailing: Text(
+                  'value_members'
+                      .tr(namedArgs: {'count': group.memberCount.toString()}),
                   style: OctopusTheme.of(context).textTheme.primaryGreyBody),
             );
           },

@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -43,12 +44,12 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('Cancel'),
+              child: Text('cancel'.tr()),
             ),
           ),
           leadingWidth: 70,
           title: Text(
-            'Create Project',
+            'create_project.title'.tr(),
             style: OctopusTheme.of(context).textTheme.navigationTitle,
           ),
           actions: [
@@ -69,7 +70,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                           Octopus.of(context).showLoadingOverlay(context);
                           bloc.add(const Submitted());
                         },
-                  child: const Text('Create'),
+                  child: Text('create'.tr()),
                 );
               },
             ),
@@ -91,7 +92,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Space name',
+                      'create_project.name_label'.tr(),
                       style: OctopusTheme.of(context)
                           .textTheme
                           .primaryGreyBodyBold,
@@ -100,7 +101,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                     SizedBox(
                       child: TextField(
                         decoration: InputDecoration(
-                          hintText: 'Enter Space name',
+                          hintText: 'create_project.name_placeholder'.tr(),
                           hintStyle: OctopusTheme.of(context).textTheme.hint,
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10)),
@@ -130,7 +131,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                       height: 10,
                     ),
                     Text(
-                      'Privacy',
+                      'create_project.privacy_label'.tr(),
                       style: OctopusTheme.of(context)
                           .textTheme
                           .primaryGreyBodyBold,
@@ -175,7 +176,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                                     width: 8,
                                   ),
                                   Text(
-                                    'Workspace',
+                                    'create_project.workspace_segment'.tr(),
                                     style: !state.workspaceAccess
                                         ? OctopusTheme.of(context)
                                             .textTheme
@@ -205,7 +206,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                                   width: 8,
                                 ),
                                 Text(
-                                  'Private',
+                                  'create_project.private_segment'.tr(),
                                   style: state.workspaceAccess
                                       ? OctopusTheme.of(context)
                                           .textTheme
@@ -240,7 +241,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                             padding: const EdgeInsets.all(16),
                             child: Row(
                               children: [
-                                Text('Share with',
+                                Text('create_project.shared_with'.tr(),
                                     style: theme.textTheme.primaryGreyBody),
                                 const Spacer(),
                                 GestureDetector(
@@ -292,7 +293,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                       height: 10,
                     ),
                     Text(
-                      'Space settings',
+                      'create_project.setting_label'.tr(),
                       style: OctopusTheme.of(context)
                           .textTheme
                           .primaryGreyBodyBold,
@@ -348,7 +349,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                                   const SizedBox(
                                     width: 12,
                                   ),
-                                  Text('Statuses',
+                                  Text('create_project.statuses_option'.tr(),
                                       style: theme.textTheme.primaryGreyBody),
                                   const SizedBox(
                                     width: 16,
@@ -387,7 +388,7 @@ class _CreateProjectPageState extends State<CreateProjectPage> {
                           }
                         },
                         title: Text(
-                          'Create channel for project',
+                          'create_project.create_channel_for_project'.tr(),
                           style: theme.textTheme.primaryGreyBody,
                         ),
                         activeColor:
