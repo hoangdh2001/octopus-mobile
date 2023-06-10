@@ -142,24 +142,24 @@ class AppRoutes {
                 initialIndex: mainPageArgs?.initialIndex ?? 0,
               );
             });
-      case Routes.CALL_PAGE:
-        return MaterialPageRoute(
-            settings: RouteSettings(arguments: args, name: Routes.CALL_PAGE),
-            builder: (context) {
-              final channelPageArgs = args as VideoCallArgs;
-              // final initialMessage = channelPageArgs.initialMessage;
-              var channel = channelPageArgs.channel;
-              if (channel == null) {
-                final client = getIt<Client>();
-                channel = client.channel(
-                  id: channelPageArgs.channelID!,
-                );
-              }
-              return VideoCallPage(
-                channel: channel,
-                isJoin: channelPageArgs.isJoin,
-              );
-            });
+      // case Routes.CALL_PAGE:
+      //   return MaterialPageRoute(
+      //       settings: RouteSettings(arguments: args, name: Routes.CALL_PAGE),
+      //       builder: (context) {
+      //         final channelPageArgs = args as VideoCallArgs;
+      //         // final initialMessage = channelPageArgs.initialMessage;
+      //         var channel = channelPageArgs.channel;
+      //         if (channel == null) {
+      //           final client = getIt<Client>();
+      //           channel = client.channel(
+      //             id: channelPageArgs.channelID!,
+      //           );
+      //         }
+      //         return VideoCallPage(
+      //           channel: channel,
+      //           isJoin: channelPageArgs.isJoin,
+      //         );
+      //       });
       case Routes.TASK_DETAIL:
         return MaterialPageRoute(
           settings: RouteSettings(arguments: args, name: Routes.TASK_DETAIL),

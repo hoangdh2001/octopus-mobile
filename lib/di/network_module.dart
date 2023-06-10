@@ -19,7 +19,7 @@ final _levelEmojiMapper = {
 abstract class NetworkModule {
   @Named("BaseUrl")
   @singleton
-  String get baseUrl => "http://157.230.195.124";
+  String get baseUrl => "http://157.230.193.222";
   // "http://localhost:80";
 
   @singleton
